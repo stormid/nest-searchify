@@ -1,0 +1,15 @@
+version: '{build}'
+configuration: Release
+install:
+- ps: >-
+    nuget install GitVersion.CommandLine -ExcludeVersion -OutputDirectory .\buildtools -NonInteractive
+
+    .\buildtools\GitVersion.CommandLine\tools\GitVersion.exe /l console /output buildserver /updateAssemblyInfo
+cache: packages -> src\packages.config
+before_build:
+- ps: nuget restore Nest.Searchify.sln
+build:
+  publish_nuget: true
+  publish_nuget_symbols: true
+  include_nuget_references: true
+  verbosity: minimal

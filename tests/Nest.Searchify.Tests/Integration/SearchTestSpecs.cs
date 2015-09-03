@@ -17,11 +17,12 @@ namespace Nest.Searchify.Tests.Integration
     [CollectionDefinition(nameof(SearchDataCollection))]
     public class SearchDataCollection : ICollectionFixture<SearchDataContext>
     {
+        [Trait("Category", "Integration")]
         [Collection(nameof(SearchDataCollection))]
         public class WhenAccessingTermsAggregation
         {
             private readonly ISearchResponse<Person> _response;
-            private SearchResult<Person, CommonParameters> _result;
+            private readonly SearchResult<Person, CommonParameters> _result;
 
             public WhenAccessingTermsAggregation(SearchDataContext context)
             {
@@ -44,6 +45,7 @@ namespace Nest.Searchify.Tests.Integration
             }
         }
 
+        [Trait("Category", "Integration")]
         [Collection(nameof(SearchDataCollection))]
         public class CommonParametersSearchWithDefaultArgs
         {
@@ -67,6 +69,7 @@ namespace Nest.Searchify.Tests.Integration
             }
         }
 
+        [Trait("Category", "Integration")]
         [Collection(nameof(SearchDataCollection))]
         public class WhenSearchingSpecificPageAndSizeWithCommonParametersSearch
         {

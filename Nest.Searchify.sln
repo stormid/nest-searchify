@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nest.Searchify", "src\Nest.Searchify.csproj", "{A39CF2A9-75DA-409B-BEAF-F4F90C0C45AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nest.Searchify", "src\Nest.Searchify\Nest.Searchify.csproj", "{A39CF2A9-75DA-409B-BEAF-F4F90C0C45AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nest.Searchify.Tests", "Nest-Searchify.Tests\Nest.Searchify.Tests.csproj", "{71F4C4D1-1C21-4789-B553-CC5ADC4E3D92}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nest.Searchify.Tests", "tests\Nest.Searchify.Tests\Nest.Searchify.Tests.csproj", "{71F4C4D1-1C21-4789-B553-CC5ADC4E3D92}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

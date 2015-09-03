@@ -27,8 +27,11 @@ namespace Nest.Searchify.SearchResults
 
 		#region Aggregations
 
-		[JsonIgnore]
-		public AggregationsHelper AggregationHelper => Response.Aggs;
+        [JsonIgnore]
+        public AggregationsHelper AggregationHelper
+        {
+            get { return Response.Aggs; }
+        }
 
         [JsonProperty("aggregations")]
         public IDictionary<string, IAggregation> Aggregations { get; } 

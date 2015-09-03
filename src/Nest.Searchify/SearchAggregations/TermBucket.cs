@@ -5,7 +5,8 @@ namespace Nest.Searchify.SearchAggregations
 {
     public class TermBucket : Bucket<TermKeyItem>
     {
-        public string Type => "Term";
+        public string Type { get { return "Term"; } }
+
         public TermBucket()
         {
         }

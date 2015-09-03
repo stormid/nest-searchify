@@ -1,8 +1,9 @@
 using System;
 using Nest.Searchify.Abstractions;
+using Nest.Searchify.Queries;
 using Newtonsoft.Json;
 
-namespace Nest.Searchify
+namespace Nest.Searchify.SearchResults
 {
 	public class PaginationOptions<TParameters> : IPaginationOptions where TParameters : ICommonParameters
 	{

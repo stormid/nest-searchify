@@ -63,21 +63,30 @@
     <Compile Include="Abstractions\ISearchResult.cs" />
     <Compile Include="Abstractions\ISearchService.cs" />
     <Compile Include="Abstractions\SortDirectionOption.cs" />
-    <Compile Include="CommonParameters.cs" />
+    <Compile Include="Queries\CommonParameters.cs" />
     <Compile Include="Extensions\ElasticsearchRepositorySearchExtensions.cs" />
     <Compile Include="FilterField.cs" />
     <Compile Include="GeoPoint.cs" />
-    <Compile Include="PaginationOptions.cs" />
+    <Compile Include="SearchResults\PaginationOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queries\CommonParametersQuery.cs" />
     <Compile Include="Queries\SearchParametersFilteredQuery.cs" />
-    <Compile Include="SearchParameters.cs" />
-    <Compile Include="SearchResult.cs" />
-    <Compile Include="SearchResultBase.cs" />
+    <Compile Include="SearchAggregations\RangeBucket.cs" />
+    <Compile Include="SearchAggregations\RangeKeyItem.cs" />
+    <Compile Include="SearchAggregations\SearchAggregationParser.cs" />
+    <Compile Include="Queries\SearchParameters.cs" />
+    <Compile Include="SearchResults\SearchResult.cs" />
+    <Compile Include="SearchResults\SearchResultBase.cs" />
+    <Compile Include="SearchAggregations\SignificantTermBucket.cs" />
+    <Compile Include="SearchAggregations\SignificantTermKeyItem.cs" />
+    <Compile Include="SearchAggregations\TermBucket.cs" />
+    <Compile Include="SearchAggregations\TermKeyItem.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Nest.Searchify.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

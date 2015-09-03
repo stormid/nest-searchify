@@ -7,6 +7,8 @@ using Nest.Queryify;
 using Nest.Queryify.Abstractions;
 using Nest.Resolvers.Converters.Aggregations;
 using Nest.Searchify.Extensions;
+using Nest.Searchify.Queries;
+using Nest.Searchify.SearchResults;
 using Newtonsoft.Json;
 using Xunit;
 

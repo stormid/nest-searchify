@@ -1,7 +1,7 @@
 using Nest.Searchify.Abstractions;
 using Newtonsoft.Json;
 
-namespace Nest.Searchify
+namespace Nest.Searchify.SearchResults
 {
 	public abstract class SearchResultBase<TParameters> : ISearchResult<TParameters> where TParameters : ICommonParameters
 	{

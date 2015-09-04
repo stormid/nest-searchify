@@ -23,7 +23,7 @@ namespace Nest.Searchify.SearchResults
 		[JsonProperty("documents", NullValueHandling = NullValueHandling.Ignore)]
 		public virtual IEnumerable<TOutputEntity> Documents { get; protected set; }
 
-		protected ISearchResponse<TEntity> Response { get; }
+		protected ISearchResponse<TEntity> Response { get; private set; }
 
 		#region Aggregations
 
@@ -34,7 +34,7 @@ namespace Nest.Searchify.SearchResults
         }
 
         [JsonProperty("aggregations")]
-        public IDictionary<string, IAggregation> Aggregations { get; } 
+        public IDictionary<string, IAggregation> Aggregations { get; private set; } 
 
         #endregion
 

@@ -4,8 +4,8 @@ namespace Nest.Searchify.SearchAggregations
 {
     public class RangeKeyItem : RangeItem
     {
-        public string Value { get; }
-        public string Text { get; }
+        public string Value { get; private set; }
+        public string Text { get; private set; }
 
         public RangeKeyItem(RangeItem item)
         {

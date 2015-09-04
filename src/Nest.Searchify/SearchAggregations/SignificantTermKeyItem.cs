@@ -4,8 +4,8 @@ namespace Nest.Searchify.SearchAggregations
 {
     public class SignificantTermKeyItem : SignificantTermItem
     {
-        public string Value { get; }
-        public string Text { get; }
+        public string Value { get; private set; }
+        public string Text { get; private set; }
 
         public SignificantTermKeyItem(SignificantTermItem item)
         {

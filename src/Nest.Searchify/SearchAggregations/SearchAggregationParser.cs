@@ -29,7 +29,12 @@ namespace Nest.Searchify.SearchAggregations
                     }
                     else if (bucket.Items.All(x => x.GetType() == typeof (SignificantTermItem)))
                     {
-                        yield return new KeyValuePair<string, IAggregation>(agg.Key, new SignificantTermBucket(bucket.Items));
+                        yield return
+                            new KeyValuePair<string, IAggregation>(agg.Key, new SignificantTermBucket(bucket.Items));
+                    }
+                    else
+                    {
+                        yield return agg;
                     }
                 }
                 else

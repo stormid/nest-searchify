@@ -35,7 +35,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Integration\Person.cs" />
-    <Compile Include="Integration\SearchTestSpecs.cs" />
+    <Compile Include="Integration\PersonSearchQueryWithTermsAggregation.cs" />
+    <Compile Include="Integration\SearchDataContext.cs" />
+    <Compile Include="Integration\SearchDataCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

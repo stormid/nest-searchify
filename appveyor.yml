@@ -1,22 +1,15 @@
 version: '{build}'
 os: Visual Studio 2015
 configuration: Release
-install:
-- ps: >-
-    nuget install GitVersion.CommandLine -ExcludeVersion -OutputDirectory .\buildtools -NonInteractive
-
-    .\buildtools\GitVersion.CommandLine\tools\GitVersion.exe /l console /output buildserver /updateAssemblyInfo
-cache: packages -> src\packages.config
-nuget:
-  account_feed: true
-before_build:
-- ps: nuget restore Nest.Searchify.sln
 build:
-  publish_nuget: true
-  publish_nuget_symbols: true
-  include_nuget_references: true
+  project: Nest.Searchify.sln
   verbosity: minimal
+after_build:
+  cmd: nuget pack src/Nest.Searchify/Nest.Searchify.csproj -Version %GitVersion_NugetVersion% -IncludeReferencedProjects -Properties "Configuration=%CONFIGURATION%" -Verbosity quiet
 test:
   categories:
     except:
     - Integration
+artifacts:
+- path: Nest.Searchify.*.nupkg
+cache: packages -> src\packages.config

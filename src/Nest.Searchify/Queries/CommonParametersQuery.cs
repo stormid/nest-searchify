@@ -5,25 +5,21 @@ using System.Linq;
 using System.Linq.Expressions;
 using Nest.Queryify.Abstractions.Queries;
 using Nest.Searchify.Abstractions;
+using Nest.Searchify.SearchResults;
 using Newtonsoft.Json;
 
 namespace Nest.Searchify.Queries
 {
-	public class CommonParametersQuery<TDocument> : CommonParametersQuery<ICommonParameters, TDocument, TDocument>
+    public class CommonParametersQuery<TDocument> : CommonParametersQuery<ICommonParameters, TDocument, SearchResult<TDocument, ICommonParameters>>
 		where TDocument : class
 	{
-		public CommonParametersQuery(NameValueCollection parameters) : base(parameters)
-		{
-		}
+        public CommonParametersQuery(ICommonParameters parameters) : base(parameters)
+        {
+        }
+    }
 
-		public CommonParametersQuery(ICommonParameters parameters)
-			: base(parameters)
-		{
-		}
-	}
-
-	public class CommonParametersQuery<TDocument, TReturnAs> :
-		CommonParametersQuery<ICommonParameters, TDocument, TReturnAs>
+    public class CommonParametersQuery<TDocument, TReturnAs> :
+		CommonParametersQuery<ICommonParameters, TDocument, TReturnAs, SearchResult<TDocument, TReturnAs, ICommonParameters>>
 		where TDocument : class
 		where TReturnAs : class
 	{
@@ -40,16 +36,24 @@ namespace Nest.Searchify.Queries
 		public CommonParametersQuery()
 		{
 		}
-
 	}
+    
+    public class CommonParametersQuery<TParameters, TDocument, TSearchResult> : CommonParametersQuery<TParameters, TDocument, TDocument, TSearchResult>
+    where TParameters : ICommonParameters
+    where TDocument : class
+    where TSearchResult : SearchResult<TDocument, TDocument, TParameters>
+    {
+        public CommonParametersQuery(TParameters parameters) : base(parameters)
+        {
+        }
+    }
 
-	public class CommonParametersQuery<TParameters, TDocument, TReturnAs> : SearchDescriptorQueryObject<TDocument, TReturnAs>
-		where TParameters : ICommonParameters
+    public class CommonParametersQuery<TParameters, TDocument, TReturnAs, TSearchResult> : SearchResultDescriptorObject<TDocument, TReturnAs, TParameters, TSearchResult>
+        where TParameters : ICommonParameters
 		where TDocument : class
 		where TReturnAs : class
+        where TSearchResult : SearchResult<TDocument, TReturnAs, TParameters>
 	{
-		private readonly TParameters _parameters;
-
 		private static TParameters ParametersFromNameValueCollection(NameValueCollection nvc)
 		{
 			var values = nvc.AllKeys.ToDictionary(k => k, k => nvc[k]);
@@ -62,9 +66,8 @@ namespace Nest.Searchify.Queries
 			
 		}
 
-		public CommonParametersQuery(TParameters parameters)
+		public CommonParametersQuery(TParameters parameters) : base(parameters)
 		{
-			_parameters = parameters;
 		}
 
 		public CommonParametersQuery() : this(new NameValueCollection())
@@ -90,7 +93,7 @@ namespace Nest.Searchify.Queries
 
 		protected sealed override SearchDescriptor<TDocument> BuildQuery(SearchDescriptor<TDocument> descriptor)
 		{
-			var parameters = ModifyParameters(_parameters);
+			var parameters = ModifyParameters(Parameters);
 
 			ApplyPaging(descriptor, parameters);
 
@@ -140,7 +143,7 @@ namespace Nest.Searchify.Queries
 
 		protected SortOrder GetSortOrderFromParameters()
 		{
-			switch (_parameters.SortDirection)
+			switch (Parameters.SortDirection)
 			{
 				case SortDirectionOption.Desc:
 					return SortOrder.Descending;

@@ -6,14 +6,6 @@ namespace Nest.Searchify.Tests.Integration
 {
     public class PersonSearchQueryWithTermsAggregation : CommonParametersQuery<Person>
     {
-        public PersonSearchQueryWithTermsAggregation(NameValueCollection parameters) : base(parameters)
-        {
-        }
-
-        public PersonSearchQueryWithTermsAggregation(ICommonParameters parameters) : base(parameters)
-        {
-        }
-
         protected override AggregationDescriptor<Person> ApplyAggregations(AggregationDescriptor<Person> descriptor, ICommonParameters parameters)
         {
             return descriptor
@@ -30,6 +22,10 @@ namespace Nest.Searchify.Tests.Integration
                 )
                 .Average("average_age", a => a.Field(f => f.Age))
                 ;
+        }
+
+        public PersonSearchQueryWithTermsAggregation(ICommonParameters parameters) : base(parameters)
+        {
         }
     }
 }

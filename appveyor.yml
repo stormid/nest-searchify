@@ -17,4 +17,3 @@ test:
     - Integration
 artifacts:
 - path: Nest.Searchify.*.nupkg
-cache: packages -> src\packages.config

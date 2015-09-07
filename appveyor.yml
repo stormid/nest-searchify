@@ -1,6 +1,8 @@
 version: '{build}'
 os: Visual Studio 2015
 configuration: Release
+before_build:
+  cmd: nuget restore Nest.Indexify.sln
 build:
   project: Nest.Searchify.sln
   verbosity: minimal

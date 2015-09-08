@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Nest.Resolvers.Converters.Aggregations;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.SearchAggregations;
 using Newtonsoft.Json;

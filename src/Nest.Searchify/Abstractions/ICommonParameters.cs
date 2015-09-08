@@ -1,10 +1,10 @@
+using System;
 using System.Collections.Specialized;
 
 namespace Nest.Searchify.Abstractions
 {
-	public interface ICommonParameters
+	public interface ICommonParameters : ICloneable
 	{
-		// void PopulateFrom(NameValueCollection nvc);
 		int Start();
 		int Size { get; set; }
 		string SortBy { get; set; }

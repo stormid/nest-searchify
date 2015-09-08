@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
+﻿using System.Linq;
 using FluentAssertions;
-using Nest.Resolvers.Converters.Aggregations;
 using Nest.Searchify.Abstractions;
-using Nest.Searchify.Extensions;
 using Nest.Searchify.Queries;
 using Nest.Searchify.SearchResults;
 using Newtonsoft.Json;
@@ -49,7 +45,7 @@ namespace Nest.Searchify.Tests.Integration
 
             public CommonParametersSearchWithDefaultArgs(SearchDataContext context)
             {
-                _result = context.Repository.Search<Person>(new CommonParameters());
+                _result = context.Repository.Query(new CommonParametersQuery<Person>(new CommonParameters()));
             }
 
             [Fact]
@@ -62,6 +58,30 @@ namespace Nest.Searchify.Tests.Integration
             public void ShouldReturnFirstPageOfDocuments()
             {
                 _result.Documents.Count().Should().Be(10);
+            }
+
+            [Fact]
+            public void ShouldHaveNextPage()
+            {
+                _result.Pagination.HasNextPage.Should().BeTrue();
+            }
+
+            [Fact]
+            public void ShouldNotHavePreviousPage()
+            {
+                _result.Pagination.HasPreviousPage.Should().BeFalse();
+            }
+
+            [Fact]
+            public void ShouldProvideNextPageParameters()
+            {
+                _result.Pagination.NextPage().Page.Should().Be(2);
+            }
+
+            [Fact]
+            public void ShouldProvidePreviousPageParameters()
+            {
+                _result.Pagination.PreviousPage().Page.Should().Be(1);
             }
         }
 
@@ -74,7 +94,7 @@ namespace Nest.Searchify.Tests.Integration
             public CommonParametersSearchResultWithDefaultArgs(SearchDataContext context)
             {
                 var query = new CommonParametersQuery<Person>(new CommonParameters());
-                _result = context.Repository.Search(query);
+                _result = context.Repository.Query(query);
             }
 
             [Fact]
@@ -87,6 +107,30 @@ namespace Nest.Searchify.Tests.Integration
             public void ShouldReturnFirstPageOfDocuments()
             {
                 _result.Documents.Count().Should().Be(10);
+            }
+
+            [Fact]
+            public void ShouldHaveNextPage()
+            {
+                _result.Pagination.HasNextPage.Should().BeTrue();
+            }
+
+            [Fact]
+            public void ShouldNotHavePreviousPage()
+            {
+                _result.Pagination.HasPreviousPage.Should().BeFalse();
+            }
+
+            [Fact]
+            public void ShouldProvideNextPageParameters()
+            {
+                _result.Pagination.NextPage().Page.Should().Be(2);
+            }
+
+            [Fact]
+            public void ShouldProvidePreviousPageParameters()
+            {
+                _result.Pagination.PreviousPage().Page.Should().Be(1);
             }
         }
 
@@ -118,7 +162,7 @@ namespace Nest.Searchify.Tests.Integration
             public CustomSearchQuery(SearchDataContext context)
             {
                 var query = new PersonSearchQuery(new PersonParameters());
-                _result = context.Repository.Search(query);
+                _result = context.Repository.Query(query);
             }
 
             [Fact]
@@ -132,6 +176,30 @@ namespace Nest.Searchify.Tests.Integration
             {
                 _result.Documents.Count().Should().Be(10);
             }
+
+            [Fact]
+            public void ShouldHaveNextPage()
+            {
+                _result.Pagination.HasNextPage.Should().BeTrue();
+            }
+
+            [Fact]
+            public void ShouldNotHavePreviousPage()
+            {
+                _result.Pagination.HasPreviousPage.Should().BeFalse();
+            }
+
+            [Fact]
+            public void ShouldProvideNextPageParameters()
+            {
+                _result.Pagination.NextPage().Page.Should().Be(2);
+            }
+
+            [Fact]
+            public void ShouldProvidePreviousPageParameters()
+            {
+                _result.Pagination.PreviousPage().Page.Should().Be(1);
+            }
         }
 
         [Trait("Category", "Integration")]
@@ -142,7 +210,7 @@ namespace Nest.Searchify.Tests.Integration
 
             public WhenSearchingSpecificPageAndSizeWithCommonParametersSearch(SearchDataContext context)
             {
-                _result = context.Repository.Search<Person>(new CommonParameters(1, 2));
+                _result = context.Repository.Query(new CommonParametersQuery<Person>(new CommonParameters(1, 100)));
             }
 
             [Fact]
@@ -155,6 +223,30 @@ namespace Nest.Searchify.Tests.Integration
             public void ShouldReturnFirstPageOfDocuments()
             {
                 _result.Documents.Count().Should().Be(1);
+            }
+
+            [Fact]
+            public void ShouldHaveNextPage()
+            {
+                _result.Pagination.HasNextPage.Should().BeFalse();
+            }
+
+            [Fact]
+            public void ShouldNotHavePreviousPage()
+            {
+                _result.Pagination.HasPreviousPage.Should().BeTrue();
+            }
+
+            [Fact]
+            public void ShouldProvideNextPageParameters()
+            {
+                _result.Pagination.NextPage().Page.Should().Be(100);
+            }
+
+            [Fact]
+            public void ShouldProvidePreviousPageParameters()
+            {
+                _result.Pagination.PreviousPage().Page.Should().Be(99);
             }
         }
     }

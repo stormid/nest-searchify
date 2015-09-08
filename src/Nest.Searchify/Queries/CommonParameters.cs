@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Specialized;
 using System.Linq;
 using Nest.Searchify.Abstractions;
@@ -69,6 +70,11 @@ namespace Nest.Searchify.Queries
 		{
 			Size = size <= 0 ? DefaultPageSize : size;
 			Page = page;
-		}		
+		}
+
+	    object ICloneable.Clone()
+	    {
+	        return MemberwiseClone();
+	    }
 	}
 }

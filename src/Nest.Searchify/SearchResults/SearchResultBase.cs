@@ -12,7 +12,7 @@ namespace Nest.Searchify.SearchResults
 
 		private PaginationOptions<TParameters> _pagination;
 		[JsonProperty("pagination")]
-		public IPaginationOptions Pagination {
+		public IPaginationOptions<TParameters> Pagination {
 			get
 			{
 				if (_pagination == null)

@@ -4,7 +4,16 @@ using Nest.Searchify.SearchResults;
 
 namespace Nest.Searchify.Queries
 {
-	public class SearchParametersFilteredQuery<TDocument, TSearchResult> :
+    public class SearchParametersFilteredQuery<TDocument> :
+        SearchParametersFilteredQuery<ISearchParameters, TDocument, SearchResult<TDocument, ISearchParameters>>
+        where TDocument : class
+    {
+        public SearchParametersFilteredQuery(ISearchParameters parameters) : base(parameters)
+        {
+        }
+    }
+
+    public class SearchParametersFilteredQuery<TDocument, TSearchResult> :
 		SearchParametersFilteredQuery<ISearchParameters, TDocument, TSearchResult>
 		where TDocument : class
         where TSearchResult : SearchResult<TDocument, ISearchParameters>

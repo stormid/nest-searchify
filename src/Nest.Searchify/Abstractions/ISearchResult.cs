@@ -2,7 +2,7 @@
 {
 	public interface ISearchResult<out TSearchParameters> where TSearchParameters : ICommonParameters
 	{
-		IPaginationOptions Pagination { get; }
+		IPaginationOptions<TSearchParameters> Pagination { get; }
 		TSearchParameters Parameters { get; }
 		int TimeTaken { get; }
 

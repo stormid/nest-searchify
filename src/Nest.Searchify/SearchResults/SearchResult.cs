@@ -6,6 +6,14 @@ using Newtonsoft.Json;
 
 namespace Nest.Searchify.SearchResults
 {
+    public class SearchResult<TEntity> : SearchResult<TEntity, TEntity, ICommonParameters>
+        where TEntity : class
+    {
+        public SearchResult(ICommonParameters parameters, ISearchResponse<TEntity> response) : base(parameters, response)
+        {
+        }
+    }
+
     public class SearchResult<TEntity, TParameters> : SearchResult<TEntity, TEntity, TParameters>
 		where TEntity : class
 		where TParameters : ICommonParameters

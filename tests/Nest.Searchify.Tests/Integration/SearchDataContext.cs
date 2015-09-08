@@ -9,17 +9,17 @@ namespace Nest.Searchify.Tests.Integration
     {
         public string IndexName { get; }
 
-        private readonly IElasticClient _client;
+        public IElasticClient Client { get; }
         public IElasticsearchRepository Repository { get; }
 
         public SearchDataContext()
         {
             IndexName = $"nest-searchify-{DateTime.UtcNow.TimeOfDay.TotalSeconds.ToString("F0")}";
-            _client = new ElasticClient(new ConnectionSettings(defaultIndex: IndexName));
+            Client = new ElasticClient(new ConnectionSettings(defaultIndex: IndexName));
 
-            _client.CreateIndex(i => i.Index(IndexName).AddMapping<Person>(m => m.MapFromAttributes()));
+            Client.CreateIndex(i => i.Index(IndexName).AddMapping<Person>(m => m.MapFromAttributes()));
 
-            Repository = new ElasticsearchRepository(_client);
+            Repository = new ElasticsearchRepository(Client);
 
             Debug.WriteLine("Creating search data");
             var data = Person.LoadFromResource();
@@ -29,7 +29,7 @@ namespace Nest.Searchify.Tests.Integration
         public void Dispose()
         {
             Debug.WriteLine("Clearing search data");
-            _client.DeleteIndex(IndexName);
+            Client.DeleteIndex(IndexName);
         }
     }
 }

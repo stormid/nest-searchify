@@ -5,7 +5,8 @@ configuration: Release
 nuget:
   account_feed: true
 before_build:
-  cmd: nuget restore Nest.Searchify.sln
+  - cmd: nuget sources
+  - cmd: nuget restore Nest.Searchify.sln -DisableParallelProcessing -NonInteractive
 build:
   project: Nest.Searchify.sln
   verbosity: minimal
@@ -17,4 +18,3 @@ test:
     - Integration
 artifacts:
 - path: Nest.Searchify.*.nupkg
-cache: packages -> src\packages.config

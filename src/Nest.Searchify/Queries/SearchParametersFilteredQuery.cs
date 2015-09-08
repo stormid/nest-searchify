@@ -1,59 +1,40 @@
 ﻿using System.Collections.Specialized;
+using Nest.Searchify.Abstractions;
+using Nest.Searchify.SearchResults;
 
 namespace Nest.Searchify.Queries
 {
-	public class SearchParametersFilteredQuery<TDocument> :
-		SearchParametersFilteredQuery<SearchParameters, TDocument>
+	public class SearchParametersFilteredQuery<TDocument, TSearchResult> :
+		SearchParametersFilteredQuery<ISearchParameters, TDocument, TSearchResult>
 		where TDocument : class
+        where TSearchResult : SearchResult<TDocument, ISearchParameters>
 	{
-		public SearchParametersFilteredQuery()
-		{
-		}
+        public SearchParametersFilteredQuery(ISearchParameters parameters) : base(parameters)
+        {
+        }
+    }
 
-		public SearchParametersFilteredQuery(NameValueCollection parameters)
-			: base(parameters)
-		{
-		}
-
-		public SearchParametersFilteredQuery(SearchParameters parameters) : base(parameters)
-		{
-		}
-	}
-
-	public class SearchParametersFilteredQuery<TSearchParameters, TDocument> : SearchParametersFilteredQuery<TSearchParameters, TDocument, TDocument>
-		where TSearchParameters : SearchParameters, new()
+    public class SearchParametersFilteredQuery<TSearchParameters, TDocument, TSearchResult> : SearchParametersFilteredQuery<TSearchParameters, TDocument, TDocument, TSearchResult>
+		where TSearchParameters : ISearchParameters
 	where TDocument : class
+        where TSearchResult : SearchResult<TDocument, TSearchParameters>
 	{
-		public SearchParametersFilteredQuery()
-		{
-		}
+        public SearchParametersFilteredQuery(TSearchParameters parameters) : base(parameters)
+        {
+        }
+    }
 
-		public SearchParametersFilteredQuery(NameValueCollection parameters)
-			: base(parameters)
-		{
-		}
-
-		public SearchParametersFilteredQuery(TSearchParameters parameters)
-			: base(parameters)
-		{
-		}
-	}
-
-	public class SearchParametersFilteredQuery<TSearchParameters, TDocument, TReturnAs> : CommonParametersQuery<TSearchParameters, TDocument, TReturnAs>
-		where TSearchParameters : SearchParameters, new()
+    public class SearchParametersFilteredQuery<TSearchParameters, TDocument, TReturnAs, TSearchResult> : CommonParametersQuery<TSearchParameters, TDocument, TReturnAs, TSearchResult>
+		where TSearchParameters : ISearchParameters
 		where TDocument : class
 		where TReturnAs : class
+        where TSearchResult : SearchResult<TDocument, TReturnAs, TSearchParameters>
 	{
-		public SearchParametersFilteredQuery() : base(new NameValueCollection()) { }
-
-		public SearchParametersFilteredQuery(NameValueCollection parameters) : base(parameters) { }
-
-		public SearchParametersFilteredQuery(TSearchParameters parameters)
-			: base(parameters)
+        public SearchParametersFilteredQuery(TSearchParameters parameters) : base(parameters)
 		{
-		}
+        }
 
-		protected virtual QueryContainer WithQuery(IQueryContainer query, string queryTerm)
+        protected virtual QueryContainer WithQuery(IQueryContainer query, string queryTerm)
 		{
 			return Query<TDocument>.QueryString(q => q.Query(queryTerm));
 		}

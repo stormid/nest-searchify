@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Web;
 using Nest.Searchify.Abstractions;
+using Nest.Searchify.Extensions;
 using Newtonsoft.Json;
 
 namespace Nest.Searchify.Queries
 {
 	public class CommonParameters : ICommonParameters
 	{
-		public static TParameters ParametersFromNameValueCollection<TParameters>(NameValueCollection nvc) where TParameters : CommonParameters
+		public static TParameters ParametersFromNameValueCollection<TParameters>(NameValueCollection nvc) where TParameters : class, ICommonParameters
 		{
 			var values = nvc.AllKeys.ToDictionary(k => k, k => nvc[k]);
 			var jsonString = JsonConvert.SerializeObject(values);
@@ -64,7 +66,28 @@ namespace Nest.Searchify.Queries
 			return !string.IsNullOrWhiteSpace(SortBy);
 		}
 
-		public CommonParameters() : this(DefaultPageSize, 1) { }
+	    public string ToJson()
+	    {
+	        return ToJson(this);
+	    }
+
+	    public static TParameters FromQueryString<TParameters>(string queryString) where TParameters : class, ICommonParameters
+	    {
+	        var nvc = HttpUtility.ParseQueryString(queryString);
+	        return ParametersFromNameValueCollection<TParameters>(nvc);
+	    }
+
+	    public NameValueCollection ToQueryString()
+	    {
+	        var nvc = HttpUtility.ParseQueryString("");
+	        foreach (var item in this.AsDictionary().Where(item => item.Value != null).OrderBy(o => o.Key))
+	        {
+	            nvc.Add(item.Key.ToLowerInvariant(), item.Value.ToString());
+	        }
+	        return nvc;
+	    }
+
+	    public CommonParameters() : this(DefaultPageSize, 1) { }
 
 		public CommonParameters(int size, int page)
 		{

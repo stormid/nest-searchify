@@ -21,6 +21,9 @@ namespace Nest.Searchify.Tests.Integration
             {
                 var parameters = new CommonParameters();
                 _result = context.Repository.Query(new PersonSearchQueryWithTermsAggregation(parameters));
+                var fqs = CommonParameters.FromQueryString<CommonParameters>("page=1&size=4");
+                var json = parameters.ToJson();
+                var qs = parameters.ToQueryString();
             }
 
             [Fact]

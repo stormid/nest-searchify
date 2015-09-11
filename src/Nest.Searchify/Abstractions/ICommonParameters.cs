@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Specialized;
+using Elasticsearch.Net;
 
 namespace Nest.Searchify.Abstractions
 {
@@ -11,5 +12,9 @@ namespace Nest.Searchify.Abstractions
 		SortDirectionOption? SortDirection { get; set; }
 		int? Page { get; set; }
 		bool HasSort();
+
+	    string ToJson();
+
+	    NameValueCollection ToQueryString();
 	}
 }

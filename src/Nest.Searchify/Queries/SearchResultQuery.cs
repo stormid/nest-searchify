@@ -7,7 +7,7 @@ using Nest.Searchify.SearchResults;
 
 namespace Nest.Searchify.Queries
 {
-    public abstract class SearchResultDescriptorObject<TDocument, TReturnDocument, TSearchParameters, TSearchResult> : ElasticClientQueryObject<TSearchResult>
+    public abstract class SearchResultQuery<TDocument, TReturnDocument, TSearchParameters, TSearchResult> : ElasticClientQueryObject<TSearchResult>
         where TDocument : class
         where TReturnDocument : class
         where TSearchParameters : ICommonParameters
@@ -15,9 +15,9 @@ namespace Nest.Searchify.Queries
     {
         private readonly TSearchParameters _parameters;
 
-        public TSearchParameters Parameters { get { return _parameters; } }
+        public TSearchParameters Parameters => _parameters;
 
-        protected SearchResultDescriptorObject(TSearchParameters parameters)
+        protected SearchResultQuery(TSearchParameters parameters)
         {
             _parameters = parameters;
         }
@@ -48,14 +48,14 @@ namespace Nest.Searchify.Queries
         protected abstract SearchDescriptor<TDocument> BuildQuery(SearchDescriptor<TDocument> descriptor);
     }
 
-    public abstract class SearchResultDescriptorObject<TDocument, TSearchParameters, TSearchResult> : ElasticClientQueryObject<TSearchResult> 
+    public abstract class SearchResultQuery<TDocument, TSearchParameters, TSearchResult> : ElasticClientQueryObject<TSearchResult> 
         where TDocument : class
         where TSearchParameters : ICommonParameters
         where TSearchResult : SearchResult<TDocument, TSearchParameters>
     {
         private readonly TSearchParameters _parameters;
 
-        protected SearchResultDescriptorObject(TSearchParameters parameters)
+        protected SearchResultQuery(TSearchParameters parameters)
         {
             _parameters = parameters;
         }

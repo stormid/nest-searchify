@@ -32,15 +32,12 @@ namespace Nest.Searchify.SearchResults
 		[JsonProperty("documents", NullValueHandling = NullValueHandling.Ignore)]
 		public virtual IEnumerable<TOutputEntity> Documents { get; protected set; }
 
-		protected ISearchResponse<TEntity> Response { get; private set; }
+		protected ISearchResponse<TEntity> Response { get; }
 
 		#region Aggregations
 
         [JsonIgnore]
-        public AggregationsHelper AggregationHelper
-        {
-            get { return Response.Aggs; }
-        }
+        public AggregationsHelper AggregationHelper => Response.Aggs;
 
         [JsonProperty("aggregations")]
         public IDictionary<string, IAggregation> Aggregations { get; private set; } 

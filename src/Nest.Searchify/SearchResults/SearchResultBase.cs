@@ -27,13 +27,9 @@ namespace Nest.Searchify.SearchResults
 		protected abstract long GetSearchResultTotal();
 
 		[JsonProperty("parameters")]
-		public TParameters Parameters { get; private set; }
+		public TParameters Parameters { get; }
 
 		[JsonProperty("timeTaken")]
-		public int TimeTaken
-		{
-			get { return GetResponseTimeTaken(); }
-		}
-
+		public int TimeTaken => GetResponseTimeTaken();
 	}
 }

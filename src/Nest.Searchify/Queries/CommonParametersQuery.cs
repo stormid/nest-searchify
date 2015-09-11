@@ -48,7 +48,7 @@ namespace Nest.Searchify.Queries
         }
     }
 
-    public class CommonParametersQuery<TParameters, TDocument, TReturnAs, TSearchResult> : SearchResultDescriptorObject<TDocument, TReturnAs, TParameters, TSearchResult>
+    public class CommonParametersQuery<TParameters, TDocument, TReturnAs, TSearchResult> : SearchResultQuery<TDocument, TReturnAs, TParameters, TSearchResult>
         where TParameters : ICommonParameters
 		where TDocument : class
 		where TReturnAs : class
@@ -74,10 +74,9 @@ namespace Nest.Searchify.Queries
 		{
 		}
 
-		/// <exception cref="ArgumentNullException"><paramref name="parameters"/> is <see langword="null" />.</exception>
 		protected virtual TParameters ModifyParameters(TParameters parameters)
 		{
-			if(parameters == null) throw new ArgumentNullException("parameters", "the parameters object must not be null");
+			if(parameters == null) throw new ArgumentNullException(nameof(parameters), "the parameters object must not be null");
 			return parameters;
 		}
 
@@ -154,7 +153,7 @@ namespace Nest.Searchify.Queries
 
 		protected virtual string SortByField(string sortBy)
 		{
-			return string.Format("{0}.sort", sortBy);
+			return $"{sortBy}.sort";
 		}
 
 		private IFieldSort WithSort(SortFieldDescriptor<TDocument> sort, TParameters parameters)

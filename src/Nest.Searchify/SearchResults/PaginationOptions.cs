@@ -16,24 +16,18 @@ namespace Nest.Searchify.SearchResults
 		}
 
         [JsonProperty("has_previous")]
-		public bool HasPreviousPage
-		{
-		    get { return _parameters.Page > 1; }
-		}
+		public bool HasPreviousPage => _parameters.Page > 1;
 
-        [JsonProperty("has_next")]
-        public bool HasNextPage
-		{
-		    get { return _parameters.Page < Pages; }
-		}
+	    [JsonProperty("has_next")]
+        public bool HasNextPage => _parameters.Page < Pages;
 
-		[JsonProperty(CommonParameters.SizeParameter)]
-		public int PageSize { get { return _parameters.Size; } }
+	    [JsonProperty(CommonParameters.SizeParameter)]
+		public int PageSize => _parameters.Size;
 
-		[JsonProperty(CommonParameters.PageParameter)]
-		public int Page { get { return _parameters.Page.GetValueOrDefault(1); } }
+	    [JsonProperty(CommonParameters.PageParameter)]
+		public int Page => _parameters.Page.GetValueOrDefault(1);
 
-		[JsonProperty("total")]
+	    [JsonProperty("total")]
 		public long Total { get; private set; }
 
 		[JsonProperty("pages")]

@@ -5,7 +5,7 @@ namespace Nest.Searchify.SearchAggregations
 {
     public class SignificantTermBucket : BucketWithDocCount<SignificantTermKeyItem>, ITypedAggregration
     {
-        public string Type { get { return "SignificantTerm"; } }
+        public string Type => "SignificantTerm";
 
         public SignificantTermBucket()
         {

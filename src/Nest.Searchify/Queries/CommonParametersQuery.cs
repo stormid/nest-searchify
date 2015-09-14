@@ -10,49 +10,30 @@ using Newtonsoft.Json;
 
 namespace Nest.Searchify.Queries
 {
-    public class CommonParametersQuery<TDocument> : CommonParametersQuery<ICommonParameters, TDocument, SearchResult<TDocument, ICommonParameters>>
-		where TDocument : class
-	{
-        public CommonParametersQuery(ICommonParameters parameters) : base(parameters)
-        {
-        }
-    }
-
-    public class CommonParametersQuery<TDocument, TReturnAs> :
-		CommonParametersQuery<ICommonParameters, TDocument, TReturnAs, SearchResult<TDocument, ICommonParameters>>
-		where TDocument : class
-		where TReturnAs : class
-	{
-		public CommonParametersQuery(NameValueCollection parameters)
-			: base(parameters)
-		{
-		}
-
-		public CommonParametersQuery(ICommonParameters parameters)
-			: base(parameters)
-		{
-		}
-
-		public CommonParametersQuery()
-		{
-		}
-	}
-    
-    public class CommonParametersQuery<TParameters, TDocument, TSearchResult> : CommonParametersQuery<TParameters, TDocument, TDocument, TSearchResult>
+    public class CommonParametersQuery<TParameters, TDocument> : CommonParametersQuery<TParameters, TDocument, SearchResult<TParameters, TDocument>, TDocument>
     where TParameters : class, ICommonParameters
     where TDocument : class
-    where TSearchResult : class, ISearchResult<TParameters, TDocument>
     {
         public CommonParametersQuery(TParameters parameters) : base(parameters)
         {
         }
     }
 
-    public class CommonParametersQuery<TParameters, TDocument, TReturnAs, TSearchResult> : SearchResultQuery<TDocument, TReturnAs, TParameters, TSearchResult>
+    public class CommonParametersQuery<TParameters, TDocument, TSearchResult> : CommonParametersQuery<TParameters, TDocument, TSearchResult, TDocument>
+    where TParameters : class, ICommonParameters
+    where TDocument : class
+    where TSearchResult : SearchResult<TParameters, TDocument>
+    {
+        public CommonParametersQuery(TParameters parameters) : base(parameters)
+        {
+        }
+    }
+
+    public class CommonParametersQuery<TParameters, TDocument, TSearchResult, TReturnAs> : SearchResultQuery<TParameters, TDocument, TSearchResult, TReturnAs>
         where TParameters : class, ICommonParameters
 		where TDocument : class
 		where TReturnAs : class
-        where TSearchResult : class, ISearchResult<TParameters, TDocument>
+        where TSearchResult : SearchResult<TParameters, TDocument>
 	{
 		private static TParameters ParametersFromNameValueCollection(NameValueCollection nvc)
 		{

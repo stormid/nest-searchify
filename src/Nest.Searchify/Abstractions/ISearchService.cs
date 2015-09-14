@@ -1,4 +1,5 @@
 ﻿using Nest.Queryify.Abstractions.Queries;
+using Nest.Searchify.SearchResults;
 
 namespace Nest.Searchify.Abstractions
 {
@@ -9,8 +10,9 @@ namespace Nest.Searchify.Abstractions
             where TSearchResult : class, ISearchResult<TSearchParameters, TDocument>
             where TSearchParameters : class, ICommonParameters
             where TDocument : class;
+
         ISearchResult<TSearchParameters, TDocument> Search<TSearchParameters, TDocument>(
-            IElasticClientQueryObject<ISearchResult<TSearchParameters, TDocument>> query)
+            IElasticClientQueryObject<SearchResult<TSearchParameters, TDocument>> query)
             where TSearchParameters : class, ICommonParameters
             where TDocument : class;
     }

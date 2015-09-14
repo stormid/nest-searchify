@@ -24,6 +24,8 @@ namespace Nest.Searchify.Tests.Integration
 
             var repository = new ElasticsearchRepository("default");
             var searchService = new RepositorySearchService(repository);
+
+            var r = searchService.Search(q);
         }
     }
 
@@ -64,7 +66,7 @@ namespace Nest.Searchify.Tests.Integration
 
             public CommonParametersSearchWithDefaultArgs(SearchDataContext context)
             {
-                _result = context.Repository.Query(new CommonParametersQuery<Person>(new CommonParameters()));
+                _result = context.Repository.Query(new CommonParametersQuery<ICommonParameters, Person>(new CommonParameters()));
             }
 
             [Fact]
@@ -108,11 +110,11 @@ namespace Nest.Searchify.Tests.Integration
         [Collection(nameof(SearchDataCollection))]
         public class CommonParametersSearchResultWithDefaultArgs
         {
-            private readonly ISearchResult<ICommonParameters, Person> _result;
+            private readonly SearchResult<ICommonParameters, Person> _result;
 
             public CommonParametersSearchResultWithDefaultArgs(SearchDataContext context)
             {
-                var query = new CommonParametersQuery<Person>(new CommonParameters());
+                var query = new CommonParametersQuery<ICommonParameters, Person, SearchResult<ICommonParameters, Person>>(new CommonParameters());
                 _result = context.Repository.Query(query);
             }
 
@@ -169,7 +171,7 @@ namespace Nest.Searchify.Tests.Integration
                 }
             }
 
-            public class PersonSearchResults : SearchResult<Person, PersonParameters>
+            public class PersonSearchResults : SearchResult<PersonParameters, Person>
             {
                 public PersonSearchResults(PersonParameters parameters, ISearchResponse<Person> response) : base(parameters, response)
                 {
@@ -229,7 +231,7 @@ namespace Nest.Searchify.Tests.Integration
 
             public WhenSearchingSpecificPageAndSizeWithCommonParametersSearch(SearchDataContext context)
             {
-                _result = context.Repository.Query(new CommonParametersQuery<Person>(new CommonParameters(1, 100)));
+                _result = context.Repository.Query(new CommonParametersQuery<ICommonParameters, Person>(new CommonParameters(1, 100)));
             }
 
             [Fact]

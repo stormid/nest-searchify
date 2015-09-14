@@ -7,38 +7,38 @@ using Nest.Searchify.SearchResults;
 
 namespace Nest.Searchify.Queries
 {
-    public abstract class SearchResultQuery<TDocument, TReturnDocument, TSearchParameters, TSearchResult> : ElasticClientQueryObject<TSearchResult>, ISearchResultQuery<TSearchParameters> 
+    public abstract class SearchResultQuery<TParameters, TDocument, TSearchResult, TReturnAs> : ElasticClientQueryObject<TSearchResult>, ISearchResultQuery<TParameters> 
         where TDocument : class
-        where TReturnDocument : class
-        where TSearchParameters : class, ICommonParameters
-        where TSearchResult : class, ISearchResult<TSearchParameters, TDocument>
+        where TReturnAs : class
+        where TParameters : class, ICommonParameters
+        where TSearchResult : SearchResult<TParameters, TDocument>
     {
-        public TSearchParameters Parameters { get; }
+        public TParameters Parameters { get; }
 
-        protected SearchResultQuery(TSearchParameters parameters)
+        protected SearchResultQuery(TParameters parameters)
         {
             Parameters = parameters;
         }
 
         protected override TSearchResult ExecuteCore(IElasticClient client, string index)
         {
-            var response = client.Search<TDocument, TReturnDocument>(desc => BuildQuery(desc).Index(index));
+            var response = client.Search<TDocument, TReturnAs>(desc => BuildQuery(desc).Index(index));
             return ToSearchResultCore(response, Parameters);
         }
 
         protected override Task<TSearchResult> ExecuteCoreAsync(IElasticClient client, string index)
         {
             return client
-                .SearchAsync<TDocument, TReturnDocument>(desc => BuildQuery(desc).Index(index))
+                .SearchAsync<TDocument, TReturnAs>(desc => BuildQuery(desc).Index(index))
                 .ContinueWith(r => ToSearchResultCore(r.Result, Parameters));
         }
 
-        protected virtual TSearchResult ToSearchResultCore(ISearchResponse<TReturnDocument> response, TSearchParameters parameters)
+        protected virtual TSearchResult ToSearchResultCore(ISearchResponse<TReturnAs> response, TParameters parameters)
         {
             return ToSearchResult(response, parameters);
         }
 
-        protected virtual TSearchResult ToSearchResult(ISearchResponse<TReturnDocument> response, TSearchParameters parameters)
+        protected virtual TSearchResult ToSearchResult(ISearchResponse<TReturnAs> response, TParameters parameters)
         {
             return (TSearchResult)Activator.CreateInstance(typeof(TSearchResult), parameters, response);
         }
@@ -46,8 +46,8 @@ namespace Nest.Searchify.Queries
         protected abstract SearchDescriptor<TDocument> BuildQuery(SearchDescriptor<TDocument> descriptor);
     }
 
-    public abstract class SearchResultQuery<TDocument, TSearchParameters> :
-        SearchResultQuery<TDocument, TSearchParameters, ISearchResult<TSearchParameters, TDocument>>
+    public abstract class SearchResultQuery<TSearchParameters, TDocument> :
+        SearchResultQuery<TSearchParameters, TDocument, ISearchResult<TSearchParameters, TDocument>>
         where TDocument : class
         where TSearchParameters : class, ICommonParameters
     {
@@ -56,14 +56,14 @@ namespace Nest.Searchify.Queries
         }
     }
 
-    public abstract class SearchResultQuery<TDocument, TSearchParameters, TSearchResult> : ElasticClientQueryObject<TSearchResult>, ISearchResultQuery<TSearchParameters> 
+    public abstract class SearchResultQuery<TParameters, TDocument, TSearchResult> : ElasticClientQueryObject<TSearchResult>, ISearchResultQuery<TParameters> 
         where TDocument : class
-        where TSearchParameters : class, ICommonParameters
-        where TSearchResult : class, ISearchResult<TSearchParameters, TDocument>
+        where TParameters : class, ICommonParameters
+        where TSearchResult : class, ISearchResult<TParameters, TDocument>
     {
-        public TSearchParameters Parameters { get; }
+        public TParameters Parameters { get; }
 
-        protected SearchResultQuery(TSearchParameters parameters)
+        protected SearchResultQuery(TParameters parameters)
         {
             Parameters = parameters;
         }
@@ -80,12 +80,12 @@ namespace Nest.Searchify.Queries
             return ToSearchResultCore(response, Parameters);
         }
 
-        protected virtual TSearchResult ToSearchResultCore(ISearchResponse<TDocument> response, TSearchParameters parameters)
+        protected virtual TSearchResult ToSearchResultCore(ISearchResponse<TDocument> response, TParameters parameters)
         {
             return ToSearchResult(response, parameters);
         }
 
-        protected virtual TSearchResult ToSearchResult(ISearchResponse<TDocument> response, TSearchParameters parameters)
+        protected virtual TSearchResult ToSearchResult(ISearchResponse<TDocument> response, TParameters parameters)
         {
             return (TSearchResult)Activator.CreateInstance(typeof(TSearchResult), BindingFlags.CreateInstance, new object[] { parameters , response });
         }

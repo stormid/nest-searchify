@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Nest.Queryify.Abstractions;
 using Nest.Queryify.Abstractions.Queries;
 using Nest.Searchify.Abstractions;
+using Nest.Searchify.SearchResults;
 
 namespace Nest.Searchify
 {
@@ -18,12 +19,17 @@ namespace Nest.Searchify
             _repository = repository;
         }
 
-        public TSearchResult Search<TSearchParameters, TDocument, TSearchResult>(IElasticClientQueryObject<TSearchResult> query) where TSearchParameters : class, ICommonParameters where TDocument : class where TSearchResult : class, ISearchResult<TSearchParameters, TDocument>
+        public TSearchResult Search<TSearchParameters, TDocument, TSearchResult>(IElasticClientQueryObject<TSearchResult> query) 
+            where TSearchParameters : class, ICommonParameters 
+            where TDocument : class 
+            where TSearchResult : class, ISearchResult<TSearchParameters, TDocument>
         {
             return _repository.Query(query);
         }
 
-        public ISearchResult<TSearchParameters, TDocument> Search<TSearchParameters, TDocument>(IElasticClientQueryObject<ISearchResult<TSearchParameters, TDocument>> query) where TSearchParameters : class, ICommonParameters where TDocument : class
+        public ISearchResult<TSearchParameters, TDocument> Search<TSearchParameters, TDocument>(IElasticClientQueryObject<SearchResult<TSearchParameters, TDocument>> query) 
+            where TSearchParameters : class, ICommonParameters 
+            where TDocument : class
         {
             return _repository.Query(query);
         }

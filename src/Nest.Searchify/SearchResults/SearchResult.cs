@@ -6,33 +6,33 @@ using Newtonsoft.Json;
 
 namespace Nest.Searchify.SearchResults
 {
-    public class SearchResult<TEntity> : SearchResult<TEntity, TEntity, ICommonParameters>
-        where TEntity : class
+    public class SearchResult<TDocument> : SearchResult<ICommonParameters, TDocument, TDocument>
+        where TDocument : class
     {
-        public SearchResult(ICommonParameters parameters, ISearchResponse<TEntity> response) : base(parameters, response)
+        public SearchResult(ICommonParameters parameters, ISearchResponse<TDocument> response) : base(parameters, response)
         {
         }
     }
 
-    public class SearchResult<TEntity, TParameters> : SearchResult<TEntity, TEntity, TParameters>
-		where TEntity : class
+    public class SearchResult<TParameters, TDocument> : SearchResult<TParameters, TDocument, TDocument>
+		where TDocument : class
 		where TParameters : class, ICommonParameters
 	{
-		public SearchResult(TParameters parameters, ISearchResponse<TEntity> response) : base(parameters, response)
+		public SearchResult(TParameters parameters, ISearchResponse<TDocument> response) : base(parameters, response)
 		{
 		}
 	}
 
-    public class SearchResult<TEntity, TOutputEntity, TParameters> : SearchResultBase<TParameters>, ISearchResult<TParameters, TOutputEntity> 
-        where TEntity : class
-		where TOutputEntity : class
+    public class SearchResult<TParameters, TDocument, TReturnAs> : SearchResultBase<TParameters>, ISearchResult<TParameters, TReturnAs> 
+        where TDocument : class
+		where TReturnAs : class
 		where TParameters : class, ICommonParameters
 	{
 
 		[JsonProperty("documents", NullValueHandling = NullValueHandling.Ignore)]
-		public virtual IEnumerable<TOutputEntity> Documents { get; protected set; }
+		public virtual IEnumerable<TReturnAs> Documents { get; protected set; }
 
-		protected ISearchResponse<TEntity> Response { get; }
+		protected ISearchResponse<TDocument> Response { get; }
 
 		#region Aggregations
 
@@ -44,26 +44,26 @@ namespace Nest.Searchify.SearchResults
 
         #endregion
 
-		public SearchResult(TParameters parameters, ISearchResponse<TEntity> response) : base(parameters)
+		public SearchResult(TParameters parameters, ISearchResponse<TDocument> response) : base(parameters)
 		{
 			Response = response;
 		    Documents = TransformResultCore(response);
             Aggregations = SearchAggregationParser.Parse(Response.Aggregations);
         }
 
-	    private IEnumerable<TOutputEntity> TransformResultCore(ISearchResponse<TEntity> response)
+	    private IEnumerable<TReturnAs> TransformResultCore(ISearchResponse<TDocument> response)
 	    {
 	        return TransformResult(response.Documents);
         }
 
-		protected virtual IEnumerable<TOutputEntity> TransformResult(IEnumerable<TEntity> entities)
+		protected virtual IEnumerable<TReturnAs> TransformResult(IEnumerable<TDocument> entities)
 		{
 			return Response.Documents.Select(TransformEntity).Where(x => x != null);
 		}
 
-		protected virtual TOutputEntity TransformEntity(TEntity entity)
+		protected virtual TReturnAs TransformEntity(TDocument entity)
 		{
-			return entity as TOutputEntity;
+			return entity as TReturnAs;
 		}
 
 		protected override int GetResponseTimeTaken()

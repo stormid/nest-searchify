@@ -2,11 +2,11 @@
 
 namespace Nest.Searchify.Abstractions
 {
-    public interface ISearchResult<out TParameters, out TOutputEntity> : ISearchResultBase<TParameters>
+    public interface ISearchResult<out TParameters, out TReturnAs> : ISearchResultBase<TParameters>
         where TParameters : class, ICommonParameters
-        where TOutputEntity : class
+        where TReturnAs : class
     {
-        IEnumerable<TOutputEntity> Documents { get; }
+        IEnumerable<TReturnAs> Documents { get; }
         AggregationsHelper AggregationHelper { get; }
         IDictionary<string, IAggregation> Aggregations { get; }
     }

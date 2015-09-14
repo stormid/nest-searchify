@@ -5,7 +5,7 @@ using Nest.Searchify.SearchResults;
 namespace Nest.Searchify.Queries
 {
     public class SearchParametersFilteredQuery<TDocument> :
-        SearchParametersFilteredQuery<ISearchParameters, TDocument, SearchResult<TDocument, ISearchParameters>>
+        SearchParametersFilteredQuery<ISearchParameters, TDocument, SearchResult<ISearchParameters, TDocument>>
         where TDocument : class
     {
         public SearchParametersFilteredQuery(ISearchParameters parameters) : base(parameters)
@@ -16,28 +16,28 @@ namespace Nest.Searchify.Queries
     public class SearchParametersFilteredQuery<TDocument, TSearchResult> :
 		SearchParametersFilteredQuery<ISearchParameters, TDocument, TSearchResult>
 		where TDocument : class
-        where TSearchResult : SearchResult<TDocument, ISearchParameters>
+        where TSearchResult : SearchResult<ISearchParameters, TDocument>
 	{
         public SearchParametersFilteredQuery(ISearchParameters parameters) : base(parameters)
         {
         }
     }
 
-    public class SearchParametersFilteredQuery<TSearchParameters, TDocument, TSearchResult> : SearchParametersFilteredQuery<TSearchParameters, TDocument, TDocument, TSearchResult>
+    public class SearchParametersFilteredQuery<TSearchParameters, TDocument, TSearchResult> : SearchParametersFilteredQuery<TSearchParameters, TDocument, TSearchResult, TDocument>
 		where TSearchParameters : class, ISearchParameters
 	where TDocument : class
-        where TSearchResult : SearchResult<TDocument, TSearchParameters>
+        where TSearchResult : SearchResult<TSearchParameters, TDocument>
 	{
         public SearchParametersFilteredQuery(TSearchParameters parameters) : base(parameters)
         {
         }
     }
 
-    public class SearchParametersFilteredQuery<TSearchParameters, TDocument, TReturnAs, TSearchResult> : CommonParametersQuery<TSearchParameters, TDocument, TReturnAs, TSearchResult>
+    public class SearchParametersFilteredQuery<TSearchParameters, TDocument, TSearchResult, TReturnAs> : CommonParametersQuery<TSearchParameters, TDocument, TSearchResult, TReturnAs>
 		where TSearchParameters : class, ISearchParameters
 		where TDocument : class
 		where TReturnAs : class
-        where TSearchResult : class, ISearchResult<TSearchParameters, TDocument>
+        where TSearchResult : SearchResult<TSearchParameters, TDocument>
 	{
         public SearchParametersFilteredQuery(TSearchParameters parameters) : base(parameters)
 		{

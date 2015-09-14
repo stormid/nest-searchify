@@ -7,20 +7,14 @@ using Nest.Searchify.Queries;
 namespace Nest.Searchify.Tests.Integration
 {
     public class TestSearchQuery :
-        SearchResultQuery
-            <Person, SearchDataCollection.CustomSearchQuery.PersonParameters>
+        CommonParametersQuery<SearchDataCollection.CustomSearchQuery.PersonParameters, Person>
     {
         public TestSearchQuery(SearchDataCollection.CustomSearchQuery.PersonParameters parameters) : base(parameters)
         {
         }
-
-        protected override SearchDescriptor<Person> BuildQuery(SearchDescriptor<Person> descriptor)
-        {
-            return descriptor.MatchAll();
-        }
     }
 
-    public class PersonSearchQueryWithTermsAggregation : CommonParametersQuery<SearchDataCollection.CustomSearchQuery.PersonParameters, Person, Person, SearchDataCollection.CustomSearchQuery.PersonSearchResults>
+    public class PersonSearchQueryWithTermsAggregation : CommonParametersQuery<SearchDataCollection.CustomSearchQuery.PersonParameters, Person, SearchDataCollection.CustomSearchQuery.PersonSearchResults>
     {
         protected override AggregationDescriptor<Person> ApplyAggregations(AggregationDescriptor<Person> descriptor, SearchDataCollection.CustomSearchQuery.PersonParameters parameters)
         {

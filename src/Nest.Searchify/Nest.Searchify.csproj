@@ -75,7 +75,6 @@
     <Compile Include="Abstractions\ISearchResultQuery.cs" />
     <Compile Include="Queries\SearchResultQuery.cs" />
     <Compile Include="SearchAggregations\ITypedAggregration.cs" />
-    <Compile Include="SearchResults\CommonSearchResult.cs" />
     <Compile Include="SearchResults\PaginationOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queries\CommonParametersQuery.cs" />

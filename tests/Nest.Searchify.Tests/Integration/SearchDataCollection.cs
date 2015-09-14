@@ -9,6 +9,7 @@ using Xunit;
 
 namespace Nest.Searchify.Tests.Integration
 {
+    [Trait("Category", "Integration")]
     public class TestSearchQueryContext
     {
         public TestSearchQueryContext()

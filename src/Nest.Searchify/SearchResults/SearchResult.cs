@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Nest.Resolvers.Converters.Aggregations;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.SearchAggregations;
 using Newtonsoft.Json;
@@ -17,16 +16,17 @@ namespace Nest.Searchify.SearchResults
 
     public class SearchResult<TEntity, TParameters> : SearchResult<TEntity, TEntity, TParameters>
 		where TEntity : class
-		where TParameters : ICommonParameters
+		where TParameters : class, ICommonParameters
 	{
 		public SearchResult(TParameters parameters, ISearchResponse<TEntity> response) : base(parameters, response)
 		{
 		}
 	}
 
-    public class SearchResult<TEntity, TOutputEntity, TParameters> : SearchResultBase<TParameters> where TEntity : class
+    public class SearchResult<TEntity, TOutputEntity, TParameters> : SearchResultBase<TParameters>, ISearchResult<TParameters, TOutputEntity> 
+        where TEntity : class
 		where TOutputEntity : class
-		where TParameters : ICommonParameters
+		where TParameters : class, ICommonParameters
 	{
 
 		[JsonProperty("documents", NullValueHandling = NullValueHandling.Ignore)]

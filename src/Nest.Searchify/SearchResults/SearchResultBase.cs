@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Nest.Searchify.SearchResults
 {
-	public abstract class SearchResultBase<TParameters> : ISearchResult<TParameters> where TParameters : ICommonParameters
+    public abstract class SearchResultBase<TParameters> : ISearchResultBase<TParameters> where TParameters : ICommonParameters
 	{
 		protected SearchResultBase(TParameters parameters)
 		{

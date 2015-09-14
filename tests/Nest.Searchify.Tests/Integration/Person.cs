@@ -5,6 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Nest.Queryify.Abstractions;
+using Nest.Queryify.Abstractions.Queries;
+using Nest.Searchify.Abstractions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

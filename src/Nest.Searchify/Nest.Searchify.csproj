@@ -40,8 +40,8 @@
       <HintPath>..\..\packages\NEST.1.7.1\lib\net45\Nest.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Nest.Queryify, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Nest.Queryify.0.4.1\lib\net452\Nest.Queryify.dll</HintPath>
+    <Reference Include="Nest.Queryify, Version=0.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Nest.Queryify.0.5.0\lib\net452\Nest.Queryify.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -64,11 +64,15 @@
     <Compile Include="Abstractions\IPaginationOptions.cs" />
     <Compile Include="Abstractions\ISearchParameters.cs" />
     <Compile Include="Abstractions\ISearchResult.cs" />
+    <Compile Include="Abstractions\ISearchResultBase.cs" />
     <Compile Include="Abstractions\SortDirectionOption.cs" />
+    <Compile Include="ElasticClientSearchService.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
+    <Compile Include="Abstractions\ISearchService.cs" />
     <Compile Include="Queries\CommonParameters.cs" />
     <Compile Include="FilterField.cs" />
     <Compile Include="GeoPoint.cs" />
+    <Compile Include="Abstractions\ISearchResultQuery.cs" />
     <Compile Include="Queries\SearchResultQuery.cs" />
     <Compile Include="SearchAggregations\ITypedAggregration.cs" />
     <Compile Include="SearchResults\CommonSearchResult.cs" />
@@ -86,6 +90,7 @@
     <Compile Include="SearchAggregations\SignificantTermKeyItem.cs" />
     <Compile Include="SearchAggregations\TermBucket.cs" />
     <Compile Include="SearchAggregations\TermKeyItem.cs" />
+    <Compile Include="RepositorySearchService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Nest.Searchify.nuspec" />

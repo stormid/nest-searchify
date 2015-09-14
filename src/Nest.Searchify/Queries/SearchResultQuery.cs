@@ -7,32 +7,30 @@ using Nest.Searchify.SearchResults;
 
 namespace Nest.Searchify.Queries
 {
-    public abstract class SearchResultQuery<TDocument, TReturnDocument, TSearchParameters, TSearchResult> : ElasticClientQueryObject<TSearchResult>
+    public abstract class SearchResultQuery<TDocument, TReturnDocument, TSearchParameters, TSearchResult> : ElasticClientQueryObject<TSearchResult>, ISearchResultQuery<TSearchParameters> 
         where TDocument : class
         where TReturnDocument : class
-        where TSearchParameters : ICommonParameters
-        where TSearchResult : SearchResult<TDocument, TReturnDocument, TSearchParameters>
+        where TSearchParameters : class, ICommonParameters
+        where TSearchResult : class, ISearchResult<TSearchParameters, TDocument>
     {
-        private readonly TSearchParameters _parameters;
-
-        public TSearchParameters Parameters => _parameters;
+        public TSearchParameters Parameters { get; }
 
         protected SearchResultQuery(TSearchParameters parameters)
         {
-            _parameters = parameters;
+            Parameters = parameters;
         }
 
         protected override TSearchResult ExecuteCore(IElasticClient client, string index)
         {
             var response = client.Search<TDocument, TReturnDocument>(desc => BuildQuery(desc).Index(index));
-            return ToSearchResultCore(response, _parameters);
+            return ToSearchResultCore(response, Parameters);
         }
 
         protected override Task<TSearchResult> ExecuteCoreAsync(IElasticClient client, string index)
         {
             return client
                 .SearchAsync<TDocument, TReturnDocument>(desc => BuildQuery(desc).Index(index))
-                .ContinueWith(r => ToSearchResultCore(r.Result, _parameters));
+                .ContinueWith(r => ToSearchResultCore(r.Result, Parameters));
         }
 
         protected virtual TSearchResult ToSearchResultCore(ISearchResponse<TReturnDocument> response, TSearchParameters parameters)
@@ -48,22 +46,38 @@ namespace Nest.Searchify.Queries
         protected abstract SearchDescriptor<TDocument> BuildQuery(SearchDescriptor<TDocument> descriptor);
     }
 
-    public abstract class SearchResultQuery<TDocument, TSearchParameters, TSearchResult> : ElasticClientQueryObject<TSearchResult> 
+    public abstract class SearchResultQuery<TDocument, TSearchParameters> :
+        SearchResultQuery<TDocument, TSearchParameters, ISearchResult<TSearchParameters, TDocument>>
         where TDocument : class
-        where TSearchParameters : ICommonParameters
-        where TSearchResult : SearchResult<TDocument, TSearchParameters>
+        where TSearchParameters : class, ICommonParameters
     {
-        private readonly TSearchParameters _parameters;
+        protected SearchResultQuery(TSearchParameters parameters) : base(parameters)
+        {
+        }
+    }
+
+    public abstract class SearchResultQuery<TDocument, TSearchParameters, TSearchResult> : ElasticClientQueryObject<TSearchResult>, ISearchResultQuery<TSearchParameters> 
+        where TDocument : class
+        where TSearchParameters : class, ICommonParameters
+        where TSearchResult : class, ISearchResult<TSearchParameters, TDocument>
+    {
+        public TSearchParameters Parameters { get; }
 
         protected SearchResultQuery(TSearchParameters parameters)
         {
-            _parameters = parameters;
+            Parameters = parameters;
         }
 
         protected override TSearchResult ExecuteCore(IElasticClient client, string index)
         {
             var response = client.Search<TDocument, TDocument>(desc => BuildQuery(desc).Index(index));
-            return ToSearchResultCore(response, _parameters);
+            return ToSearchResultCore(response, Parameters);
+        }
+
+        protected override async Task<TSearchResult> ExecuteCoreAsync(IElasticClient client, string index)
+        {
+            var response = await client.SearchAsync<TDocument, TDocument>(desc => BuildQuery(desc).Index(index));
+            return ToSearchResultCore(response, Parameters);
         }
 
         protected virtual TSearchResult ToSearchResultCore(ISearchResponse<TDocument> response, TSearchParameters parameters)

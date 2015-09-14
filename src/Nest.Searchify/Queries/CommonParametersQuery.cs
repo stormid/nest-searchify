@@ -19,7 +19,7 @@ namespace Nest.Searchify.Queries
     }
 
     public class CommonParametersQuery<TDocument, TReturnAs> :
-		CommonParametersQuery<ICommonParameters, TDocument, TReturnAs, SearchResult<TDocument, TReturnAs, ICommonParameters>>
+		CommonParametersQuery<ICommonParameters, TDocument, TReturnAs, SearchResult<TDocument, ICommonParameters>>
 		where TDocument : class
 		where TReturnAs : class
 	{
@@ -39,9 +39,9 @@ namespace Nest.Searchify.Queries
 	}
     
     public class CommonParametersQuery<TParameters, TDocument, TSearchResult> : CommonParametersQuery<TParameters, TDocument, TDocument, TSearchResult>
-    where TParameters : ICommonParameters
+    where TParameters : class, ICommonParameters
     where TDocument : class
-    where TSearchResult : SearchResult<TDocument, TDocument, TParameters>
+    where TSearchResult : class, ISearchResult<TParameters, TDocument>
     {
         public CommonParametersQuery(TParameters parameters) : base(parameters)
         {
@@ -49,10 +49,10 @@ namespace Nest.Searchify.Queries
     }
 
     public class CommonParametersQuery<TParameters, TDocument, TReturnAs, TSearchResult> : SearchResultQuery<TDocument, TReturnAs, TParameters, TSearchResult>
-        where TParameters : ICommonParameters
+        where TParameters : class, ICommonParameters
 		where TDocument : class
 		where TReturnAs : class
-        where TSearchResult : SearchResult<TDocument, TReturnAs, TParameters>
+        where TSearchResult : class, ISearchResult<TParameters, TDocument>
 	{
 		private static TParameters ParametersFromNameValueCollection(NameValueCollection nvc)
 		{

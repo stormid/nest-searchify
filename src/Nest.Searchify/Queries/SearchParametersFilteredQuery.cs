@@ -24,7 +24,7 @@ namespace Nest.Searchify.Queries
     }
 
     public class SearchParametersFilteredQuery<TSearchParameters, TDocument, TSearchResult> : SearchParametersFilteredQuery<TSearchParameters, TDocument, TDocument, TSearchResult>
-		where TSearchParameters : ISearchParameters
+		where TSearchParameters : class, ISearchParameters
 	where TDocument : class
         where TSearchResult : SearchResult<TDocument, TSearchParameters>
 	{
@@ -34,10 +34,10 @@ namespace Nest.Searchify.Queries
     }
 
     public class SearchParametersFilteredQuery<TSearchParameters, TDocument, TReturnAs, TSearchResult> : CommonParametersQuery<TSearchParameters, TDocument, TReturnAs, TSearchResult>
-		where TSearchParameters : ISearchParameters
+		where TSearchParameters : class, ISearchParameters
 		where TDocument : class
 		where TReturnAs : class
-        where TSearchResult : SearchResult<TDocument, TReturnAs, TSearchParameters>
+        where TSearchResult : class, ISearchResult<TSearchParameters, TDocument>
 	{
         public SearchParametersFilteredQuery(TSearchParameters parameters) : base(parameters)
 		{

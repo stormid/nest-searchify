@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using FluentAssertions;
+using Nest.Queryify;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.Queries;
 using Nest.Searchify.SearchResults;
@@ -8,6 +9,24 @@ using Xunit;
 
 namespace Nest.Searchify.Tests.Integration
 {
+    public class TestSearchQueryContext
+    {
+        public TestSearchQueryContext()
+        {
+            
+        }
+
+        [Fact]
+        public void Should()
+        {
+            var parameters = new SearchDataCollection.CustomSearchQuery.PersonParameters();
+            var q = new TestSearchQuery(parameters);
+
+            var repository = new ElasticsearchRepository("default");
+            var searchService = new RepositorySearchService(repository);
+        }
+    }
+
     [CollectionDefinition(nameof(SearchDataCollection))]
     public class SearchDataCollection : ICollectionFixture<SearchDataContext>
     {
@@ -15,15 +34,12 @@ namespace Nest.Searchify.Tests.Integration
         [Collection(nameof(SearchDataCollection))]
         public class WhenAccessingTermsAggregation
         {
-            private readonly SearchResult<Person, ICommonParameters> _result;
+            private readonly CustomSearchQuery.PersonSearchResults _result;
 
             public WhenAccessingTermsAggregation(SearchDataContext context)
             {
-                var parameters = new CommonParameters();
+                var parameters = new CustomSearchQuery.PersonParameters();
                 _result = context.Repository.Query(new PersonSearchQueryWithTermsAggregation(parameters));
-                var fqs = CommonParameters.FromQueryString<CommonParameters>("page=1&size=4");
-                var json = parameters.ToJson();
-                var qs = parameters.ToQueryString();
             }
 
             [Fact]
@@ -44,7 +60,7 @@ namespace Nest.Searchify.Tests.Integration
         [Collection(nameof(SearchDataCollection))]
         public class CommonParametersSearchWithDefaultArgs
         {
-            private readonly SearchResult<Person, ICommonParameters> _result;
+            private readonly ISearchResult<ICommonParameters, Person> _result;
 
             public CommonParametersSearchWithDefaultArgs(SearchDataContext context)
             {
@@ -92,7 +108,7 @@ namespace Nest.Searchify.Tests.Integration
         [Collection(nameof(SearchDataCollection))]
         public class CommonParametersSearchResultWithDefaultArgs
         {
-            private readonly SearchResult<Person, ICommonParameters> _result;
+            private readonly ISearchResult<ICommonParameters, Person> _result;
 
             public CommonParametersSearchResultWithDefaultArgs(SearchDataContext context)
             {
@@ -209,7 +225,7 @@ namespace Nest.Searchify.Tests.Integration
         [Collection(nameof(SearchDataCollection))]
         public class WhenSearchingSpecificPageAndSizeWithCommonParametersSearch
         {
-            private readonly SearchResult<Person, ICommonParameters> _result;
+            private readonly ISearchResult<ICommonParameters, Person> _result;
 
             public WhenSearchingSpecificPageAndSizeWithCommonParametersSearch(SearchDataContext context)
             {

@@ -1,12 +1,28 @@
 using System.Collections.Specialized;
+using System.Threading.Tasks;
+using Nest.Queryify.Abstractions.Queries;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.Queries;
 
 namespace Nest.Searchify.Tests.Integration
 {
-    public class PersonSearchQueryWithTermsAggregation : CommonParametersQuery<Person>
+    public class TestSearchQuery :
+        SearchResultQuery
+            <Person, SearchDataCollection.CustomSearchQuery.PersonParameters>
     {
-        protected override AggregationDescriptor<Person> ApplyAggregations(AggregationDescriptor<Person> descriptor, ICommonParameters parameters)
+        public TestSearchQuery(SearchDataCollection.CustomSearchQuery.PersonParameters parameters) : base(parameters)
+        {
+        }
+
+        protected override SearchDescriptor<Person> BuildQuery(SearchDescriptor<Person> descriptor)
+        {
+            return descriptor.MatchAll();
+        }
+    }
+
+    public class PersonSearchQueryWithTermsAggregation : CommonParametersQuery<SearchDataCollection.CustomSearchQuery.PersonParameters, Person, Person, SearchDataCollection.CustomSearchQuery.PersonSearchResults>
+    {
+        protected override AggregationDescriptor<Person> ApplyAggregations(AggregationDescriptor<Person> descriptor, SearchDataCollection.CustomSearchQuery.PersonParameters parameters)
         {
             return descriptor
                 .Terms("country", t => t
@@ -24,8 +40,6 @@ namespace Nest.Searchify.Tests.Integration
                 ;
         }
 
-        public PersonSearchQueryWithTermsAggregation(ICommonParameters parameters) : base(parameters)
-        {
-        }
+        public PersonSearchQueryWithTermsAggregation(SearchDataCollection.CustomSearchQuery.PersonParameters parameters) : base(parameters) { }
     }
 }

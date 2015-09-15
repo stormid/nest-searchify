@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Nest.Searchify.SearchResults
 {
-    public abstract class SearchResultBase<TParameters> : ISearchResultBase<TParameters> where TParameters : ICommonParameters
+    public abstract class SearchResultBase<TParameters> : ISearchResultBase<TParameters> where TParameters : IParameters
 	{
 		protected SearchResultBase(TParameters parameters)
 		{
@@ -12,18 +12,9 @@ namespace Nest.Searchify.SearchResults
 
 		private PaginationOptions<TParameters> _pagination;
 		[JsonProperty("pagination")]
-		public IPaginationOptions<TParameters> Pagination {
-			get
-			{
-				if (_pagination == null)
-				{
-					_pagination = new PaginationOptions<TParameters>(Parameters, GetSearchResultTotal());
-				}
-				return _pagination;
-			} 
-		}
+		public IPaginationOptions<TParameters> Pagination => _pagination ?? (_pagination = new PaginationOptions<TParameters>(Parameters, GetSearchResultTotal()));
 
-		protected abstract int GetResponseTimeTaken();
+        protected abstract int GetResponseTimeTaken();
 		protected abstract long GetSearchResultTotal();
 
 		[JsonProperty("parameters")]

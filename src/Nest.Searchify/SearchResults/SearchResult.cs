@@ -6,31 +6,13 @@ using Newtonsoft.Json;
 
 namespace Nest.Searchify.SearchResults
 {
-    public class SearchResult<TDocument> : SearchResult<ICommonParameters, TDocument, TDocument>
+    public class SearchResult<TParameters, TDocument> : SearchResultBase<TParameters>, ISearchResult<TParameters, TDocument> 
         where TDocument : class
-    {
-        public SearchResult(ICommonParameters parameters, ISearchResponse<TDocument> response) : base(parameters, response)
-        {
-        }
-    }
-
-    public class SearchResult<TParameters, TDocument> : SearchResult<TParameters, TDocument, TDocument>
-		where TDocument : class
-		where TParameters : class, ICommonParameters
-	{
-		public SearchResult(TParameters parameters, ISearchResponse<TDocument> response) : base(parameters, response)
-		{
-		}
-	}
-
-    public class SearchResult<TParameters, TDocument, TReturnAs> : SearchResultBase<TParameters>, ISearchResult<TParameters, TReturnAs> 
-        where TDocument : class
-		where TReturnAs : class
-		where TParameters : class, ICommonParameters
+		where TParameters : class, IParameters
 	{
 
 		[JsonProperty("documents", NullValueHandling = NullValueHandling.Ignore)]
-		public virtual IEnumerable<TReturnAs> Documents { get; protected set; }
+		public virtual IEnumerable<TDocument> Documents { get; protected set; }
 
 		protected ISearchResponse<TDocument> Response { get; }
 
@@ -40,30 +22,35 @@ namespace Nest.Searchify.SearchResults
         public AggregationsHelper AggregationHelper => Response.Aggs;
 
         [JsonProperty("aggregations")]
-        public IDictionary<string, IAggregation> Aggregations { get; private set; } 
+        public IDictionary<string, IAggregation> Aggregations { get; } 
 
         #endregion
 
 		public SearchResult(TParameters parameters, ISearchResponse<TDocument> response) : base(parameters)
 		{
 			Response = response;
-		    Documents = TransformResultCore(response);
+		    SetDocuments();
             Aggregations = SearchAggregationParser.Parse(Response.Aggregations);
         }
 
-	    private IEnumerable<TReturnAs> TransformResultCore(ISearchResponse<TDocument> response)
+        private void SetDocuments()
+        {
+            Documents = TransformResultCore(Response);
+        }
+
+	    private IEnumerable<TDocument> TransformResultCore(ISearchResponse<TDocument> response)
 	    {
 	        return TransformResult(response.Documents);
         }
 
-		protected virtual IEnumerable<TReturnAs> TransformResult(IEnumerable<TDocument> entities)
+		protected virtual IEnumerable<TDocument> TransformResult(IEnumerable<TDocument> entities)
 		{
 			return Response.Documents.Select(TransformEntity).Where(x => x != null);
 		}
 
-		protected virtual TReturnAs TransformEntity(TDocument entity)
+		protected virtual TDocument TransformEntity(TDocument entity)
 		{
-			return entity as TReturnAs;
+		    return entity;
 		}
 
 		protected override int GetResponseTimeTaken()

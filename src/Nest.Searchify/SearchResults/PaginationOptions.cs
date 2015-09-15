@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Nest.Searchify.SearchResults
 {
-	public class PaginationOptions<TParameters> : IPaginationOptions<TParameters> where TParameters : ICommonParameters
+	public class PaginationOptions<TParameters> : IPaginationOptions<TParameters> where TParameters : IParameters
 	{
 		private readonly TParameters _parameters;
 
@@ -21,14 +21,14 @@ namespace Nest.Searchify.SearchResults
 	    [JsonProperty("has_next")]
         public bool HasNextPage => _parameters.Page < Pages;
 
-	    [JsonProperty(CommonParameters.SizeParameter)]
+	    [JsonProperty(Parameters.SizeParameter)]
 		public int PageSize => _parameters.Size;
 
-	    [JsonProperty(CommonParameters.PageParameter)]
+	    [JsonProperty(Parameters.PageParameter)]
 		public int Page => _parameters.Page.GetValueOrDefault(1);
 
 	    [JsonProperty("total")]
-		public long Total { get; private set; }
+		public long Total { get; }
 
 		[JsonProperty("pages")]
 		public long Pages

@@ -1,6 +1,6 @@
 namespace Nest.Searchify.Abstractions
 {
-	public interface IPaginationOptions<out TParameters> where TParameters : ICommonParameters
+	public interface IPaginationOptions<out TParameters> where TParameters : IParameters
     {
 		bool HasPreviousPage { get; }
 		bool HasNextPage { get; }

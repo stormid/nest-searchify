@@ -8,16 +8,16 @@ using Newtonsoft.Json;
 
 namespace Nest.Searchify.Queries
 {
-	public class CommonParameters : ICommonParameters
+	public class Parameters : IParameters
 	{
-		public static TParameters ParametersFromNameValueCollection<TParameters>(NameValueCollection nvc) where TParameters : class, ICommonParameters
+		public static TParameters ParametersFromNameValueCollection<TParameters>(NameValueCollection nvc) where TParameters : class, IParameters
 		{
 			var values = nvc.AllKeys.ToDictionary(k => k, k => nvc[k]);
 			var jsonString = JsonConvert.SerializeObject(values);
 			return JsonConvert.DeserializeObject<TParameters>(jsonString);
 		}
 
-		public static string ToJson<TParameters>(TParameters parameters) where TParameters : CommonParameters
+		public static string ToJson<TParameters>(TParameters parameters) where TParameters : Parameters
 		{
 			return JsonConvert.SerializeObject(parameters);
 		}
@@ -71,7 +71,7 @@ namespace Nest.Searchify.Queries
 	        return ToJson(this);
 	    }
 
-	    public static TParameters FromQueryString<TParameters>(string queryString) where TParameters : class, ICommonParameters
+	    public static TParameters FromQueryString<TParameters>(string queryString) where TParameters : class, IParameters
 	    {
 	        var nvc = HttpUtility.ParseQueryString(queryString);
 	        return ParametersFromNameValueCollection<TParameters>(nvc);
@@ -87,9 +87,9 @@ namespace Nest.Searchify.Queries
 	        return nvc;
 	    }
 
-	    public CommonParameters() : this(DefaultPageSize, 1) { }
+	    public Parameters() : this(DefaultPageSize, 1) { }
 
-		public CommonParameters(int size, int page)
+		public Parameters(int size, int page)
 		{
 			Size = size <= 0 ? DefaultPageSize : size;
 			Page = page;

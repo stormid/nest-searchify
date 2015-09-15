@@ -10,29 +10,9 @@ using Newtonsoft.Json;
 
 namespace Nest.Searchify.Queries
 {
-    public class CommonParametersQuery<TParameters, TDocument> : CommonParametersQuery<TParameters, TDocument, SearchResult<TParameters, TDocument>, TDocument>
-    where TParameters : class, ICommonParameters
-    where TDocument : class
-    {
-        public CommonParametersQuery(TParameters parameters) : base(parameters)
-        {
-        }
-    }
-
-    public class CommonParametersQuery<TParameters, TDocument, TSearchResult> : CommonParametersQuery<TParameters, TDocument, TSearchResult, TDocument>
-    where TParameters : class, ICommonParameters
-    where TDocument : class
-    where TSearchResult : SearchResult<TParameters, TDocument>
-    {
-        public CommonParametersQuery(TParameters parameters) : base(parameters)
-        {
-        }
-    }
-
-    public class CommonParametersQuery<TParameters, TDocument, TSearchResult, TReturnAs> : SearchResultQuery<TParameters, TDocument, TSearchResult, TReturnAs>
-        where TParameters : class, ICommonParameters
+    public class ParametersQuery<TParameters, TDocument, TSearchResult> : SearchResultQuery<TParameters, TDocument, TSearchResult>
+        where TParameters : class, IParameters
 		where TDocument : class
-		where TReturnAs : class
         where TSearchResult : SearchResult<TParameters, TDocument>
 	{
 		private static TParameters ParametersFromNameValueCollection(NameValueCollection nvc)
@@ -42,16 +22,16 @@ namespace Nest.Searchify.Queries
 			return JsonConvert.DeserializeObject<TParameters>(jsonString);
 		}
 
-		public CommonParametersQuery(NameValueCollection parameters) : this(ParametersFromNameValueCollection(parameters))
+		public ParametersQuery(NameValueCollection parameters) : this(ParametersFromNameValueCollection(parameters))
 		{
 			
 		}
 
-		public CommonParametersQuery(TParameters parameters) : base(parameters)
+		public ParametersQuery(TParameters parameters) : base(parameters)
 		{
 		}
 
-		public CommonParametersQuery() : this(new NameValueCollection())
+		public ParametersQuery() : this(new NameValueCollection())
 		{
 		}
 

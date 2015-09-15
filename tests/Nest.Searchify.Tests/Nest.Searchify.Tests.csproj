@@ -34,10 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Extensions\ReadEmbeddedResourceExtensions.cs" />
+    <Compile Include="Integration\InMemoryElasticsearchContext.cs" />
     <Compile Include="Integration\Person.cs" />
-    <Compile Include="Integration\PersonSearchQueryWithTermsAggregation.cs" />
-    <Compile Include="Integration\SearchDataContext.cs" />
-    <Compile Include="Integration\SearchDataCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +88,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Data\search_person_match_all.json" />
+    <EmbeddedResource Include="Data\search_person_match_all_country_aggs.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -97,6 +98,7 @@
       <Name>Nest.Searchify</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Nest.Searchify.Queries
 {
-	public class SearchParameters : CommonParameters, ISearchParameters
+	public class SearchParameters : Parameters, ISearchParameters
 	{
         public const string QueryParameter = "q";
 

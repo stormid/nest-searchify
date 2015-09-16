@@ -1,14 +1,19 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Web;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.Extensions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace Nest.Searchify.Queries
 {
-	public class Parameters : IParameters
+	public partial class Parameters : IParameters
 	{
 		public static TParameters ParametersFromNameValueCollection<TParameters>(NameValueCollection nvc) where TParameters : class, IParameters
 		{
@@ -31,12 +36,6 @@ namespace Nest.Searchify.Queries
 
 		public const int DefaultPageSize = 10;
 
-		public const string StartParameter = "start";
-		public const string SizeParameter = "size";
-		public const string PageParameter = "page";
-		public const string SortByParameter = "sortby";
-		public const string SortDirectionParameter = "sortdir";
-
 		public int Start()
 		{
 			var start = (Page.GetValueOrDefault(1) - 1)*Size;
@@ -49,16 +48,12 @@ namespace Nest.Searchify.Queries
 			return start;
 		}
 
-		[JsonProperty(SizeParameter, NullValueHandling = NullValueHandling.Ignore)]
 		public int Size { get; set; }
 
-		[JsonProperty(SortByParameter, NullValueHandling = NullValueHandling.Ignore)]
 		public string SortBy { get; set; }
 
-		[JsonProperty(SortDirectionParameter, NullValueHandling = NullValueHandling.Ignore)]
 		public SortDirectionOption? SortDirection { get; set; }
 
-		[JsonProperty(PageParameter, NullValueHandling = NullValueHandling.Ignore)]
 		public int? Page { get; set; }
 
 		public bool HasSort()
@@ -82,7 +77,19 @@ namespace Nest.Searchify.Queries
 	        var nvc = HttpUtility.ParseQueryString("");
 	        foreach (var item in this.AsDictionary().Where(item => item.Value != null).OrderBy(o => o.Key))
 	        {
-	            nvc.Add(item.Key.ToLowerInvariant(), item.Value.ToString());
+	            var key = item.Key.Camelize();
+
+	            if (item.Value is IEnumerable)
+	            {
+	                foreach (var val in item.Value as IEnumerable)
+	                {
+                        nvc.Add(key, val.ToString());
+                    }
+	            }
+	            else
+	            {
+	                nvc.Add(key, item.Value.ToString());
+	            }
 	        }
 	        return nvc;
 	    }
@@ -100,4 +107,8 @@ namespace Nest.Searchify.Queries
 	        return MemberwiseClone();
 	    }
 	}
+
+    public partial class Parameters : IParameters
+    {
+    }
 }

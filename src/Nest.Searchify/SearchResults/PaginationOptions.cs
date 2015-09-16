@@ -21,10 +21,8 @@ namespace Nest.Searchify.SearchResults
 	    [JsonProperty("has_next")]
         public bool HasNextPage => _parameters.Page < Pages;
 
-	    [JsonProperty(Parameters.SizeParameter)]
 		public int PageSize => _parameters.Size;
 
-	    [JsonProperty(Parameters.PageParameter)]
 		public int Page => _parameters.Page.GetValueOrDefault(1);
 
 	    [JsonProperty("total")]

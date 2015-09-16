@@ -21,9 +21,9 @@ namespace Nest.Searchify.Extensions
             return someObject;
         }
 
-        public static IDictionary<string, object> AsDictionary(this object source, BindingFlags bindingAttr = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance)
+        public static IDictionary<string, object> AsDictionary(this object source)
         {
-            return source.GetType().GetProperties(bindingAttr).ToDictionary
+            return source.GetType().GetProperties().ToDictionary
                 (
                     propInfo => propInfo.Name,
                     propInfo => propInfo.GetValue(source, null)

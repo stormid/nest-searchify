@@ -4,6 +4,11 @@ namespace Nest.Searchify.SearchAggregations
 {
     public class TermKeyItem : KeyItem
     {
+        public static TermKeyItem Create(KeyItem item)
+        {
+            return new TermKeyItem(item);
+        }
+
         public string Value { get; private set; }
         public string Text { get; private set; }
 

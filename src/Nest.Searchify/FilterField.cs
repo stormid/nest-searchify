@@ -51,12 +51,9 @@ namespace Nest.Searchify
 		}
 
 		[ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
-		public string Key
-		{
-			get { return string.Format("{0}{1}{2}", Value, Delimiter, Text); }
-		}
+		public string Key => $"{Value}{Delimiter}{Text}";
 
-		public string Text { get; set; }
+	    public string Text { get; set; }
 
 		[ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
 		public string Value { get; set; }

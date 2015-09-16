@@ -1,6 +1,8 @@
+using System;
+
 namespace Nest.Searchify.Abstractions
 {
-    public interface IPagingParameters
+    public interface IPagingParameters : ICloneable
     {
         int Start();
         int Size { get; set; }

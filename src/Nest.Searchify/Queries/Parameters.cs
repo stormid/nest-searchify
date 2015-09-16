@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using System.Web;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.Extensions;
@@ -102,7 +103,7 @@ namespace Nest.Searchify.Queries
 			Page = page;
 		}
 
-	    object ICloneable.Clone()
+	    public object Clone()
 	    {
 	        return MemberwiseClone();
 	    }

@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace Nest.Searchify.SearchResults
 {
-	public class PaginationOptions<TParameters> : IPaginationOptions<TParameters> where TParameters : IParameters
+	public class PaginationOptions<TParameters> : IPaginationOptions<TParameters> where TParameters : class, IPagingParameters, ISortingParameters
 	{
 		private readonly TParameters _parameters;
 
@@ -15,20 +15,21 @@ namespace Nest.Searchify.SearchResults
 			_parameters = parameters;
 		}
 
-        [JsonProperty("has_previous")]
+	    public bool HasPage(int page)
+	    {
+	        return page <= Pages;
+	    }
+
 		public bool HasPreviousPage => _parameters.Page > 1;
 
-	    [JsonProperty("has_next")]
         public bool HasNextPage => _parameters.Page < Pages;
 
 		public int PageSize => _parameters.Size;
 
 		public int Page => _parameters.Page.GetValueOrDefault(1);
 
-	    [JsonProperty("total")]
 		public long Total { get; }
 
-		[JsonProperty("pages")]
 		public long Pages
 		{
 			get
@@ -42,9 +43,20 @@ namespace Nest.Searchify.SearchResults
 			}
 		}
 
+	    public long From => _parameters.Start();
+
+	    public long To
+	    {
+	        get
+	        {
+	            var to = From + PageSize;
+	            return to > Total ? Total : to;
+	        }
+	    }
+
 	    public TParameters NextPage()
 	    {
-	        if (!HasNextPage) return _parameters;
+	        if (!HasNextPage) return null;
 	        var p = (TParameters)_parameters.Clone();
 	        p.Page += 1;
 	        return p;
@@ -52,10 +64,18 @@ namespace Nest.Searchify.SearchResults
 
 	    public TParameters PreviousPage()
 	    {
-	        if (!HasPreviousPage) return _parameters;
+	        if (!HasPreviousPage) return null;
 	        var p = (TParameters)_parameters.Clone();
 	        p.Page -= 1;
 	        return p;
         }
-	}
+
+        public TParameters ForPage(int page)
+        {
+            if (!HasPage(page)) return null;
+            var p = (TParameters)_parameters.Clone();
+            p.Page = page;
+            return p;
+        }
+    }
 }

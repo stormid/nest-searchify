@@ -4,15 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Nest.Searchify.Abstractions;
 using Xunit;
 
 namespace Nest.Searchify.Tests.Parameters
 {
+
     public enum EnumTypeOptions
     {
         OptionOne,
         OptionTwo
     }
+
 
     public class ParametersContext
     {

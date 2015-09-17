@@ -49,7 +49,7 @@ namespace Nest.Searchify.SearchResults
 	    {
 	        get
 	        {
-	            var to = From + PageSize;
+	            var to = _parameters.Start() + PageSize;
 	            return to > Total ? Total : to;
 	        }
 	    }

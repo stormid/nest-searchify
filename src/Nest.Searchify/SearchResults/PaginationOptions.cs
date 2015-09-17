@@ -43,7 +43,7 @@ namespace Nest.Searchify.SearchResults
 			}
 		}
 
-	    public long From => _parameters.Start();
+	    public long From => _parameters.Start() + 1;
 
 	    public long To
 	    {

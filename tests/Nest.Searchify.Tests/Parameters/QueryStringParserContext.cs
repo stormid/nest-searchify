@@ -52,6 +52,7 @@ namespace Nest.Searchify.Tests.Parameters
         [InlineData("size=100", "size=100", 1)]
         [InlineData("page=1&size=100", "size=100", 1)]
         [InlineData("sortDirection=Asc&sortBy=column", "sortBy=column&sortDirection=Asc", 2)]
+        [InlineData("page=", "", 0)]
         public void ParseQueryStringForParameters(string actual, string expected, int paramCount)
         {
             var parameters = QueryStringParser<Queries.Parameters>.Parse(actual);
@@ -67,6 +68,7 @@ namespace Nest.Searchify.Tests.Parameters
         [InlineData("q=test", "q=test", 1)]
         [InlineData("query=test", "", 0)]
         [InlineData("q=test&page=2", "page=2&q=test", 2)]
+        [InlineData("q=", "", 0)]
         public void ParseQueryStringForSearchParameters(string actual, string expected, int paramCount)
         {
             var parameters = QueryStringParser<SearchParameters>.Parse(actual);

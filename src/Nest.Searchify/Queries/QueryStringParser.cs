@@ -100,7 +100,8 @@ namespace Nest.Searchify.Queries
 
             public static string ParseToString(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
             {
-                return nvc[key];
+                var value = nvc[key];
+                return string.IsNullOrWhiteSpace(value) ? null : value;
             }
 
             public static GeoPoint ParseToGeoPoint(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
@@ -112,12 +113,18 @@ namespace Nest.Searchify.Queries
 
             public static object ParseToInteger(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
             {
-                return int.Parse(nvc[key]);
+                var value = ParseToString(parameters, prop, nvc, key);
+                if (value == null) return null;
+
+                return int.Parse(value);
             }
 
             public static object ParseToDouble(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
             {
-                return double.Parse(nvc[key]);
+                var value = ParseToString(parameters, prop, nvc, key);
+                if (value == null) return null;
+
+                return double.Parse(value);
             }
 
             public static object ParseToEnum<TEnum>(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key) where TEnum : struct
@@ -161,6 +168,11 @@ namespace Nest.Searchify.Queries
             { typeof (GeoPoint), TypeParsers.ParseFromGeoPoint },
         };
 
+        /// <summary>
+        /// Resolvers are used to resolve from querystring value (string) to actual parameter property type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="resolver"></param>
         public static void AddResolver<T>(Func<TParameters, PropertyInfo, NameValueCollection, string, object> resolver)
         {
             if (!Resolvers.ContainsKey(typeof(T)))
@@ -173,6 +185,11 @@ namespace Nest.Searchify.Queries
             }
         }
 
+        /// <summary>
+        /// Converters are used to augment a name value collection with additional parameter properties
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="converter"></param>
         public static void AddConverter<T>(Action<NameValueCollection, object, string> converter)
         {
             if (!Converters.ContainsKey(typeof(T)))
@@ -235,7 +252,10 @@ namespace Nest.Searchify.Queries
                         try
                         {
                             var value = Resolvers[prop.PropertyType](parameters, prop, nvc, key);
-                            prop.SetValue(parameters, value);
+                            if (value != null)
+                            {
+                                prop.SetValue(parameters, value);
+                            }
                         }
                         catch (Exception ex)
                         {

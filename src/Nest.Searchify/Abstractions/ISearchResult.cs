@@ -3,7 +3,7 @@
 namespace Nest.Searchify.Abstractions
 {
     public interface ISearchResult<out TParameters, out TReturnAs> : ISearchResultBase<TParameters>
-        where TParameters : class, IParameters
+        where TParameters : class, IPagingParameters, ISortingParameters
         where TReturnAs : class
     {
         IEnumerable<TReturnAs> Documents { get; }

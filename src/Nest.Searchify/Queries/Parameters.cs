@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
@@ -14,27 +15,9 @@ using Newtonsoft.Json.Serialization;
 
 namespace Nest.Searchify.Queries
 {
-	public partial class Parameters : IParameters
-	{
-		public static TParameters ParametersFromNameValueCollection<TParameters>(NameValueCollection nvc) where TParameters : class, IParameters
-		{
-			var values = nvc.AllKeys.ToDictionary(k => k, k => nvc[k]);
-			var jsonString = JsonConvert.SerializeObject(values);
-			return JsonConvert.DeserializeObject<TParameters>(jsonString);
-		}
-
-		public static string ToJson<TParameters>(TParameters parameters) where TParameters : Parameters
-		{
-			return JsonConvert.SerializeObject(parameters);
-		}
-
-		public void PopulateFrom(NameValueCollection nvc)
-		{
-			var values = nvc.AllKeys.ToDictionary(k => k, k => nvc[k]);
-			var jsonString = JsonConvert.SerializeObject(values);
-			JsonConvert.PopulateObject(jsonString, this);
-		}
-
+	public class Parameters : IPagingParameters, ISortingParameters
+    {
+	    public const int DefaultPage = 1;
 		public const int DefaultPageSize = 10;
 
 		public int Start()
@@ -49,58 +32,28 @@ namespace Nest.Searchify.Queries
 			return start;
 		}
 
-		public int Size { get; set; }
+        [DefaultValue(DefaultPageSize)]
+        public int Size { get; set; }
 
 		public string SortBy { get; set; }
 
 		public SortDirectionOption? SortDirection { get; set; }
 
-		public int? Page { get; set; }
+        [DefaultValue(DefaultPage)]
+        public int? Page { get; set; }
 
 		public bool HasSort()
 		{
 			return !string.IsNullOrWhiteSpace(SortBy);
 		}
+        
 
-	    public string ToJson()
-	    {
-	        return ToJson(this);
-	    }
-
-	    public static TParameters FromQueryString<TParameters>(string queryString) where TParameters : class, IParameters
-	    {
-	        var nvc = HttpUtility.ParseQueryString(queryString);
-	        return ParametersFromNameValueCollection<TParameters>(nvc);
-	    }
-
-	    public NameValueCollection ToQueryString()
-	    {
-	        var nvc = HttpUtility.ParseQueryString("");
-	        foreach (var item in this.AsDictionary().Where(item => item.Value != null).OrderBy(o => o.Key))
-	        {
-	            var key = item.Key.Camelize();
-
-	            if (item.Value is IEnumerable)
-	            {
-	                foreach (var val in item.Value as IEnumerable)
-	                {
-                        nvc.Add(key, val.ToString());
-                    }
-	            }
-	            else
-	            {
-	                nvc.Add(key, item.Value.ToString());
-	            }
-	        }
-	        return nvc;
-	    }
-
-	    public Parameters() : this(DefaultPageSize, 1) { }
+	    public Parameters() : this(DefaultPageSize, DefaultPage) { }
 
 		public Parameters(int size, int page)
 		{
 			Size = size <= 0 ? DefaultPageSize : size;
-			Page = page;
+			Page = page <= 0 ? DefaultPage : page;
 		}
 
 	    public object Clone()
@@ -108,8 +61,4 @@ namespace Nest.Searchify.Queries
 	        return MemberwiseClone();
 	    }
 	}
-
-    public partial class Parameters : IParameters
-    {
-    }
 }

@@ -36,7 +36,7 @@ namespace Nest.Searchify.Queries
                     var values = nvc.GetValues(key);
                     if (values != null)
                     {
-                        foreach (var value in values)
+                        foreach (var value in values.OrderBy(v => v))
                         {
                             sortedNvc.Add(key, value);
                         }

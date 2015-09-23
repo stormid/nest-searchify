@@ -25,6 +25,11 @@ namespace Nest.Searchify.Tests.Parameters
             OptionTwo
         }
 
+        public class CustomParameters : Queries.Parameters
+        {
+            public IEnumerable<string> Options { get; set; }
+        }
+
         public class MyParameters : SearchParameters
         {
             public IEnumerable<string> Options { get; set; }
@@ -67,6 +72,22 @@ namespace Nest.Searchify.Tests.Parameters
             var parameters = QueryStringParser<SearchParameters>.Parse(actual);
 
             var nvc = QueryStringParser<SearchParameters>.Parse(parameters);
+            nvc.Count.Should().Be(paramCount);
+
+            var qs = nvc.ToString();
+            qs.Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData("options=alpha&options=beta", "options=alpha&options=beta", 1)]
+        [InlineData("options=beta&options=alpha", "options=alpha&options=beta", 1)]
+        [InlineData("options=2&options=zulu", "options=2&options=zulu", 1)]
+        [InlineData("options=zulu&options=6", "options=6&options=zulu", 1)]
+        public void ParseQueryStringForCustomParameters(string actual, string expected, int paramCount)
+        {
+            var parameters = QueryStringParser<CustomParameters>.Parse(actual);
+
+            var nvc = QueryStringParser<CustomParameters>.Parse(parameters);
             nvc.Count.Should().Be(paramCount);
 
             var qs = nvc.ToString();

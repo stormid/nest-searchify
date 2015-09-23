@@ -38,7 +38,7 @@
     <Compile Include="Integration\InMemoryElasticsearchContext.cs" />
     <Compile Include="Integration\Person.cs" />
     <Compile Include="Parameters\PaginationOptionsContext.cs" />
-    <Compile Include="Parameters\ParameterConversionContext.cs" />
+    <Compile Include="Parameters\QueryStringParserContext.cs" />
     <Compile Include="Parameters\ParametersContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

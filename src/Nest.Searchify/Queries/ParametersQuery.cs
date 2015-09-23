@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace Nest.Searchify.Queries
 {
     public class ParametersQuery<TParameters, TDocument, TSearchResult> : SearchResultQuery<TParameters, TDocument, TSearchResult>
-        where TParameters : class, IParameters
+        where TParameters : class, IPagingParameters, ISortingParameters
 		where TDocument : class
         where TSearchResult : SearchResult<TParameters, TDocument>
 	{

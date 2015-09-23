@@ -60,7 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstractions\IPagingParameters.cs" />
-    <Compile Include="Abstractions\IParameters.cs" />
     <Compile Include="Abstractions\IFilterField.cs" />
     <Compile Include="Abstractions\IPaginationOptions.cs" />
     <Compile Include="Abstractions\ISearchParameters.cs" />

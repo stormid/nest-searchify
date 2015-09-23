@@ -9,7 +9,7 @@ namespace Nest.Searchify.Queries
 {
     public abstract class SearchResultQuery<TParameters, TDocument, TSearchResult> : ElasticClientQueryObject<TSearchResult>, ISearchResultQuery<TParameters> 
         where TDocument : class
-        where TParameters : class, IParameters
+        where TParameters : class, IPagingParameters, ISortingParameters
         where TSearchResult : class, ISearchResult<TParameters, TDocument>
     {
         public TParameters Parameters { get; }

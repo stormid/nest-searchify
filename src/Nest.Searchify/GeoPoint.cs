@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using Nest.Searchify.Queries;
 using Newtonsoft.Json;
 
 namespace Nest.Searchify
@@ -18,7 +19,8 @@ namespace Nest.Searchify
 		/// Latitude
 		/// </summary>
 		[JsonProperty("lat")]
-		public double Latitude
+        [Parameter("lat")]
+        public double Latitude
 		{
 			get { return _latitude; }
 		}
@@ -29,7 +31,8 @@ namespace Nest.Searchify
 		/// Longitude
 		/// </summary>
 		[JsonProperty("lon")]
-		public double Longitude
+        [Parameter("lat")]
+        public double Longitude
 		{
 			get { return _longitude; }
 		}

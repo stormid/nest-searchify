@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Nest.Searchify.Abstractions;
+using Nest.Searchify.Queries;
 using Xunit;
 
 namespace Nest.Searchify.Tests.Parameters
@@ -37,12 +38,13 @@ namespace Nest.Searchify.Tests.Parameters
         [Fact]
         public void Should()
         {
-            var nvc = _parameters.ToQueryString();
-            nvc.Count.Should().Be(4);
+            QueryStringParser<MyParameters>.AddConverter<IEnumerable<EnumTypeOptions>>(QueryStringParser<MyParameters>.TypeParsers.ParseFromStringArray<EnumTypeOptions>);
+            var nvc = QueryStringParser<MyParameters>.Parse(_parameters);
+            nvc.Count.Should().Be(2);
 
             var qs = nvc.ToString();
 
-            qs.Should().Be("contentType=test&contentType=test2&page=1&size=10&type=OptionOne&type=OptionTwo");
+            qs.Should().Be("contentType=test&contentType=test2&type=OptionOne&type=OptionTwo");
         }
     }
 }

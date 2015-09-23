@@ -29,7 +29,7 @@ namespace Nest.Searchify
 		/// Longitude
 		/// </summary>
 		[JsonProperty("lon")]
-		public double Longtitude
+		public double Longitude
 		{
 			get { return _longitude; }
 		}

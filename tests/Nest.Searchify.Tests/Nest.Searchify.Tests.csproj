@@ -35,6 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Extensions\ReadEmbeddedResourceExtensions.cs" />
+    <Compile Include="FilterField\FilterFieldContext.cs" />
     <Compile Include="Integration\InMemoryElasticsearchContext.cs" />
     <Compile Include="Integration\Person.cs" />
     <Compile Include="Parameters\PaginationOptionsContext.cs" />

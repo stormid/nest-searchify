@@ -71,6 +71,7 @@
     <Compile Include="Extensions\ElasticsearchRepositorySearchExtensions.cs" />
     <Compile Include="Extensions\Inflector.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Queries\Parameters.cs" />
     <Compile Include="FilterField.cs" />
     <Compile Include="GeoPoint.cs" />

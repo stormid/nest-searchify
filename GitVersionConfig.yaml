@@ -1,5 +1,5 @@
+mode: ContinuousDeployment
 branches:
   feature[/-]:
     mode: ContinuousDeployment
-    tag:
     increment: Inherit

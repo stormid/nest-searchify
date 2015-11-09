@@ -1,23 +1,17 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.InteropServices;
-using System.Web;
 using Nest.Searchify.Abstractions;
-using Nest.Searchify.Extensions;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 
 namespace Nest.Searchify.Queries
 {
 	public class Parameters : IPagingParameters, ISortingParameters
-    {
-	    public const int DefaultPage = 1;
+	{
+	    public const string SizeParameter = "size";
+        public const string PageParameter = "page";
+        public const string SortByParameter = "sortby";
+        public const string SortDirectionParameter = "sortdir";
+
+        public const int DefaultPage = 1;
 		public const int DefaultPageSize = 10;
 
 		public int Start()
@@ -33,16 +27,25 @@ namespace Nest.Searchify.Queries
 		}
 
         [DefaultValue(DefaultPageSize)]
+        [JsonProperty(SizeParameter)]
         public int Size { get; set; }
 
-		public string SortBy { get; set; }
+        [JsonProperty(SortByParameter)]
+        public string SortBy { get; set; }
 
-		public SortDirectionOption? SortDirection { get; set; }
+        [JsonProperty(SortDirectionParameter)]
+        public SortDirectionOption? SortDirection { get; set; }
 
+	    private int? _page;
         [DefaultValue(DefaultPage)]
-        public int? Page { get; set; }
+	    [JsonProperty(PageParameter)]
+	    public int? Page
+	    {
+	        get { return _page; }
+	        set { SetPage(value.GetValueOrDefault(DefaultPage)); }
+	    }
 
-		public bool HasSort()
+	    public bool HasSort()
 		{
 			return !string.IsNullOrWhiteSpace(SortBy);
 		}
@@ -53,8 +56,13 @@ namespace Nest.Searchify.Queries
 		public Parameters(int size, int page)
 		{
 			Size = size <= 0 ? DefaultPageSize : size;
-			Page = page <= 0 ? DefaultPage : page;
+			SetPage(page);
 		}
+
+	    private void SetPage(int page)
+	    {
+	        _page = page <= 0 ? DefaultPage : page;
+	    }
 
 	    public object Clone()
 	    {

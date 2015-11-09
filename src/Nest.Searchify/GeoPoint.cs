@@ -19,7 +19,6 @@ namespace Nest.Searchify
 		/// Latitude
 		/// </summary>
 		[JsonProperty("lat")]
-        [Parameter("lat")]
         public double Latitude
 		{
 			get { return _latitude; }
@@ -31,7 +30,6 @@ namespace Nest.Searchify
 		/// Longitude
 		/// </summary>
 		[JsonProperty("lon")]
-        [Parameter("lat")]
         public double Longitude
 		{
 			get { return _longitude; }

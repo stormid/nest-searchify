@@ -7,7 +7,7 @@ namespace Nest.Searchify.Queries
 	{
         public const string QueryParameter = "q";
 
-		[Parameter(QueryParameter)]
+		[JsonProperty(QueryParameter)]
         public string Query { get; set; }
 
 		public SearchParameters() : this(DefaultPageSize, 1) { }

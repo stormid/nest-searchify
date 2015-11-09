@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstractions\IGeoPointParameters.cs" />
     <Compile Include="Abstractions\IPagingParameters.cs" />
     <Compile Include="Abstractions\IFilterField.cs" />
     <Compile Include="Abstractions\IPaginationOptions.cs" />
@@ -70,7 +71,6 @@
     <Compile Include="Extensions\ElasticClientSearchExtensions.cs" />
     <Compile Include="Extensions\ElasticsearchRepositorySearchExtensions.cs" />
     <Compile Include="Extensions\Inflector.cs" />
-    <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Queries\Parameters.cs" />
     <Compile Include="FilterField.cs" />

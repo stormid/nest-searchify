@@ -10,7 +10,7 @@ namespace Nest.Searchify.Extensions
         public static TSearchResult Search<TSearchParameters, TDocument, TSearchResult>(this IElasticsearchRepository repository,
             IElasticClientQueryObject<TSearchResult> query)
             where TSearchResult : class, ISearchResult<TSearchParameters, TDocument>
-            where TSearchParameters : class, IPagingParameters, ISortingParameters
+            where TSearchParameters : class, IPagingParameters, ISortingParameters, new()
             where TDocument : class
         {
             return repository.Query(query);
@@ -18,7 +18,7 @@ namespace Nest.Searchify.Extensions
 
         public static ISearchResult<TSearchParameters, TDocument> Search<TSearchParameters, TDocument>(this IElasticsearchRepository repository,
             IElasticClientQueryObject<SearchResult<TSearchParameters, TDocument>> query)
-            where TSearchParameters : class, IPagingParameters, ISortingParameters
+            where TSearchParameters : class, IPagingParameters, ISortingParameters, new()
             where TDocument : class
         {
             return repository.Query(query);

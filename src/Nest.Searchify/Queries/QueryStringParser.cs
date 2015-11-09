@@ -7,20 +7,11 @@ using System.Reflection;
 using System.Web;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.Extensions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Nest.Searchify.Queries
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public sealed class ParameterAttribute : Attribute
-    {
-        public string Name { get; }
-
-        public ParameterAttribute(string name)
-        {
-            Name = name;
-        }
-    }
-
     public static class QueryStringParser<TParameters> where TParameters : class, new()
     {
         public static class TypeParsers
@@ -269,7 +260,7 @@ namespace Nest.Searchify.Queries
         private static string GetParameterName(PropertyInfo propertyInfo)
         {
             if (propertyInfo == null) throw new ArgumentNullException(nameof(propertyInfo));
-            return propertyInfo.GetCustomAttribute<ParameterAttribute>(true)?.Name ?? propertyInfo.Name;
+            return propertyInfo.GetCustomAttribute<JsonPropertyAttribute>(true)?.PropertyName ?? propertyInfo.Name;
         }
 
         private static object GetDefaultValue(PropertyInfo propertyInfo)

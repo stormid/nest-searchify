@@ -8,7 +8,7 @@ namespace Nest.Searchify.SearchResults
 {
     public class SearchResult<TParameters, TDocument> : SearchResultBase<TParameters>, ISearchResult<TParameters, TDocument> 
         where TDocument : class
-		where TParameters : class, IPagingParameters, ISortingParameters
+		where TParameters : class, IPagingParameters, ISortingParameters, new()
     {
 
 		[JsonProperty("documents", NullValueHandling = NullValueHandling.Ignore)]

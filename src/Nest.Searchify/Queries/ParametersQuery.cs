@@ -1,30 +1,17 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Linq.Expressions;
-using Nest.Queryify.Abstractions.Queries;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.SearchResults;
-using Newtonsoft.Json;
 
 namespace Nest.Searchify.Queries
 {
-    public class ParametersQuery<TParameters, TDocument, TSearchResult> : SearchResultQuery<TParameters, TDocument, TSearchResult>
-        where TParameters : class, IPagingParameters, ISortingParameters
+    public partial class ParametersQuery<TParameters, TDocument, TSearchResult> : SearchResultQuery<TParameters, TDocument, TSearchResult>
+        where TParameters : class, IPagingParameters, ISortingParameters, new()
 		where TDocument : class
         where TSearchResult : SearchResult<TParameters, TDocument>
 	{
-		private static TParameters ParametersFromNameValueCollection(NameValueCollection nvc)
+		public ParametersQuery(NameValueCollection parameters) : base(QueryStringParser<TParameters>.Parse(parameters))
 		{
-			var values = nvc.AllKeys.ToDictionary(k => k, k => nvc[k]);
-			var jsonString = JsonConvert.SerializeObject(values);
-			return JsonConvert.DeserializeObject<TParameters>(jsonString);
-		}
-
-		public ParametersQuery(NameValueCollection parameters) : this(ParametersFromNameValueCollection(parameters))
-		{
-			
 		}
 
 		public ParametersQuery(TParameters parameters) : base(parameters)
@@ -123,66 +110,5 @@ namespace Nest.Searchify.Queries
 				.OnField(SortByField(parameters.SortBy))
 				.Order(GetSortOrderFromParameters());
 		}
-
-		protected FilterContainer TermFilterFor<T, K>(Expression<Func<T,K>> field, K value) where T : class
-		{
-			return Filter<T>.Term(field, value);
-		}
-
-		protected FilterContainer MultiTermAndFilterFor<T, K>(Expression<Func<T, K>> field, IEnumerable<K> values) where T : class
-		{
-			if (values != null)
-			{
-				return MultiTermAndFilterFor(field, values.ToArray());
-			}
-			return null;
-		}
-
-		protected FilterContainer MultiTermOrFilterFor<T, K>(Expression<Func<T, K>> field, IEnumerable<K> values) where T : class
-		{
-			if (values != null)
-			{
-				return MultiTermOrFilterFor(field, values.ToArray());
-			}
-			return null;
-		}
-
-		protected FilterContainer MultiTermAndFilterFor<T, K>(Expression<Func<T, K>> field, params K[] values) where T : class
-		{
-			if (values != null)
-			{
-				var valuesList = values.ToList();
-
-				if (valuesList.Any())
-				{
-
-					var filters = valuesList.Select(
-						termFilter => new Func<FilterDescriptor<T>, FilterContainer>(filter => Filter<T>.Term(field, termFilter)))
-						.ToArray();
-
-					return Filter<T>.And(filters);
-				}
-			}
-			return null;
-		}
-
-		protected FilterContainer MultiTermOrFilterFor<T, K>(Expression<Func<T,K>> field, params K[] values) where T : class
-		{
-			if (values != null)
-			{
-				var valuesList = values.ToList();
-
-				if (valuesList.Any())
-				{
-
-					var filters = valuesList.Select(
-						termFilter => new Func<FilterDescriptor<T>, FilterContainer>(filter => Filter<T>.Term(field, termFilter)))
-						.ToArray();
-
-					return Filter<T>.Or(filters);
-				}
-			}
-			return null;
-		}
-	}
+    }
 }

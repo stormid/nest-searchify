@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Nest.Searchify.Extensions
 {
-    public static class Inflector
+    internal static class Inflector
     {
         #region Default Rules
 

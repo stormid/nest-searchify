@@ -1,20 +1,14 @@
 ﻿using System;
-using System.CodeDom;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Web;
 using FluentAssertions;
 using Nest.Searchify.Abstractions;
-using Nest.Searchify.Extensions;
 using Nest.Searchify.Queries;
+using Newtonsoft.Json;
 using Xunit;
 
-namespace Nest.Searchify.Tests.Parameters
+namespace Nest.Searchify.Tests.ParametersTests
 {
 
     public class QueryStringParserContext
@@ -25,19 +19,19 @@ namespace Nest.Searchify.Tests.Parameters
             OptionTwo
         }
 
-        public class CustomParameters : Queries.Parameters
+        public class CustomParameters : Parameters
         {
             public IEnumerable<string> Options { get; set; }
         }
 
-        public class MyParameters : SearchParameters
+        public class MyParameters : SearchParameters, IGeoPointParameters
         {
             public IEnumerable<string> Options { get; set; }
             public IEnumerable<int> Numbers { get; set; }
             public IEnumerable<double> Doubles { get; set; }
-            [Parameter("lat")]
+            [JsonProperty("lat")]
             public double Latitude { get; set; }
-            [Parameter("lng")]
+            [JsonProperty("lng")]
             public double Longitude { get; set; }
 
             public GeoPoint Location { get; set; }
@@ -51,13 +45,13 @@ namespace Nest.Searchify.Tests.Parameters
         [InlineData("size=10", "", 0)]
         [InlineData("size=100", "size=100", 1)]
         [InlineData("page=1&size=100", "size=100", 1)]
-        [InlineData("sortDirection=Asc&sortBy=column", "sortBy=column&sortDirection=Asc", 2)]
+        [InlineData("sortdir=Asc&sortby=column", "sortby=column&sortdir=Asc", 2)]
         [InlineData("page=", "", 0)]
         public void ParseQueryStringForParameters(string actual, string expected, int paramCount)
         {
-            var parameters = QueryStringParser<Queries.Parameters>.Parse(actual);
+            var parameters = QueryStringParser<Parameters>.Parse(actual);
 
-            var nvc = QueryStringParser<Queries.Parameters>.Parse(parameters);
+            var nvc = QueryStringParser<Parameters>.Parse(parameters);
             nvc.Count.Should().Be(paramCount);
 
             var qs = nvc.ToString();
@@ -99,7 +93,7 @@ namespace Nest.Searchify.Tests.Parameters
         [Fact]
         public void FromQueryString()
         {
-            var queryString = HttpUtility.ParseQueryString("q=test&options=o1&options=o2&numbers=1&numbers=5&doubles=99.99&doubles=8&lat=-53.3&lng=3.234&location=1,2&sortDirection=Asc&enumOptions=optionone");
+            var queryString = HttpUtility.ParseQueryString("q=test&options=o1&options=o2&numbers=1&numbers=5&doubles=99.99&doubles=8&lat=-53.3&lng=3.234&location=1,2&sortdir=Asc&enumOptions=optionone");
             var p = new MyParameters();
 
             QueryStringParser<MyParameters>.Populate(queryString, p);

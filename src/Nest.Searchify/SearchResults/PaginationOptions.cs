@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.Queries;
 using Newtonsoft.Json;
@@ -53,7 +55,14 @@ namespace Nest.Searchify.SearchResults
 	            return to > Total ? Total : to;
 	        }
 	    }
-        
+
+	    public TParameters FirstPage()
+	    {
+            var p = (TParameters)_parameters.Clone();
+            p.Page = 1;
+            return p;
+        }
+
         public TParameters NextPage()
 	    {
 	        if (!HasNextPage) return null;
@@ -76,6 +85,25 @@ namespace Nest.Searchify.SearchResults
             var p = (TParameters)_parameters.Clone();
             p.Page = page;
             return p;
+        }
+
+	    public TParameters LastPage()
+	    {
+            var p = (TParameters)_parameters.Clone();
+            p.Page = (int)Pages;
+            return p;
+        }
+
+        public IEnumerable<Tuple<int, NameValueCollection>> PagingGroup(int range = 5)
+        {
+            var fromPage = (Page - range) <= 0 ? 1 : Page - range;
+            var toPage = (Page + range) > Pages ? Pages : Page + range;
+
+            for (var page = fromPage; page <= toPage; page++)
+            {
+                var nvc = QueryStringParser<TParameters>.Parse(ForPage(page));
+                yield return new Tuple<int, NameValueCollection>(page, nvc);
+            }
         }
     }
 }

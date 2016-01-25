@@ -90,6 +90,57 @@ namespace Nest.Searchify.Tests.ParametersTests
             nextPageUri.Should().Be(expectedPageUri);
         }
 
+        [Theory]
+        [InlineData(1, 100)]
+        [InlineData(5, 100)]
+        [InlineData(10, 100)]
+        public void ShouldGeneratePageParameters(int page, int total)
+        {
+            var parameters = Create(new MyParameters(), total);
+            var actualParameters = parameters.ForPage(page);
+            actualParameters.Should().NotBeNull();
+            actualParameters.Page.Should().Be(page);
+        }
+
+        [Theory]
+        [InlineData(1, 100)]
+        [InlineData(5, 100)]
+        [InlineData(10, 100)]
+        public void ShouldGenerateFirstPageParameters(int page, int total)
+        {
+            var parameters = Create(new MyParameters() { Page = page}, total);
+            var actualParameters = parameters.FirstPage();
+            actualParameters.Should().NotBeNull();
+            actualParameters.Page.Should().Be(1);
+        }
+
+        [Theory]
+        [InlineData(1, 100, 10)]
+        [InlineData(1, 10, 1)]
+        [InlineData(10, 1000, 100)]
+        public void ShouldGenerateLastPageParameters(int page, int total, int expectedPage)
+        {
+            var parameters = Create(new MyParameters() { Page = page }, total);
+            var actualParameters = parameters.LastPage();
+            actualParameters.Should().NotBeNull();
+            actualParameters.Page.Should().Be(expectedPage);
+        }
+
+        [Theory]
+        [InlineData(1, 100, 5, 6)]
+        [InlineData(1, 10, 5, 1)]
+        [InlineData(10, 1000, 5, 11)]
+        [InlineData(10, 1000, 1, 3)]
+        [InlineData(10, 1000, 100, 100)]
+        public void ShouldGeneratePagingGroup(int page, int total, int range, int groupCount)
+        {
+            var parameters = Create(new MyParameters() { Page = page }, total);
+            var grouping = parameters.PagingGroup(range);
+            grouping.Should().NotBeEmpty();
+            grouping.Should().BeInAscendingOrder(x => x.Item1);
+            grouping.Should().HaveCount(groupCount);
+        }
+
         private PaginationOptions<MyParameters> Create(MyParameters parameters, int max)
         {
             return new PaginationOptions<MyParameters>(parameters, max);
@@ -104,6 +155,5 @@ namespace Nest.Searchify.Tests.ParametersTests
                 Page = page
             };
         }
-
     }
 }

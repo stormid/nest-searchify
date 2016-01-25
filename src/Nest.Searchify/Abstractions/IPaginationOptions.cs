@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Security.Cryptography.X509Certificates;
+
 namespace Nest.Searchify.Abstractions
 {
 	public interface IPaginationOptions<out TParameters> where TParameters : IPagingParameters, ISortingParameters
@@ -13,7 +18,17 @@ namespace Nest.Searchify.Abstractions
 
         long To { get; }
 
+	    TParameters FirstPage();
 	    TParameters NextPage();
         TParameters PreviousPage();
+        TParameters ForPage(int page);
+	    TParameters LastPage();
+
+	    /// <summary>
+	    /// Generates a group of pages around the current page, will always include
+	    /// </summary>
+	    /// <param name="range">the range of pages to generate, by default 5 pages either side of the current page will be generated (or the available pages if that is less than the <paramref name="range"/></param>
+	    /// <returns>Group of page numbers along with a name value collection derived from HttpValueCollection that will generate the required querystring for the page</returns>
+	    IEnumerable<Tuple<int, NameValueCollection>> PagingGroup(int range = 5);
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.Queries;
-using Newtonsoft.Json;
 
 namespace Nest.Searchify.SearchResults
 {

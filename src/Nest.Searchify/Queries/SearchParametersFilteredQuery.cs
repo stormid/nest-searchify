@@ -1,14 +1,25 @@
-﻿using System.Collections.Specialized;
-using Nest.Searchify.Abstractions;
+﻿using Nest.Searchify.Abstractions;
 using Nest.Searchify.SearchResults;
 
 namespace Nest.Searchify.Queries
 {
-    public class SearchParametersFilteredQuery<TSearchParameters, TDocument, TSearchResult> : ParametersQuery<TSearchParameters, TDocument, TSearchResult>
+    public class SearchParametersFilteredQuery<TSearchParameters, TDocument, TSearchResult> : SearchParametersFilteredQuery<TSearchParameters, TDocument, TSearchResult, TDocument>
 		where TSearchParameters : class, ISearchParameters, new()
 	where TDocument : class
         where TSearchResult : SearchResult<TSearchParameters, TDocument>
 	{
+        public SearchParametersFilteredQuery(TSearchParameters parameters) : base(parameters)
+        {
+        }
+    }
+
+    public class SearchParametersFilteredQuery<TSearchParameters, TDocument, TSearchResult, TOutputEntity> :
+        ParametersQuery<TSearchParameters, TDocument, TSearchResult, TOutputEntity>
+        where TSearchParameters : class, ISearchParameters, new()
+        where TDocument : class
+        where TOutputEntity : class
+        where TSearchResult : SearchResult<TSearchParameters, TOutputEntity>
+    {
         public SearchParametersFilteredQuery(TSearchParameters parameters) : base(parameters)
         {
         }
@@ -20,7 +31,9 @@ namespace Nest.Searchify.Queries
 
         protected QueryContainer WithQueryCore(IQueryContainer query, TSearchParameters parameters)
         {
-            return !string.IsNullOrWhiteSpace(parameters.Query) ? WithQuery(query, parameters.Query.ToLowerInvariant()) : Query<TDocument>.MatchAll();
+            return !string.IsNullOrWhiteSpace(parameters.Query)
+                ? WithQuery(query, parameters.Query.ToLowerInvariant())
+                : Query<TDocument>.MatchAll();
         }
 
         protected FilterContainer WithFilterCore(IFilterContainer filter, TSearchParameters parameters)
@@ -33,7 +46,7 @@ namespace Nest.Searchify.Queries
             return null;
         }
 
-        protected sealed override QueryContainer BuildQueryCore(QueryContainer query, TSearchParameters parameters)
+        protected override sealed QueryContainer BuildQueryCore(QueryContainer query, TSearchParameters parameters)
         {
             return Query<TDocument>
                 .Filtered(fq => fq
@@ -42,5 +55,4 @@ namespace Nest.Searchify.Queries
                 );
         }
     }
-
 }

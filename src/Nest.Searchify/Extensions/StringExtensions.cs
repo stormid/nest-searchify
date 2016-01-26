@@ -16,6 +16,18 @@ namespace Nest.Searchify.Extensions
     public static class PaginationOptionsExtensions
     {
 
+        public static Uri GetPageUri<TParameters>(this IPaginationOptions<TParameters> pagination, int page, Uri baseUri) where TParameters : class, IPagingParameters, ISortingParameters, new()
+        {
+            var parameters = pagination.ForPage(page);
+            if (parameters != null)
+            {
+                var ub = new UriBuilder(baseUri) { Query = QueryStringParser<TParameters>.Parse(parameters).ToString() };
+                return ub.Uri;
+            }
+            return baseUri;
+
+        }
+
         public static Uri GetNextPageUri<TParameters>(this IPaginationOptions<TParameters> pagination, Uri baseUri) where TParameters : class, IPagingParameters, ISortingParameters, new()
         {
             var nextPage = pagination.NextPage();

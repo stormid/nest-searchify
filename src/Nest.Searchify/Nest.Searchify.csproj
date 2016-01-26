@@ -9,10 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Nest.Searchify</RootNamespace>
     <AssemblyName>Nest.Searchify</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,8 +41,8 @@
       <HintPath>..\..\packages\NEST.1.6.0\lib\net45\Nest.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Nest.Queryify, Version=0.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Nest.Queryify.0.5.0\lib\net452\Nest.Queryify.dll</HintPath>
+    <Reference Include="Nest.Queryify, Version=0.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Nest.Queryify.0.6.0\lib\net45\Nest.Queryify.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -72,11 +73,12 @@
     <Compile Include="Extensions\ElasticsearchRepositorySearchExtensions.cs" />
     <Compile Include="Extensions\Inflector.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Queries\Models\BoundingBox.cs" />
     <Compile Include="Queries\Parameters.cs" />
     <Compile Include="FilterField.cs" />
     <Compile Include="GeoPoint.cs" />
     <Compile Include="Abstractions\ISearchResultQuery.cs" />
-    <Compile Include="Queries\QueryParameters_Helpers.cs" />
+    <Compile Include="Queries\ParametersQuery_Helpers.cs" />
     <Compile Include="Queries\QueryStringParser.cs" />
     <Compile Include="Queries\SearchResultQuery.cs" />
     <Compile Include="SearchAggregations\ITypedAggregration.cs" />

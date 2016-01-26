@@ -7,10 +7,21 @@ using Nest.Searchify.SearchResults;
 
 namespace Nest.Searchify.Queries
 {
-    public abstract class SearchResultQuery<TParameters, TDocument, TSearchResult> : ElasticClientQueryObject<TSearchResult>, ISearchResultQuery<TParameters> 
+    public abstract class SearchResultQuery<TParameters, TDocument, TSearchResult> : SearchResultQuery<TParameters, TDocument, TSearchResult, TDocument>
         where TDocument : class
         where TParameters : class, IPagingParameters, ISortingParameters
         where TSearchResult : class, ISearchResult<TParameters, TDocument>
+    {
+        protected SearchResultQuery(TParameters parameters) : base(parameters)
+        {
+        }
+    }
+
+    public abstract class SearchResultQuery<TParameters, TDocument, TSearchResult, TOutputEntity> : ElasticClientQueryObject<TSearchResult>, ISearchResultQuery<TParameters>
+        where TDocument : class
+        where TOutputEntity : class
+        where TParameters : class, IPagingParameters, ISortingParameters
+        where TSearchResult : class, ISearchResult<TParameters, TOutputEntity>
     {
         public TParameters Parameters { get; }
 
@@ -38,7 +49,7 @@ namespace Nest.Searchify.Queries
 
         protected virtual TSearchResult ToSearchResult(ISearchResponse<TDocument> response, TParameters parameters)
         {
-            if(typeof(TSearchResult).GetTypeInfo().IsInterface) throw new InvalidCastException("Cant create instance of interface, please override ToSearchResult");
+            if (typeof(TSearchResult).GetTypeInfo().IsInterface) throw new InvalidCastException("Cant create instance of interface, please override ToSearchResult");
             return (TSearchResult)Activator.CreateInstance(typeof(TSearchResult), parameters, response);
         }
 

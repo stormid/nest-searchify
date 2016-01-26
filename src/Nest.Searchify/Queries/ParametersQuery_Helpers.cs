@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using Nest.Searchify.Abstractions;
+using Nest.Searchify.Queries.Models;
 using Nest.Searchify.SearchResults;
 
 namespace Nest.Searchify.Queries
 {
-    public partial class ParametersQuery<TParameters, TDocument, TSearchResult> where TParameters : class, IPagingParameters, ISortingParameters, new()
+    public partial class ParametersQuery<TParameters, TDocument, TSearchResult, TOutputEntity> where TParameters : class, IPagingParameters, ISortingParameters, new()
         where TDocument : class
-        where TSearchResult : SearchResult<TParameters, TDocument>
+        where TOutputEntity : class
+        where TSearchResult : SearchResult<TParameters, TOutputEntity>
     {
         /// <summary>
         /// Creates a terms filter against the given document (<see cref="TFilterOnDocument"/>)
@@ -178,6 +178,37 @@ namespace Nest.Searchify.Queries
                 }
             }
             return null;
+        }
+
+        protected FilterContainer GeoDistanceFilter<TFilterOnDocument>(
+            Expression<Func<TFilterOnDocument, object>> field, double latitude, double longitude, double distance,
+            GeoUnit unit = GeoUnit.Miles, GeoOptimizeBBox optimize = GeoOptimizeBBox.None)
+            where TFilterOnDocument : class
+        {
+            return Filter<TFilterOnDocument>.GeoDistance(field, geo => geo
+                    .Location(latitude, longitude)
+                    .Optimize(optimize)
+                    .Distance(distance, unit));
+        }
+
+        protected FilterContainer GeoBBoxFilter<TFilterOnDocument>(
+            Expression<Func<TFilterOnDocument, object>> field, BoundingBox boundingBox, GeoExecution? geoExecution = null)
+            where TFilterOnDocument : class
+        {
+            return Filter<TFilterOnDocument>
+                .GeoBoundingBox(field, 
+                boundingBox.TopLeft.Longitude, 
+                boundingBox.TopLeft.Latitude, 
+                boundingBox.BottomRight.Longitude, 
+                boundingBox.BottomRight.Latitude, 
+                geoExecution);
+        }
+
+        protected FilterContainer GeoBBoxFilter<TFilterOnDocument>(
+            Expression<Func<TFilterOnDocument, object>> field, GeoPoint topLeft, GeoPoint bottomRight, GeoExecution? geoExecution = null)
+            where TFilterOnDocument : class
+        {
+            return GeoBBoxFilter(field, new BoundingBox(topLeft, bottomRight));
         }
     }
 }

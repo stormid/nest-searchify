@@ -19,23 +19,17 @@ namespace Nest.Searchify
 		/// Latitude
 		/// </summary>
 		[JsonProperty("lat")]
-        public double Latitude
-		{
-			get { return _latitude; }
-		}
+        public double Latitude => _latitude;
 
-		private readonly double _latitude;
+	    private readonly double _latitude;
 
 		/// <summary>
 		/// Longitude
 		/// </summary>
 		[JsonProperty("lon")]
-        public double Longitude
-		{
-			get { return _longitude; }
-		}
+        public double Longitude => _longitude;
 
-		private readonly double _longitude;
+	    private readonly double _longitude;
 
 	    public static implicit operator GeoPoint(string value)
 	    {

@@ -5,110 +5,119 @@ using Nest.Searchify.SearchResults;
 
 namespace Nest.Searchify.Queries
 {
-    public partial class ParametersQuery<TParameters, TDocument, TSearchResult> : SearchResultQuery<TParameters, TDocument, TSearchResult>
+    public class ParametersQuery<TParameters, TDocument, TSearchResult> : ParametersQuery<TParameters, TDocument, TSearchResult, TDocument>
         where TParameters : class, IPagingParameters, ISortingParameters, new()
 		where TDocument : class
         where TSearchResult : SearchResult<TParameters, TDocument>
 	{
-		public ParametersQuery(NameValueCollection parameters) : base(QueryStringParser<TParameters>.Parse(parameters))
-		{
-		}
+        public ParametersQuery(TParameters parameters) : base(parameters) { }
+    }
 
-		public ParametersQuery(TParameters parameters) : base(parameters)
-		{
-		}
+    public partial class ParametersQuery<TParameters, TDocument, TSearchResult, TOutputEntity> : SearchResultQuery<TParameters, TDocument, TSearchResult, TOutputEntity>
+        where TParameters : class, IPagingParameters, ISortingParameters, new()
+        where TDocument : class
+        where TOutputEntity : class
+        where TSearchResult : SearchResult<TParameters, TOutputEntity>
+    {
+        public ParametersQuery(NameValueCollection parameters) : base(QueryStringParser<TParameters>.Parse(parameters))
+        {
+        }
 
-		public ParametersQuery() : this(new NameValueCollection())
-		{
-		}
+        public ParametersQuery(TParameters parameters) : base(parameters)
+        {
+        }
 
-		protected virtual TParameters ModifyParameters(TParameters parameters)
-		{
-			if(parameters == null) throw new ArgumentNullException(nameof(parameters), "the parameters object must not be null");
-			return parameters;
-		}
+        public ParametersQuery() : this(new NameValueCollection())
+        {
+        }
 
-		protected virtual QueryContainer BuildQueryCore(QueryContainer query, TParameters parameters)
-		{
-			return Query<TDocument>.MatchAll();
-		}
+        protected virtual TParameters ModifyParameters(TParameters parameters)
+        {
+            if (parameters == null) throw new ArgumentNullException(nameof(parameters), "the parameters object must not be null");
+            return parameters;
+        }
 
-		protected virtual void ModifySearchDescriptor(SearchDescriptor<TDocument> descriptor, TParameters parameters)
-		{
+        protected virtual QueryContainer BuildQueryCore(QueryContainer query, TParameters parameters)
+        {
+            return Query<TDocument>.MatchAll();
+        }
 
-		}
+        protected virtual void ModifySearchDescriptor(SearchDescriptor<TDocument> descriptor, TParameters parameters)
+        {
 
-		protected sealed override SearchDescriptor<TDocument> BuildQuery(SearchDescriptor<TDocument> descriptor)
-		{
-			var parameters = ModifyParameters(Parameters);
+        }
 
-			ApplyPaging(descriptor, parameters);
+        protected sealed override SearchDescriptor<TDocument> BuildQuery(SearchDescriptor<TDocument> descriptor)
+        {
+            var parameters = ModifyParameters(Parameters);
 
-			if (!string.IsNullOrWhiteSpace(parameters.SortBy))
-			{
-				ApplySorting(descriptor, parameters);
-			}
+            ApplyPaging(descriptor, parameters);
 
-			descriptor.Query(q => BuildQueryCore(q, parameters));
+            if (!string.IsNullOrWhiteSpace(parameters.SortBy))
+            {
+                ApplySorting(descriptor, parameters);
+            }
 
-			descriptor.Aggregations(agg => ApplyAggregationsCore(agg, parameters));
+            descriptor.Query(q => BuildQueryCore(q, parameters));
 
-			ModifySearchDescriptor(descriptor, parameters);
+            descriptor.Aggregations(agg => ApplyAggregationsCore(agg, parameters));
 
-			return descriptor;			
-		}
+            ModifySearchDescriptor(descriptor, parameters);
 
-		private AggregationDescriptor<TDocument> ApplyAggregationsCore(AggregationDescriptor<TDocument> descriptor, TParameters parameters)
-		{
-			return ApplyAggregations(descriptor, parameters);
-		}
+            return descriptor;
+        }
 
-		protected virtual AggregationDescriptor<TDocument> ApplyAggregations(AggregationDescriptor<TDocument> descriptor, TParameters parameters)
-		{
-			return descriptor;
-		}
+        private AggregationDescriptor<TDocument> ApplyAggregationsCore(AggregationDescriptor<TDocument> descriptor, TParameters parameters)
+        {
+            return ApplyAggregations(descriptor, parameters);
+        }
 
-		protected virtual void ApplyPaging(SearchDescriptor<TDocument> descriptor, TParameters parameters)
-		{
-			descriptor
-				.From(parameters.Start())
-				.Size(parameters.Size);
-		}
+        protected virtual AggregationDescriptor<TDocument> ApplyAggregations(AggregationDescriptor<TDocument> descriptor, TParameters parameters)
+        {
+            return descriptor;
+        }
 
-		protected virtual void ApplySorting(SearchDescriptor<TDocument> descriptor, TParameters parameters)
-		{
-			if (parameters.HasSort())
-			{
-				descriptor.Sort(sort => ModifySortCore(WithSort(sort, parameters)));
-			}
-		}
+        protected virtual void ApplyPaging(SearchDescriptor<TDocument> descriptor, TParameters parameters)
+        {
+            descriptor
+                .From(parameters.Start())
+                .Size(parameters.Size);
+        }
 
-		protected virtual IFieldSort ModifySortCore(IFieldSort withSort)
-		{
-			return withSort;
-		}
+        protected virtual void ApplySorting(SearchDescriptor<TDocument> descriptor, TParameters parameters)
+        {
+            if (parameters.HasSort())
+            {
+                descriptor.Sort(sort => ModifySortCore(WithSort(sort, parameters)));
+            }
+        }
 
-		protected SortOrder GetSortOrderFromParameters()
-		{
-			switch (Parameters.SortDirection)
-			{
-				case SortDirectionOption.Desc:
-					return SortOrder.Descending;
-				default:
-					return SortOrder.Ascending;
-			}
-		}
+        protected virtual IFieldSort ModifySortCore(IFieldSort withSort)
+        {
+            return withSort;
+        }
 
-		protected virtual string SortByField(string sortBy)
-		{
-			return $"{sortBy}.sort";
-		}
+        protected SortOrder GetSortOrderFromParameters()
+        {
+            switch (Parameters.SortDirection)
+            {
+                case SortDirectionOption.Desc:
+                    return SortOrder.Descending;
+                default:
+                    return SortOrder.Ascending;
+            }
+        }
 
-		private IFieldSort WithSort(SortFieldDescriptor<TDocument> sort, TParameters parameters)
-		{
-			return sort
-				.OnField(SortByField(parameters.SortBy))
-				.Order(GetSortOrderFromParameters());
-		}
+        protected virtual string SortByField(string sortBy)
+        {
+            return $"{sortBy}.sort";
+        }
+
+        private IFieldSort WithSort(SortFieldDescriptor<TDocument> sort, TParameters parameters)
+        {
+            return sort
+                .OnField(SortByField(parameters.SortBy))
+                .Order(GetSortOrderFromParameters());
+        }
     }
 }

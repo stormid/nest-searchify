@@ -18,7 +18,7 @@ namespace Nest.Searchify.Queries
         where TSearchParameters : class, ISearchParameters, new()
         where TDocument : class
         where TOutputEntity : class
-        where TSearchResult : SearchResult<TSearchParameters, TOutputEntity>
+        where TSearchResult : SearchResult<TSearchParameters, TDocument, TOutputEntity>
     {
         public SearchParametersFilteredQuery(TSearchParameters parameters) : base(parameters)
         {

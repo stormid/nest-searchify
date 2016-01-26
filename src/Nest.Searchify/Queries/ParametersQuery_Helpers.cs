@@ -11,7 +11,7 @@ namespace Nest.Searchify.Queries
     public partial class ParametersQuery<TParameters, TDocument, TSearchResult, TOutputEntity> where TParameters : class, IPagingParameters, ISortingParameters, new()
         where TDocument : class
         where TOutputEntity : class
-        where TSearchResult : SearchResult<TParameters, TOutputEntity>
+        where TSearchResult : SearchResult<TParameters, TDocument, TOutputEntity>
     {
         /// <summary>
         /// Creates a terms filter against the given document (<see cref="TFilterOnDocument"/>)

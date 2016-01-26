@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nest.Searchify.Abstractions;
@@ -42,15 +43,10 @@ namespace Nest.Searchify.SearchResults
 
         private IEnumerable<TOutputEntity> TransformResultCore(ISearchResponse<TDocument> response)
         {
-            return TransformResult(response.Documents);
+            return TransformResult(response.Documents).Where(x => x != null);
         }
 
-        protected virtual IEnumerable<TOutputEntity> TransformResult(IEnumerable<TDocument> entities)
-        {
-            return Response.Documents.Select(TransformEntity).Where(x => x != null);
-        }
-
-        protected abstract TOutputEntity TransformEntity(TDocument entity);
+        protected abstract IEnumerable<TOutputEntity> TransformResult(IEnumerable<TDocument> entities);
 
         protected override int GetResponseTimeTaken()
         {
@@ -71,12 +67,12 @@ namespace Nest.Searchify.SearchResults
 		{
         }
 
-		protected override TDocument TransformEntity(TDocument entity)
-		{
-		    return entity;
-		}
+        protected override IEnumerable<TDocument> TransformResult(IEnumerable<TDocument> entities)
+        {
+            return entities;
+        }
 
-		protected override int GetResponseTimeTaken()
+        protected override int GetResponseTimeTaken()
 		{
 			return Response.ElapsedMilliseconds;
 		}

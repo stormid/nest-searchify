@@ -17,7 +17,7 @@ namespace Nest.Searchify.Queries
         where TParameters : class, IPagingParameters, ISortingParameters, new()
         where TDocument : class
         where TOutputEntity : class
-        where TSearchResult : SearchResult<TParameters, TOutputEntity>
+        where TSearchResult : SearchResult<TParameters, TDocument, TOutputEntity>
     {
         public ParametersQuery(NameValueCollection parameters) : base(QueryStringParser<TParameters>.Parse(parameters))
         {

@@ -8,7 +8,8 @@ namespace Nest.Searchify.SearchAggregations
         public static IDictionary<string, IAggregation> Parse(IDictionary<string, IAggregation> aggregations)
         {
             if (aggregations == null || !aggregations.Any()) return null;
-            return ParseCore(aggregations).ToDictionary(k => k.Key, v => v.Value);
+            var keyValuePairs = ParseCore(aggregations);
+            return keyValuePairs.ToDictionary(k => k.Key, v => v.Value);
         }
 
         private static IEnumerable<KeyValuePair<string, IAggregation>> ParseCore(IDictionary<string, IAggregation> aggregations)
@@ -36,6 +37,24 @@ namespace Nest.Searchify.SearchAggregations
                     {
                         yield return agg;
                     }
+                }
+                else if (agg.Value is SingleBucket)
+                {
+                    var bucket = agg.Value as SingleBucket;
+
+                    if (bucket.Aggregations != null)
+                    {
+                        var subAggs = ParseCore(bucket.Aggregations)
+                            .ToDictionary(x => x.Key, y => y.Value);
+
+                        yield return new KeyValuePair<string, IAggregation>(agg.Key, new SingleBucket(subAggs));
+                    }
+                    else
+                    {
+                        yield return agg; 
+                    }
+
+
                 }
                 else
                 {

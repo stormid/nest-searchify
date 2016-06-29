@@ -42,6 +42,7 @@
     <Compile Include="ParametersTests\QueryStringParserContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queries\SearchResultQueryContext.cs" />
+    <Compile Include="SearchAggregations\SearchAggregationParserContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Integration\Person.json" />

@@ -1,20 +1,12 @@
 version: '{build}'
-skip_tags: true
 os: Visual Studio 2015
-configuration: Release
-nuget:
-  account_feed: true
-before_build:
-  - cmd: nuget sources
-  - cmd: nuget restore Nest.Searchify.sln -DisableParallelProcessing -NonInteractive
-build:
-  project: Nest.Searchify.sln
-  verbosity: minimal
-after_build:
-  cmd: nuget pack src/Nest.Searchify/Nest.Searchify.csproj -Version %GitVersion_NugetVersion% -IncludeReferencedProjects -Properties "Configuration=%CONFIGURATION%" -Verbosity quiet
-test:
-  categories:
-    except:
-    - Integration
+init:
+- cmd: git config --global core.autocrlf true
+cache: 
+- packages -> src\**\packages.config
+- tools -> tools\packages.config
+build_script:
+- ps: .\build.ps1 -Target "Default" -Verbosity "Normal" -Configuration "Release"
+test: off
 artifacts:
-- path: Nest.Searchify.*.nupkg
+- path: artifacts\*.nupkg

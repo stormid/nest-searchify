@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Nest.Searchify")]
-[assembly: AssemblyDescription("An easy to use search interface to Elasticsearch using Nest-Queryify")]
+[assembly: AssemblyDescription("An easy to use search interface to Elasticsearch using Nest.Queryify")]
 [assembly: AssemblyCompany("Storm ID Ltd")]
 
 #if DEBUG

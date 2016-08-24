@@ -99,6 +99,8 @@
     <Compile Include="SearchAggregations\SignificantTermKeyItem.cs" />
     <Compile Include="SearchAggregations\TermBucket.cs" />
     <Compile Include="SearchAggregations\TermKeyItem.cs" />
+    <Compile Include="Utils\GeoMath.cs" />
+    <Compile Include="Extensions\GeoPointExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

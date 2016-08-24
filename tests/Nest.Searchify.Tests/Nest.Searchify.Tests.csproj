@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Include="Extensions\ReadEmbeddedResourceExtensions.cs" />
     <Compile Include="FilterFieldTests\FilterFieldContext.cs" />
+    <Compile Include="GeoPointTests\GeoPointContext.cs" />
     <Compile Include="Integration\InMemoryElasticsearchContext.cs" />
     <Compile Include="Integration\Person.cs" />
     <Compile Include="ParametersTests\PaginationOptionsContext.cs" />

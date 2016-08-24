@@ -48,19 +48,19 @@ namespace Nest.Searchify
 		/// <summary>
 		/// Represents a Latitude/Longitude as a 2 dimensional point. 
 		/// </summary>
-		/// <param name="latitude">Value between -90 and 90</param>
-		/// <param name="longitude">Value between -180 and 180</param>
-		/// <exception cref="ArgumentOutOfRangeException">If <paramref name="latitude"/> or <paramref name="longitude"/> are invalid</exception>
-		public GeoPoint(double latitude, double longitude)
+		/// <param name="lat">Value between -90 and 90</param>
+		/// <param name="lon">Value between -180 and 180</param>
+		/// <exception cref="ArgumentOutOfRangeException">If <paramref name="lat"/> or <paramref name="lon"/> are invalid</exception>
+		public GeoPoint(double lat, double lon)
 		{
-			if (!IsValidLatitude(latitude))
+			if (!IsValidLatitude(lat))
 				throw new ArgumentOutOfRangeException(string.Format(CultureInfo.InvariantCulture,
-					"Invalid latitude '{0}'. Valid values are between -90 and 90", latitude));
-			if (!IsValidLongitude(longitude))
+					"Invalid latitude '{0}'. Valid values are between -90 and 90", lat));
+			if (!IsValidLongitude(lon))
 				throw new ArgumentOutOfRangeException(string.Format(CultureInfo.InvariantCulture,
-					"Invalid longitude '{0}'. Valid values are between -180 and 180", longitude));
-			_latitude = latitude;
-			_longitude = longitude;
+					"Invalid longitude '{0}'. Valid values are between -180 and 180", lon));
+			_latitude = lat;
+			_longitude = lon;
 		}
 
 		/// <summary>
@@ -132,7 +132,7 @@ namespace Nest.Searchify
 
 		public string ToString(string format, IFormatProvider formatProvider)
 		{
-			return ToString();
+		    return string.Format(formatProvider, format, Latitude, Longitude);
 		}
 	}
 }

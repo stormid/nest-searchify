@@ -196,26 +196,27 @@ namespace Nest.Searchify.Queries
             GeoUnit unit = GeoUnit.Miles, GeoOptimizeBBox optimize = GeoOptimizeBBox.None)
             where TFilterOnDocument : class
         {
-            return GeoDistanceFilter(field, point.Latitude, point.Longitude, distance, unit, optimize);
+            return point != null ? GeoDistanceFilter(field, point.Latitude, point.Longitude, distance, unit, optimize) : null;
         }
 
         protected FilterContainer GeoBBoxFilter<TFilterOnDocument>(
             Expression<Func<TFilterOnDocument, object>> field, GeoBoundingBox boundingBox, GeoExecution? geoExecution = null)
             where TFilterOnDocument : class
         {
-            return Filter<TFilterOnDocument>
+            return boundingBox != null ? Filter<TFilterOnDocument>
                 .GeoBoundingBox(field, 
                 boundingBox.TopLeft.Longitude, 
                 boundingBox.TopLeft.Latitude, 
                 boundingBox.BottomRight.Longitude, 
                 boundingBox.BottomRight.Latitude, 
-                geoExecution);
+                geoExecution) : null;
         }
 
         protected FilterContainer GeoBBoxFilter<TFilterOnDocument>(
             Expression<Func<TFilterOnDocument, object>> field, GeoPoint topLeft, GeoPoint bottomRight, GeoExecution? geoExecution = null)
             where TFilterOnDocument : class
         {
+            if (topLeft == null || bottomRight == null) return null;
             return GeoBBoxFilter(field, new GeoBoundingBox(topLeft, bottomRight));
         }
     }

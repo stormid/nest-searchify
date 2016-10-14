@@ -191,6 +191,14 @@ namespace Nest.Searchify.Queries
                     .Distance(distance, unit));
         }
 
+        protected FilterContainer GeoDistanceFilter<TFilterOnDocument>(
+            Expression<Func<TFilterOnDocument, object>> field, GeoPoint point, double distance,
+            GeoUnit unit = GeoUnit.Miles, GeoOptimizeBBox optimize = GeoOptimizeBBox.None)
+            where TFilterOnDocument : class
+        {
+            return GeoDistanceFilter(field, point.Latitude, point.Longitude, distance, unit, optimize);
+        }
+
         protected FilterContainer GeoBBoxFilter<TFilterOnDocument>(
             Expression<Func<TFilterOnDocument, object>> field, GeoBoundingBox boundingBox, GeoExecution? geoExecution = null)
             where TFilterOnDocument : class

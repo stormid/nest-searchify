@@ -25,7 +25,7 @@ namespace Nest.Searchify.SearchResults
         public AggregationsHelper AggregationHelper => Response.Aggs;
 
         [JsonProperty("aggregations")]
-        public IDictionary<string, IAggregation> Aggregations { get; }
+        public IDictionary<string, IAggregation> Aggregations { get; private set; }
 
         #endregion
 
@@ -33,7 +33,12 @@ namespace Nest.Searchify.SearchResults
         {
             Response = response;
             SetDocuments();
-            Aggregations = SearchAggregationParser.Parse(Response.Aggregations);
+            SetAggregations();
+        }
+
+        private void SetAggregations()
+        {
+            Aggregations = AlterAggregations(Response.Aggregations);
         }
 
         private void SetDocuments()
@@ -41,9 +46,19 @@ namespace Nest.Searchify.SearchResults
             Documents = TransformResultCore(Response);
         }
 
+        protected virtual IDictionary<string, IAggregation> AlterAggregations(IDictionary<string, IAggregation> aggregations)
+        {
+            return SearchAggregationParser.Parse(aggregations);
+        }
+
+        protected virtual IEnumerable<TDocument> ResponseToDocuments(ISearchResponse<TDocument> response)
+        {
+            return response.Documents;
+        }
+
         private IEnumerable<TOutputEntity> TransformResultCore(ISearchResponse<TDocument> response)
         {
-            return TransformResult(response.Documents).Where(x => x != null);
+            return TransformResult(ResponseToDocuments(response)).Where(x => x != null);
         }
 
         protected abstract IEnumerable<TOutputEntity> TransformResult(IEnumerable<TDocument> entities);

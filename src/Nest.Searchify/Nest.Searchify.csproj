@@ -76,13 +76,14 @@
     <Compile Include="Extensions\ElasticsearchRepositorySearchExtensions.cs" />
     <Compile Include="Extensions\Inflector.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Queries\Models\BoundingBox.cs" />
+    <Compile Include="Queries\Models\GeoBoundingBox.cs" />
     <Compile Include="Queries\Parameters.cs" />
     <Compile Include="FilterField.cs" />
     <Compile Include="GeoPoint.cs" />
     <Compile Include="Abstractions\ISearchResultQuery.cs" />
     <Compile Include="Queries\ParametersQuery_Helpers.cs" />
     <Compile Include="Queries\QueryStringParser.cs" />
+    <Compile Include="Queries\SearchQuery.cs" />
     <Compile Include="Queries\SearchResultQuery.cs" />
     <Compile Include="SearchAggregations\ITypedAggregration.cs" />
     <Compile Include="SearchResults\PaginationOptions.cs" />

@@ -192,7 +192,7 @@ namespace Nest.Searchify.Queries
         }
 
         protected FilterContainer GeoBBoxFilter<TFilterOnDocument>(
-            Expression<Func<TFilterOnDocument, object>> field, BoundingBox boundingBox, GeoExecution? geoExecution = null)
+            Expression<Func<TFilterOnDocument, object>> field, GeoBoundingBox boundingBox, GeoExecution? geoExecution = null)
             where TFilterOnDocument : class
         {
             return Filter<TFilterOnDocument>
@@ -208,7 +208,7 @@ namespace Nest.Searchify.Queries
             Expression<Func<TFilterOnDocument, object>> field, GeoPoint topLeft, GeoPoint bottomRight, GeoExecution? geoExecution = null)
             where TFilterOnDocument : class
         {
-            return GeoBBoxFilter(field, new BoundingBox(topLeft, bottomRight));
+            return GeoBBoxFilter(field, new GeoBoundingBox(topLeft, bottomRight));
         }
     }
 }

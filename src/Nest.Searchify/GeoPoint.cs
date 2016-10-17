@@ -45,13 +45,18 @@ namespace Nest.Searchify
             throw new ArgumentNullException(nameof(value), "No GeoPoint value specified");
         }
 
-		/// <summary>
-		/// Represents a Latitude/Longitude as a 2 dimensional point. 
-		/// </summary>
-		/// <param name="lat">Value between -90 and 90</param>
-		/// <param name="lon">Value between -180 and 180</param>
-		/// <exception cref="ArgumentOutOfRangeException">If <paramref name="lat"/> or <paramref name="lon"/> are invalid</exception>
-		public GeoPoint(double lat, double lon)
+        public static implicit operator string(GeoPoint value)
+        {
+            return value?.ToString();
+        }
+
+        /// <summary>
+        /// Represents a Latitude/Longitude as a 2 dimensional point. 
+        /// </summary>
+        /// <param name="lat">Value between -90 and 90</param>
+        /// <param name="lon">Value between -180 and 180</param>
+        /// <exception cref="ArgumentOutOfRangeException">If <paramref name="lat"/> or <paramref name="lon"/> are invalid</exception>
+        public GeoPoint(double lat, double lon)
 		{
 			if (!IsValidLatitude(lat))
 				throw new ArgumentOutOfRangeException(string.Format(CultureInfo.InvariantCulture,

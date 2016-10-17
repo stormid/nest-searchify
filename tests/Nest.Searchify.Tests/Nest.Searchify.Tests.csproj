@@ -41,6 +41,7 @@
     <Compile Include="Integration\InMemoryElasticsearchContext.cs" />
     <Compile Include="Integration\Person.cs" />
     <Compile Include="ParametersTests\PaginationOptionsContext.cs" />
+    <Compile Include="ParametersTests\GeoParameterSerialisation.cs" />
     <Compile Include="ParametersTests\QueryStringParserContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queries\SearchResultQueryContext.cs" />

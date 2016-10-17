@@ -76,6 +76,8 @@
     <Compile Include="Extensions\ElasticsearchRepositorySearchExtensions.cs" />
     <Compile Include="Extensions\Inflector.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Converters\GeoBoundingBoxToStringJsonConverter.cs" />
+    <Compile Include="Converters\GeoPointToStringJsonConverter.cs" />
     <Compile Include="Queries\Models\GeoBoundingBox.cs" />
     <Compile Include="Queries\Parameters.cs" />
     <Compile Include="FilterField.cs" />

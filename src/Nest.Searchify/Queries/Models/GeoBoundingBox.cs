@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
@@ -43,7 +44,12 @@ namespace Nest.Searchify.Queries.Models
 
         public override string ToString()
         {
-            return $"[{TopLeft}],[{BottomRight}]";
+            return string.Format(CultureInfo.InvariantCulture, "[{0}][{1}]", TopLeft.ToString(), BottomRight.ToString());
+        }
+
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            return string.Format(formatProvider, format, TopLeft, BottomRight);
         }
     }
 }

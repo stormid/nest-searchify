@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using Nest.Searchify.Queries;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Nest.Searchify
 {

@@ -6,11 +6,11 @@ using FluentAssertions;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.Queries;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace Nest.Searchify.Tests.ParametersTests
 {
-
     public class QueryStringParserContext
     {
         public enum SomeOption

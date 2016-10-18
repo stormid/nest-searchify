@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using Nest.Searchify.Converters;
@@ -16,7 +17,8 @@ namespace Nest.Searchify
 	/// Represents a Latitude/Longitude as a 2 dimensional point. 
 	/// </summary>
 	[JsonConverter(typeof(GeoPointJsonConverter))]
-	public class GeoPoint : IEquatable<GeoPoint>, IFormattable
+    [TypeConverter(typeof(GeoPointTypeConverter))]
+	public class GeoPoint : IEquatable<GeoPoint>
 	{
 		/// <summary>
 		/// Latitude
@@ -138,9 +140,9 @@ namespace Nest.Searchify
 			}
 		}
 
-		public string ToString(string format, IFormatProvider formatProvider)
-		{
-		    return string.Format(formatProvider, format, Latitude, Longitude);
-		}
+		//public string ToString(string format, IFormatProvider formatProvider)
+		//{
+		//    return string.Format(formatProvider, format, Latitude, Longitude);
+		//}
 	}
 }

@@ -12,6 +12,7 @@ namespace Nest.Searchify.Tests.ParametersTests
         public class TestGeoPointParameters : SearchParameters
         {
             [JsonConverter(typeof(GeoPointJsonConverter))]
+            [JsonProperty(PropertyName = "locpt")]
             public string Point { get; set; }
             [JsonConverter(typeof(GeoBoundingBoxJsonConverter))]
             public string BBox { get; set; }
@@ -19,6 +20,7 @@ namespace Nest.Searchify.Tests.ParametersTests
 
         public class TestGeoPointOutParameters : SearchParameters
         {
+            [JsonProperty(PropertyName = "locpt")]
             public GeoPoint Point { get; set; }
             public GeoBoundingBox BBox { get; set; }
         }
@@ -39,7 +41,7 @@ namespace Nest.Searchify.Tests.ParametersTests
         public void ShouldNotDeserialiseGeoPointToGeoPointWithInvalidPoints()
         {
 
-            var json = "{ \"Point\": \"3,4\" }";
+            var json = "{ \"locpt\": \"3,4\" }";
             var p2 = JsonConvert.DeserializeObject<TestGeoPointOutParameters>(json);
             p2.Point.Latitude.Should().Be(3);
             p2.Point.Longitude.Should().Be(4);

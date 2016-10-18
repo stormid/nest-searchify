@@ -7,11 +7,18 @@ namespace Nest.Searchify.Converters
 {
     public class GeoBoundingBoxJsonConverter : JsonConverter
     {
-        public override bool CanWrite => false;
-
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            throw new NotImplementedException();
+            GeoBoundingBox bbox = value as GeoBoundingBox ?? value as string;
+            if (bbox != null)
+            {
+                writer.WriteStartObject();
+                writer.WritePropertyName("topLeft");
+                serializer.Serialize(writer, bbox.TopLeft);
+                writer.WritePropertyName("bottomRight");
+                serializer.Serialize(writer, bbox.BottomRight);
+                writer.WriteEndObject();
+            }
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)

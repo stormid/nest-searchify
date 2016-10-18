@@ -4,13 +4,23 @@ using Newtonsoft.Json.Linq;
 
 namespace Nest.Searchify.Converters
 {
-    public class GeoPointJsonConverter : JsonConverter
+    public sealed class GeoPointJsonConverter : JsonConverter
     {
-        public override bool CanWrite => false;
+        // public override bool CanWrite => false;
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            throw new NotImplementedException();
+            GeoPoint point = value as GeoPoint ?? value as string;
+
+            if (point != null)
+            {
+                writer.WriteStartObject();
+                writer.WritePropertyName("lat");
+                writer.WriteValue(point.Latitude);
+                writer.WritePropertyName("lon");
+                writer.WriteValue(point.Longitude);
+                writer.WriteEndObject();
+            }
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)

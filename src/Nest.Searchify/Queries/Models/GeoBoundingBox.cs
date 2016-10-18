@@ -1,15 +1,18 @@
 using System;
 using System.Globalization;
-using System.Linq;
 using System.Text.RegularExpressions;
+using Nest.Searchify.Converters;
 using Newtonsoft.Json;
 
 namespace Nest.Searchify.Queries.Models
 {
-    public class GeoBoundingBox
+    [JsonConverter(typeof(GeoBoundingBoxJsonConverter))]
+    public class GeoBoundingBox : IEquatable<GeoBoundingBox>, IFormattable
     {
         private static readonly Regex Pattern = new Regex(@"^\[(?<topLeft>(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?))\]\s?\[(?<bottomRight>(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?))\]$", RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace);
+        [JsonProperty("topLeft")]
         public GeoPoint TopLeft { get; set; }
+        [JsonProperty("bottomRight")]
         public GeoPoint BottomRight { get; set; }
 
         public GeoBoundingBox()
@@ -28,7 +31,7 @@ namespace Nest.Searchify.Queries.Models
             if (!string.IsNullOrWhiteSpace(value))
             {
                 var match = Pattern.Match(value);
-                if (!match.Success) throw new FormatException("Unable to create GeoBoundingBox from input string, string must in in the format '[topLeftLat,topleftLon],[bottomRightLat,bottomRightLon]'");
+                if (!match.Success) throw new FormatException("Unable to create GeoBoundingBox from input string, string must in in the format '[topLeftLat,topleftLon][bottomRightLat,bottomRightLon]'");
                 GeoPoint topLeft = match.Groups["topLeft"].Value;
                 GeoPoint bottomRight = match.Groups["bottomRight"].Value;
 
@@ -42,9 +45,15 @@ namespace Nest.Searchify.Queries.Models
             return value?.ToString();
         }
 
+        public bool Equals(GeoBoundingBox other)
+        {
+            if (other == null) throw new ArgumentNullException(nameof(other));
+            return TopLeft.Equals(other.TopLeft) && BottomRight.Equals(other.BottomRight);
+        }
+
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "[{0}][{1}]", TopLeft.ToString(), BottomRight.ToString());
+            return string.Format(CultureInfo.InvariantCulture, "[{0}][{1}]", TopLeft.ToString("{0},{1}", CultureInfo.InvariantCulture), BottomRight.ToString("{0},{1}", CultureInfo.InvariantCulture));
         }
 
         public string ToString(string format, IFormatProvider formatProvider)

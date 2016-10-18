@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using Nest.Searchify.Converters;
 using Nest.Searchify.Queries;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -14,6 +15,7 @@ namespace Nest.Searchify
 	/// <summary>
 	/// Represents a Latitude/Longitude as a 2 dimensional point. 
 	/// </summary>
+	[JsonConverter(typeof(GeoPointJsonConverter))]
 	public class GeoPoint : IEquatable<GeoPoint>, IFormattable
 	{
 		/// <summary>

@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Nest.Searchify.Converters;
@@ -7,7 +8,8 @@ using Newtonsoft.Json;
 namespace Nest.Searchify.Queries.Models
 {
     [JsonConverter(typeof(GeoBoundingBoxJsonConverter))]
-    public class GeoBoundingBox : IEquatable<GeoBoundingBox>, IFormattable
+    [TypeConverter(typeof(GeoBoundingBoxTypeConverter))]
+    public class GeoBoundingBox : IEquatable<GeoBoundingBox>
     {
         private static readonly Regex Pattern = new Regex(@"^\[(?<topLeft>(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?))\]\s?\[(?<bottomRight>(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?))\]$", RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace);
         [JsonProperty("topLeft")]
@@ -53,12 +55,7 @@ namespace Nest.Searchify.Queries.Models
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "[{0}][{1}]", TopLeft.ToString("{0},{1}", CultureInfo.InvariantCulture), BottomRight.ToString("{0},{1}", CultureInfo.InvariantCulture));
-        }
-
-        public string ToString(string format, IFormatProvider formatProvider)
-        {
-            return string.Format(formatProvider, format, TopLeft, BottomRight);
+            return string.Format(CultureInfo.InvariantCulture, "[{0}][{1}]", TopLeft.ToString(), BottomRight.ToString());
         }
     }
 }

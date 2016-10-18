@@ -72,7 +72,9 @@
     <Compile Include="Abstractions\ISearchResultBase.cs" />
     <Compile Include="Abstractions\ISortingParameters.cs" />
     <Compile Include="Abstractions\SortDirectionOption.cs" />
+    <Compile Include="Converters\GeoBoundingBoxTypeConverter.cs" />
     <Compile Include="Converters\GeoPointJsonConverter.cs" />
+    <Compile Include="Converters\GeoPointTypeConverter.cs" />
     <Compile Include="Extensions\ElasticClientSearchExtensions.cs" />
     <Compile Include="Extensions\ElasticsearchRepositorySearchExtensions.cs" />
     <Compile Include="Extensions\Inflector.cs" />

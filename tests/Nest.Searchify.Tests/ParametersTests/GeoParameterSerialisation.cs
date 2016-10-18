@@ -1,4 +1,5 @@
-﻿using Nest.Searchify.Converters;
+﻿using FluentAssertions;
+using Nest.Searchify.Converters;
 using Nest.Searchify.Queries;
 using Nest.Searchify.Queries.Models;
 using Newtonsoft.Json;
@@ -10,9 +11,9 @@ namespace Nest.Searchify.Tests.ParametersTests
     {
         public class TestGeoPointParameters : SearchParameters
         {
-            [JsonConverter(typeof(GeoPointToStringJsonConverter))]
+            [JsonConverter(typeof(GeoPointJsonConverter))]
             public string Point { get; set; }
-            [JsonConverter(typeof(GeoBoundingBoxToStringJsonConverter))]
+            [JsonConverter(typeof(GeoBoundingBoxJsonConverter))]
             public string BBox { get; set; }
         }
 
@@ -23,7 +24,43 @@ namespace Nest.Searchify.Tests.ParametersTests
         }
 
         [Fact]
-        public void Test()
+        public void ShouldDeserialiseGeoPointToGeoPoint()
+        {
+            var p = new TestGeoPointOutParameters()
+            {
+                Point = "2.1,3.4"
+            };
+            var json = JsonConvert.SerializeObject(p);
+            var p2 = JsonConvert.DeserializeObject<TestGeoPointOutParameters>(json);
+            p2.Point.Should().Be(p.Point);
+        }
+
+        [Fact]
+        public void ShouldNotDeserialiseGeoPointToGeoPointWithInvalidPoints()
+        {
+
+            var json = "{ \"Point\": \"3,4\" }";
+            var p2 = JsonConvert.DeserializeObject<TestGeoPointOutParameters>(json);
+            p2.Point.Latitude.Should().Be(3);
+            p2.Point.Longitude.Should().Be(4);
+        }
+
+        [Fact]
+        public void ShouldDeserialiseGeoBoundingBoxToGeoBoundingBox()
+        {
+            var p = new TestGeoPointOutParameters()
+            {
+                BBox = "[2.123, -3.213234] [2.123, -3.213234]"
+            };
+            var json = JsonConvert.SerializeObject(p);
+            var p2 = JsonConvert.DeserializeObject<TestGeoPointOutParameters>(json);
+            p2.BBox.Should().NotBeNull();
+            p2.BBox.TopLeft.Should().Be(p.BBox.TopLeft);
+            p2.BBox.BottomRight.Should().Be(p.BBox.BottomRight);
+        }
+
+        [Fact]
+        public void ShouldDeserialiseStringRepresentationToObject()
         {
             var p = new TestGeoPointParameters()
             {
@@ -35,7 +72,7 @@ namespace Nest.Searchify.Tests.ParametersTests
         }
 
         [Fact]
-        public void Test2()
+        public void ShouldDeserialiseObjectToStringRepresentation()
         {
             var p = new TestGeoPointOutParameters()
             {

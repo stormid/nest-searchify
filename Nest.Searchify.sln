@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nest.Searchify", "src\Nest.Searchify\Nest.Searchify.csproj", "{A39CF2A9-75DA-409B-BEAF-F4F90C0C45AF}"
 EndProject
@@ -11,6 +11,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		cake.config = cake.config
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A06F6CB4-EB24-47F1-908D-ADD5535C8861}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nest.Searchify", "src\Nest.SearchifyCore\Nest.Searchify.csproj", "{2A1F41AB-18F4-4F65-8C83-615EFC90EE79}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9F1A84F9-F23F-4DB8-8245-1D9016428458}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nest.Searchify.Tests", "tests\Nest.Searchify.TestsCore\Nest.Searchify.Tests.csproj", "{52208A8D-204C-4C12-A16A-B3C301164D9F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,8 +34,20 @@ Global
 		{71F4C4D1-1C21-4789-B553-CC5ADC4E3D92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71F4C4D1-1C21-4789-B553-CC5ADC4E3D92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71F4C4D1-1C21-4789-B553-CC5ADC4E3D92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A1F41AB-18F4-4F65-8C83-615EFC90EE79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A1F41AB-18F4-4F65-8C83-615EFC90EE79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A1F41AB-18F4-4F65-8C83-615EFC90EE79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A1F41AB-18F4-4F65-8C83-615EFC90EE79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52208A8D-204C-4C12-A16A-B3C301164D9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52208A8D-204C-4C12-A16A-B3C301164D9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52208A8D-204C-4C12-A16A-B3C301164D9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52208A8D-204C-4C12-A16A-B3C301164D9F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2A1F41AB-18F4-4F65-8C83-615EFC90EE79} = {A06F6CB4-EB24-47F1-908D-ADD5535C8861}
+		{52208A8D-204C-4C12-A16A-B3C301164D9F} = {9F1A84F9-F23F-4DB8-8245-1D9016428458}
 	EndGlobalSection
 EndGlobal

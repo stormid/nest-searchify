@@ -13,10 +13,10 @@ namespace Nest.Searchify
 			return Create(text, text.ToUrl(), delimiter);
 		}
 
-		//public static FilterField Create(Enum value, string delimiter = DefaultDelimiter)
-		//{
-		//	return Create(value.ToString("G"), value.ToString("D"), delimiter);
-		//}
+        public static FilterField Create(Enum value, string delimiter = DefaultDelimiter)
+        {
+            return Create(value.ToString("G"), value.ToString("D"), delimiter);
+        }
 
         public static FilterField CreateWithCustomDelimiter(string text, string delimiter)
         {
@@ -61,15 +61,16 @@ namespace Nest.Searchify
 			Delimiter = delimiter;
 		}
 
-		[ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
+		[Text(Index = false)]
 		public string Key => $"{Value}{Delimiter}{Text}";
 
+        [Text]
 	    public string Text { get; set; }
 
-		[ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
+		[Text(Index = false)]
 		public string Value { get; set; }
 
-		[ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
+		[Text(Index = false)]
 		public string Delimiter { get; set; }
 	}
 }

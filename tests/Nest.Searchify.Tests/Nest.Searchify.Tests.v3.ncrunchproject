@@ -1,0 +1,14 @@
+﻿<ProjectConfiguration>
+  <Settings>
+    <IgnoredTests>
+      <FixtureTestSelector>
+        <FixtureName>Nest.Searchify.Tests.Integration.AggregationSearchSpecs</FixtureName>
+      </FixtureTestSelector>
+      <FixtureTestSelector>
+        <FixtureName>Nest.Searchify.Tests.Integration.BasicSearchTestSpecs</FixtureName>
+      </FixtureTestSelector>
+      <AllTestsSelector />
+    </IgnoredTests>
+    <PreviouslyBuiltSuccessfully>True</PreviouslyBuiltSuccessfully>
+  </Settings>
+</ProjectConfiguration>

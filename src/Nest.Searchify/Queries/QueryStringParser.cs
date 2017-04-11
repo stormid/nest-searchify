@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
-using System.Web;
-using Nest.Searchify.Abstractions;
-using Nest.Searchify.Extensions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-
-namespace Nest.Searchify.Queries
+﻿namespace Nest.Searchify.Queries
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.Specialized;
+    using System.ComponentModel;
+    using System.Linq;
+    using System.Reflection;
+    using System.Web;
+    using Nest.Searchify.Abstractions;
+    using Nest.Searchify.Extensions;
+    using Newtonsoft.Json;
+
     public static class QueryStringParser<TParameters> where TParameters : class, new()
     {
         public static class TypeParsers

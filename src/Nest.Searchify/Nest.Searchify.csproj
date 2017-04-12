@@ -12,10 +12,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <RestoreSources>https://www.myget.org/F/es-snapback/api/v3/index.json;$(RestoreSources)</RestoreSources>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageId>Nest.Searchify</PackageId>
     <Authors>Phil Oyston, Storm ID</Authors>

@@ -80,6 +80,7 @@ Task("DotNet-MsBuild-Restore")
             .SetConfiguration(configuration)
             .SetVerbosity(Verbosity.Minimal)
             .UseToolVersion(MSBuildToolVersion.VS2017)
+            .WithProperty("RestoreSources", "https://api.nuget.org/v3/index.json;https://www.myget.org/F/es-snapback/api/v3/index.json")
             .WithTarget("Restore")
         );
 });

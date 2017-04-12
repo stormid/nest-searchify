@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Nest.Searchify.Converters;
 using Nest.Searchify.Queries;
 using Nest.Searchify.Queries.Models;
 using Newtonsoft.Json;
@@ -11,7 +10,7 @@ namespace Nest.Searchify.Tests.ParametersTests
     {
         public class TestGeoPointParameters : SearchParameters
         {
-            [JsonConverter(typeof(GeoPointJsonConverter))]
+            [JsonConverter(typeof(GeoLocationJsonConverter))]
             [JsonProperty(PropertyName = "locpt")]
             public string Point { get; set; }
             [JsonConverter(typeof(GeoBoundingBoxJsonConverter))]
@@ -21,7 +20,7 @@ namespace Nest.Searchify.Tests.ParametersTests
         public class TestGeoPointOutParameters : SearchParameters
         {
             [JsonProperty(PropertyName = "locpt")]
-            public GeoPoint Point { get; set; }
+            public GeoLocation Point { get; set; }
             public GeoBoundingBox BBox { get; set; }
         }
 
@@ -52,7 +51,7 @@ namespace Nest.Searchify.Tests.ParametersTests
         {
             var p = new TestGeoPointOutParameters()
             {
-                BBox = "[2.123, -3.213234] [2.123, -3.213234]"
+                BBox = "[2.123,-3.213234][2.123,-3.213234]"
             };
             var json = JsonConvert.SerializeObject(p);
             var p2 = JsonConvert.DeserializeObject<TestGeoPointOutParameters>(json);
@@ -66,11 +65,13 @@ namespace Nest.Searchify.Tests.ParametersTests
         {
             var p = new TestGeoPointParameters()
             {
-                BBox = "[2.123, -3.213234] [2.123, -3.213234]",
+                BBox = "[2.123,-3.213234][2.123,-3.213234]",
                 Point = "2.1,3.4"
             };
             var json = JsonConvert.SerializeObject(p);
             var p2 = JsonConvert.DeserializeObject<TestGeoPointOutParameters>(json);
+            p2.BBox.ToString().Should().BeEquivalentTo(p.BBox);
+            p2.Point.ToString().Should().BeEquivalentTo(p.Point);
         }
 
         [Fact]
@@ -78,11 +79,13 @@ namespace Nest.Searchify.Tests.ParametersTests
         {
             var p = new TestGeoPointOutParameters()
             {
-                BBox = "[2.123, -3.213234] [2.123, -3.213234]",
+                BBox = "[2.123,-3.213234][2.123,-3.213234]",
                 Point = "2.1,3.4"
             };
             var json = JsonConvert.SerializeObject(p);
             var p2 = JsonConvert.DeserializeObject<TestGeoPointParameters>(json);
+            p2.BBox.Should().BeEquivalentTo(p.BBox);
+            p2.Point.Should().BeEquivalentTo(p.Point.ToString());
         }
     }
 }

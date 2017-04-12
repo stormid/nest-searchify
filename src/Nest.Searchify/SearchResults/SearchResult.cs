@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nest.Searchify.Abstractions;
-using Nest.Searchify.SearchAggregations;
 using Newtonsoft.Json;
 
 namespace Nest.Searchify.SearchResults
@@ -25,7 +24,7 @@ namespace Nest.Searchify.SearchResults
         public AggregationsHelper AggregationHelper => Response.Aggs;
 
         [JsonProperty("aggregations")]
-        public IDictionary<string, IAggregation> Aggregations { get; private set; }
+        public IReadOnlyDictionary<string, IAggregate> Aggregations { get; private set; }
 
         #endregion
 
@@ -46,9 +45,11 @@ namespace Nest.Searchify.SearchResults
             Documents = TransformResultCore(Response);
         }
 
-        protected virtual IDictionary<string, IAggregation> AlterAggregations(IDictionary<string, IAggregation> aggregations)
+        protected virtual IReadOnlyDictionary<string, IAggregate> AlterAggregations(IReadOnlyDictionary<string, IAggregate> aggregations)
         {
-            return SearchAggregationParser.Parse(aggregations);
+            return aggregations;
+            // TODO : this could be better in v5!
+            // return SearchAggregationParser.Parse(aggregations);
         }
 
         protected virtual IEnumerable<TDocument> ResponseToDocuments(ISearchResponse<TDocument> response)
@@ -63,9 +64,9 @@ namespace Nest.Searchify.SearchResults
 
         protected abstract IEnumerable<TOutputEntity> TransformResult(IEnumerable<TDocument> entities);
 
-        protected override int GetResponseTimeTaken()
+        protected override long GetResponseTimeTaken()
         {
-            return Response.ElapsedMilliseconds;
+            return Response.Took;
         }
 
         protected override long GetSearchResultTotal()
@@ -87,9 +88,9 @@ namespace Nest.Searchify.SearchResults
             return entities;
         }
 
-        protected override int GetResponseTimeTaken()
+        protected override long GetResponseTimeTaken()
 		{
-			return Response.ElapsedMilliseconds;
+			return Response.Took;
 		}
 
 		protected override long GetSearchResultTotal()

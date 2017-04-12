@@ -9,7 +9,7 @@ namespace Nest.Searchify.Utils
         /// </summary>
         public enum MeasureUnits { Miles, Kilometers };
 
-        public static double Distance(GeoPoint from, GeoPoint to, MeasureUnits units, int decimalPoints = 2)
+        public static double Distance(GeoLocation from, GeoLocation to, MeasureUnits units, int decimalPoints = 2)
         {
             return Distance(from.Latitude, from.Longitude, to.Latitude, to.Longitude, units, decimalPoints);
         }

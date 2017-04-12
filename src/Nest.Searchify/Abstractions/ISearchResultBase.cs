@@ -5,7 +5,7 @@
 	{
 		IPaginationOptions<TParameters> Pagination { get; }
 		TParameters Parameters { get; }
-		int TimeTaken { get; }
+		long TimeTaken { get; }
 
 	}
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using FluentAssertions;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.Queries;
@@ -34,7 +33,7 @@ namespace Nest.Searchify.Tests.ParametersTests
             [JsonProperty("lng")]
             public double Longitude { get; set; }
 
-            public GeoPoint Location { get; set; }
+            public GeoLocation Location { get; set; }
             public SomeOption EnumOptions { get; set; }
         }
         
@@ -54,7 +53,7 @@ namespace Nest.Searchify.Tests.ParametersTests
             var nvc = QueryStringParser<Parameters>.Parse(parameters);
             nvc.Count.Should().Be(paramCount);
 
-            var qs = nvc.ToString();
+            var qs = QueryStringParser<Parameters>.ToQueryString(parameters);
             qs.Should().Be(expected);
         }
 
@@ -70,7 +69,7 @@ namespace Nest.Searchify.Tests.ParametersTests
             var nvc = QueryStringParser<SearchParameters>.Parse(parameters);
             nvc.Count.Should().Be(paramCount);
 
-            var qs = nvc.ToString();
+            var qs = QueryStringParser<SearchParameters>.ToQueryString(parameters);
             qs.Should().Be(expected);
         }
 
@@ -86,14 +85,18 @@ namespace Nest.Searchify.Tests.ParametersTests
             var nvc = QueryStringParser<CustomParameters>.Parse(parameters);
             nvc.Count.Should().Be(paramCount);
 
-            var qs = nvc.ToString();
+            var qs = QueryStringParser<CustomParameters>.ToQueryString(parameters);
             qs.Should().Be(expected);
         }
 
         [Fact]
         public void FromQueryString()
         {
-            var queryString = HttpUtility.ParseQueryString("q=test&options=o1&options=o2&numbers=1&numbers=5&doubles=99.99&doubles=8&lat=-53.3&lng=3.234&location=1,2&sortdir=Asc&enumOptions=optionone");
+#if NETSTANDARD
+            var queryString = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery("q=test&options=o1&options=o2&numbers=1&numbers=5&doubles=99.99&doubles=8&lat=-53.3&lng=3.234&location=1,2&sortdir=Asc&enumOptions=optionone");
+#else
+            var queryString = System.Web.HttpUtility.ParseQueryString("q=test&options=o1&options=o2&numbers=1&numbers=5&doubles=99.99&doubles=8&lat=-53.3&lng=3.234&location=1,2&sortdir=Asc&enumOptions=optionone");
+#endif
             var p = new MyParameters();
 
             QueryStringParser<MyParameters>.Populate(queryString, p);
@@ -116,23 +119,19 @@ namespace Nest.Searchify.Tests.ParametersTests
         [Fact]
         public void ToQueryString()
         {
-            var p = new MyParameters();
-            p.Query = "test";
-            p.Options = new[] {"o1", "o2"};
-            p.Numbers = new[] {1, 5};
-            p.Doubles = new[] { 2.3, 17.5 };
-            p.Latitude = -53.1;
-            p.Longitude = -3;
-            p.Location = GeoPoint.TryCreate(-53.1, -3);
+            var p = new MyParameters
+            {
+                Query = "test",
+                Options = new[] {"o1", "o2"},
+                Numbers = new[] {1, 5},
+                Doubles = new[] {2.3, 17.5},
+                Latitude = -53.1,
+                Longitude = -3,
+                Location = GeoLocation.TryCreate(-53.1, -3)
+            };
 
             var nvc = QueryStringParser<MyParameters>.Parse(p);
             nvc.Count.Should().Be(7);
-
-            foreach (var item in nvc.AllKeys)
-            {
-                Console.WriteLine($"{item} => {nvc.Get(item)}");
-            }
-            Console.WriteLine(nvc);
         }
     }
 

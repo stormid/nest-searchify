@@ -80,7 +80,7 @@ Task("DotNet-MsBuild-Restore")
     .IsDependentOn("Update-Version-Info")
     .Does(() => {
 
-        var restoreSourcesPropertyValue = "\"" +string.Join(";", restoreSources) +"\"";
+        var restoreSourcesPropertyValue = string.Format("\"{0}\"", string.Join(";", restoreSources));
 
         MSBuild(solutionPath, c => c
             .SetConfiguration(configuration)

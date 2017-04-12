@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Reflection;
 
 public static class ReadEmbeddedResourceExtensions
 {
@@ -21,7 +22,7 @@ public static class ReadEmbeddedResourceExtensions
 
     public static Stream ReadFromEmbeddedResource<T>(this string resourceName)
     {
-        var assembly = typeof (T).Assembly;
+        var assembly = typeof (T).GetTypeInfo().Assembly;
         return assembly.GetManifestResourceStream(resourceName);
     }
 }

@@ -41,9 +41,9 @@ namespace Nest.Searchify.Queries
 	    [JsonProperty(PageParameter)]
 	    public int? Page
 	    {
-	        get { return _page; }
-	        set { SetPage(value.GetValueOrDefault(DefaultPage)); }
-	    }
+	        get => _page;
+            set => SetPage(value.GetValueOrDefault(DefaultPage));
+        }
 
 	    public bool HasSort()
 		{
@@ -62,11 +62,6 @@ namespace Nest.Searchify.Queries
 	    private void SetPage(int page)
 	    {
 	        _page = page <= 0 ? DefaultPage : page;
-	    }
-
-	    public object Clone()
-	    {
-	        return MemberwiseClone();
 	    }
 	}
 }

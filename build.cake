@@ -12,6 +12,10 @@ var solutionPath            = MakeAbsolute(File(Argument("solutionPath", "./Nest
 // PREPARATION
 //////////////////////////////////////////////////////////////////////
 
+var restoreSources          = new[] {
+    "https://api.nuget.org/v3/index.json", "https://www.myget.org/F/es-snapback/api/v3/index.json"
+};
+
 var testAssemblies          = "./tests/**/bin/" +configuration +"/*.Tests.dll";
 
 var artifacts               = MakeAbsolute(Directory(Argument("artifactPath", "./artifacts")));
@@ -35,7 +39,7 @@ Setup(ctx => {
     {
         DeleteDirectory(artifacts, true);
     }
-    
+
     EnsureDirectoryExists(artifacts);
     
     var binDirs = GetDirectories(solutionPath.GetDirectory() +@"\src\**\bin");
@@ -76,11 +80,13 @@ Task("DotNet-MsBuild-Restore")
     .IsDependentOn("Update-Version-Info")
     .Does(() => {
 
+        var restoreSourcesPropertyValue = "\"" +string.Join(";", restoreSources) +"\"";
+
         MSBuild(solutionPath, c => c
             .SetConfiguration(configuration)
             .SetVerbosity(Verbosity.Minimal)
             .UseToolVersion(MSBuildToolVersion.VS2017)
-            .WithProperty("RestoreSources", "https://api.nuget.org/v3/index.json;https://www.myget.org/F/es-snapback/api/v3/index.json")
+            .WithProperty("RestoreSources", restoreSourcesPropertyValue)
             .WithTarget("Restore")
         );
 });

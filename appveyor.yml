@@ -1,12 +1,12 @@
 version: '{build}'
-os: Visual Studio 2015
+os: Visual Studio 2017
 init:
 - cmd: git config --global core.autocrlf true
-cache: 
-- packages -> src\**\packages.config
-- tools -> tools\packages.config
 build_script:
-- ps: .\build.ps1 -Target "Default" -Verbosity "Normal" -Configuration "Release"
+- ps: .\build.ps1 -Target "CI" -Verbosity "Normal" -Configuration "Release"
 test: off
-artifacts:
-- path: artifacts\*.nupkg
+deploy:
+- provider: Environment
+  name: MyGet (ES Snapback)
+  on:
+    branch: /release\/.+/

@@ -63,11 +63,8 @@ namespace Nest.Searchify.Queries
             var parameters = ModifyParameters(Parameters);
 
             ApplyPaging(descriptor, parameters);
-
-            if (!string.IsNullOrWhiteSpace(parameters.SortBy))
-            {
-                ApplySorting(descriptor, parameters);
-            }
+            
+            descriptor.Sort(s => ApplySortingCore(s, parameters));
 
             descriptor.Query(q => BuildQueryCore(q, parameters));
 
@@ -95,17 +92,19 @@ namespace Nest.Searchify.Queries
                 .Size(parameters.Size);
         }
 
-        protected virtual void ApplySorting(SearchDescriptor<TDocument> descriptor, TParameters parameters)
+        protected virtual SortDescriptor<TDocument> ApplySortingCore(SortDescriptor<TDocument> descriptor, TParameters parameters)
         {
-            if (parameters.HasSort())
-            {
-                descriptor.Sort(sort => ModifySortCore(sort, SortByField(parameters.SortBy), GetSortOrderFromParameters()));
-            }
+            var sortField = string.IsNullOrWhiteSpace(parameters.SortBy) ? null : SortByField(parameters.SortBy);
+            return ApplySorting(descriptor, parameters, sortField, GetSortOrderFromParameters());
         }
 
-        protected virtual IPromise<IList<ISort>> ModifySortCore(SortDescriptor<TDocument> descriptor, Field sortBy, SortOrder sortOrder)
+        protected virtual SortDescriptor<TDocument> ApplySorting(SortDescriptor<TDocument> descriptor, TParameters parameters, Field sortField, SortOrder sortOrder)
         {
-            return descriptor.Field(sortBy, sortOrder);
+            if (parameters.HasSort() && sortField != null)
+            {
+                return descriptor.Field(sortField, sortOrder);
+            }
+            return null;
         }
 
         protected SortOrder GetSortOrderFromParameters()
@@ -121,7 +120,7 @@ namespace Nest.Searchify.Queries
 
         protected virtual Field SortByField(string sortBy)
         {
-            return $"{sortBy}.sort";
+            return string.IsNullOrWhiteSpace(sortBy) ? null : $"{sortBy}.keyword";
         }
     }
 }

@@ -1,10 +1,11 @@
 using System;
+using Nest.Searchify.Abstractions;
 using Nest.Searchify.Extensions;
 
 namespace Nest.Searchify
 {
 	public class FilterField
-	{
+    {
 		public const string DefaultDelimiter = "||";
 
 		public static FilterField Empty(string text = "N/A", string delimiter = DefaultDelimiter)
@@ -51,7 +52,12 @@ namespace Nest.Searchify
 			};
 		}
 
-	    public static implicit operator FilterField(string value)
+        public static implicit operator string(FilterField value)
+        {
+            return value.Key;
+        }
+
+        public static implicit operator FilterField(string value)
 	    {
 	        return Create(value);
 	    }
@@ -61,16 +67,20 @@ namespace Nest.Searchify
 			Delimiter = delimiter;
 		}
 
-		[Text(Index = false)]
-		public string Key => $"{Value}{Delimiter}{Text}";
+        protected virtual string GetKey()
+        {
+            return $"{Value}{Delimiter}{Text}";
+        }
 
-        [Text]
+        [Keyword]
+        public string Key => GetKey();
+
 	    public string Text { get; set; }
 
-		[Text(Index = false)]
-		public string Value { get; set; }
+        [Keyword]
+        public string Value { get; set; }
 
-		[Text(Index = false)]
-		public string Delimiter { get; set; }
+        [Keyword(Ignore = true)]
+        public string Delimiter { get; set; }
 	}
 }

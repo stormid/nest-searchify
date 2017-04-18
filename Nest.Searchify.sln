@@ -11,6 +11,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nest.Searchify", "src\Nest.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nest.Searchify.Tests", "tests\Nest.Searchify.Tests\Nest.Searchify.Tests.csproj", "{BEE12680-9932-4650-B922-EC72CF83C017}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{FDF0EBD3-E9E3-4875-9856-4518DBC2B6E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchifyCoreSample", "sample\SearchifyCoreSample\SearchifyCoreSample.csproj", "{613E380B-2CB0-4F5A-B82E-9CE088F33279}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +29,10 @@ Global
 		{BEE12680-9932-4650-B922-EC72CF83C017}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BEE12680-9932-4650-B922-EC72CF83C017}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BEE12680-9932-4650-B922-EC72CF83C017}.Release|Any CPU.Build.0 = Release|Any CPU
+		{613E380B-2CB0-4F5A-B82E-9CE088F33279}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{613E380B-2CB0-4F5A-B82E-9CE088F33279}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{613E380B-2CB0-4F5A-B82E-9CE088F33279}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{613E380B-2CB0-4F5A-B82E-9CE088F33279}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,5 +40,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{B4874200-235E-4918-9F1F-1E3C67F7D199} = {298246C4-F1D9-4472-A630-4A46F473FABB}
 		{BEE12680-9932-4650-B922-EC72CF83C017} = {0F5F1469-6918-43D3-A296-87E3FA08CF23}
+		{613E380B-2CB0-4F5A-B82E-9CE088F33279} = {FDF0EBD3-E9E3-4875-9856-4518DBC2B6E4}
 	EndGlobalSection
 EndGlobal

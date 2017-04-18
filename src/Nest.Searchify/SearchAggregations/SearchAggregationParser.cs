@@ -5,62 +5,36 @@ namespace Nest.Searchify.SearchAggregations
 {
     internal static class SearchAggregationParser
     {
-        public static IDictionary<string, IAggregation> Parse(IDictionary<string, IAggregation> aggregations)
+        public static IDictionary<string, IAggregate> Parse(IReadOnlyDictionary<string, IAggregate> aggregations)
         {
             if (aggregations == null || !aggregations.Any()) return null;
             var keyValuePairs = ParseCore(aggregations);
             return keyValuePairs.ToDictionary(k => k.Key, v => v.Value);
         }
 
-        private static IEnumerable<KeyValuePair<string, IAggregation>> ParseCore(IDictionary<string, IAggregation> aggregations)
+        private static IEnumerable<KeyValuePair<string, IAggregate>> ParseCore(IReadOnlyDictionary<string, IAggregate> aggregations)
         {
-            // TODO : yes, this is a mess
+            var d = new Dictionary<string, IAggregate>();
             foreach (var agg in aggregations)
             {
-                if (agg.Value is Bucket) // if its a bucket
+                var key = agg.Key;
+                var value = agg.Value;
+                switch (agg.Value)
                 {
-                    var bucket = agg.Value as Bucket;
-                    if (bucket.Items.All(x => x.GetType() == typeof(KeyItem)))
-                    {
-                        yield return TermBucket.From(agg);
-                    }
-                    else if (bucket.Items.All(x => x.GetType() == typeof (RangeItem)))
-                    {
-                        yield return new KeyValuePair<string, IAggregation>(agg.Key, new RangeBucket(bucket.Items));
-                    }
-                    else if (bucket.Items.All(x => x.GetType() == typeof (SignificantTermItem)))
-                    {
-                        yield return
-                            new KeyValuePair<string, IAggregation>(agg.Key, new SignificantTermBucket(bucket.Items));
-                    }
-                    else
-                    {
-                        yield return agg;
-                    }
+                    case BucketAggregate b:
+                        switch (b.Items)
+                        {
+                            case IReadOnlyCollection<KeyedBucket<object>> k:
+                                // term bucket
+                                value = b;
+                                break;
+                        }
+
+                        break;
                 }
-                else if (agg.Value is SingleBucket)
-                {
-                    var bucket = agg.Value as SingleBucket;
-
-                    if (bucket.Aggregations != null)
-                    {
-                        var subAggs = ParseCore(bucket.Aggregations)
-                            .ToDictionary(x => x.Key, y => y.Value);
-
-                        yield return new KeyValuePair<string, IAggregation>(agg.Key, new SingleBucket(subAggs));
-                    }
-                    else
-                    {
-                        yield return agg; 
-                    }
-
-
-                }
-                else
-                {
-                    yield return agg;
-                }
+                d.Add(key, value);
             }
+            return d;
         }
     }
 }

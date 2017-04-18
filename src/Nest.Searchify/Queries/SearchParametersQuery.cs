@@ -1,4 +1,6 @@
-﻿using Nest.Searchify.Abstractions;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Nest.Searchify.Abstractions;
 using Nest.Searchify.SearchResults;
 
 namespace Nest.Searchify.Queries
@@ -23,17 +25,35 @@ namespace Nest.Searchify.Queries
         public SearchParametersQuery(TSearchParameters parameters) : base(parameters)
         {
         }
-        
-        protected virtual QueryContainer WithQueryCore(IQueryContainer query, TSearchParameters parameters)
+
+        protected virtual QueryContainer WithQuery(IQueryContainer query, string queryTerm)
         {
-            return !string.IsNullOrWhiteSpace(parameters.Query)
-                ? Query<TDocument>.QueryString(q => q.Query(parameters.Query))
+            return !string.IsNullOrWhiteSpace(queryTerm)
+                ? Query<TDocument>.QueryString(q => q.Query(queryTerm))
                 : Query<TDocument>.MatchAll();
         }
-        
+
+        protected virtual QueryContainer BuildQuery(TSearchParameters parameters, QueryContainer query, QueryContainer filters)
+        {
+            return Query<TDocument>
+                .Bool(b => b
+                    .Must(query)
+                    .Filter(filters)
+                );
+        }
+
+        protected virtual QueryContainer WithFilters(IQueryContainer query, TSearchParameters parameters)
+        {
+            return null;
+        }
+
         protected sealed override QueryContainer BuildQueryCore(QueryContainer query, TSearchParameters parameters)
         {
-            return WithQueryCore(query, parameters);
+            return BuildQuery(
+                parameters,
+                WithQuery(query, parameters.Query),
+                WithFilters(query, parameters)
+            );
         }
     }
 }

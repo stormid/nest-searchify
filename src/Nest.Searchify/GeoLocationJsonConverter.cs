@@ -2,15 +2,15 @@ using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Nest.Searchify.Converters
+namespace Nest.Searchify
 {
-    public sealed class GeoPointJsonConverter : JsonConverter
+    public sealed class GeoLocationJsonConverter : JsonConverter
     {
         // public override bool CanWrite => false;
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            GeoPoint point = value as GeoPoint ?? value as string;
+            var point = value as GeoLocation ?? value as string;
 
             if (point != null)
             {
@@ -27,16 +27,16 @@ namespace Nest.Searchify.Converters
         {
             if (reader.TokenType == JsonToken.StartObject)
             {
-                var geoPointJObject = JObject.Load(reader);
-                var lat = geoPointJObject.Value<double>("lat");
-                var lon = geoPointJObject.Value<double>("lon");
-                var point = GeoPoint.TryCreate(lat, lon);
+                var geoLocationJObject = JObject.Load(reader);
+                var lat = geoLocationJObject.Value<double>("lat");
+                var lon = geoLocationJObject.Value<double>("lon");
+                var point = GeoLocation.TryCreate(lat, lon);
                 if (objectType == typeof(string)) return point.ToString();
                 return point;
             }
             if (reader.TokenType == JsonToken.String)
             {
-                GeoPoint point = (string)reader.Value;
+                GeoLocation point = (string)reader.Value;
                 return point;
             }
             return null;
@@ -44,7 +44,7 @@ namespace Nest.Searchify.Converters
 
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(GeoPoint) || objectType == typeof(string);
+            return objectType == typeof(GeoLocation) || objectType == typeof(string);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Nest.Searchify.Extensions
             var parameters = pagination.ForPage(page);
             if (parameters != null)
             {
-                var ub = new UriBuilder(baseUri) { Query = QueryStringParser<TParameters>.Parse(parameters).ToString() };
+                var ub = new UriBuilder(baseUri) { Query = QueryStringParser<TParameters>.ToQueryString(parameters) };
                 return ub.Uri;
             }
             return baseUri;
@@ -33,7 +33,7 @@ namespace Nest.Searchify.Extensions
             var nextPage = pagination.NextPage();
             if (nextPage != null)
             {
-                var ub = new UriBuilder(baseUri) {Query = QueryStringParser<TParameters>.Parse(nextPage).ToString()};
+                var ub = new UriBuilder(baseUri) {Query = QueryStringParser<TParameters>.ToQueryString(nextPage)};
                 return ub.Uri;
             }
             return baseUri;
@@ -47,7 +47,7 @@ namespace Nest.Searchify.Extensions
             {
                 var ub = new UriBuilder(baseUri)
                 {
-                    Query = QueryStringParser<TParameters>.Parse(previousPage).ToString()
+                    Query = QueryStringParser<TParameters>.ToQueryString(previousPage)
                 };
                 return ub.Uri;
             }

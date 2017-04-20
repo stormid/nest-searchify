@@ -1,12 +1,33 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using Nest.Searchify.Abstractions;
-using Nest.Searchify.SearchAggregations;
 using Newtonsoft.Json;
 
 namespace Nest.Searchify.SearchResults
 {
+    public struct SearchifyKey
+    {
+        public string Key { get; }
+        public string Value { get; }
+        public string Text { get; }
+
+        public SearchifyKey(string key, string delimiter = "||")
+        {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
+            var values = key.Split(new[] { delimiter }, StringSplitOptions.RemoveEmptyEntries);
+            Key = key;
+            Value = values.ElementAtOrDefault(0);
+            Text = values.ElementAtOrDefault(1);
+        }
+    }
+
     public abstract class SearchResult<TParameters, TDocument, TOutputEntity> : SearchResultBase<TParameters>, ISearchResult<TParameters, TOutputEntity>
         where TDocument : class
         where TOutputEntity : class
@@ -25,7 +46,7 @@ namespace Nest.Searchify.SearchResults
         public AggregationsHelper AggregationHelper => Response.Aggs;
 
         [JsonProperty("aggregations")]
-        public IDictionary<string, IAggregation> Aggregations { get; private set; }
+        public IReadOnlyDictionary<string, IAggregate> Aggregations { get; private set; }
 
         #endregion
 
@@ -46,9 +67,14 @@ namespace Nest.Searchify.SearchResults
             Documents = TransformResultCore(Response);
         }
 
-        protected virtual IDictionary<string, IAggregation> AlterAggregations(IDictionary<string, IAggregation> aggregations)
+        protected IReadOnlyDictionary<string, IAggregate> AlterAggregationsCore(IReadOnlyDictionary<string, IAggregate> aggregations)
         {
-            return SearchAggregationParser.Parse(aggregations);
+            return AlterAggregations(aggregations);
+        }
+
+        protected virtual IReadOnlyDictionary<string, IAggregate> AlterAggregations(IReadOnlyDictionary<string, IAggregate> aggregations)
+        {
+            return aggregations;
         }
 
         protected virtual IEnumerable<TDocument> ResponseToDocuments(ISearchResponse<TDocument> response)
@@ -63,9 +89,9 @@ namespace Nest.Searchify.SearchResults
 
         protected abstract IEnumerable<TOutputEntity> TransformResult(IEnumerable<TDocument> entities);
 
-        protected override int GetResponseTimeTaken()
+        protected override long GetResponseTimeTaken()
         {
-            return Response.ElapsedMilliseconds;
+            return Response.Took;
         }
 
         protected override long GetSearchResultTotal()
@@ -87,9 +113,9 @@ namespace Nest.Searchify.SearchResults
             return entities;
         }
 
-        protected override int GetResponseTimeTaken()
+        protected override long GetResponseTimeTaken()
 		{
-			return Response.ElapsedMilliseconds;
+			return Response.Took;
 		}
 
 		protected override long GetSearchResultTotal()

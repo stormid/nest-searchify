@@ -13,16 +13,16 @@ namespace Nest.Searchify.Queries.Models
     {
         private static readonly Regex Pattern = new Regex(@"^\[(?<topLeft>(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?))\]\s?\[(?<bottomRight>(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?))\]$", RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace);
         [JsonProperty("topLeft")]
-        public GeoPoint TopLeft { get; set; }
+        public GeoLocation TopLeft { get; set; }
         [JsonProperty("bottomRight")]
-        public GeoPoint BottomRight { get; set; }
+        public GeoLocation BottomRight { get; set; }
 
         public GeoBoundingBox()
         {
             
         }
 
-        public GeoBoundingBox(GeoPoint topLeft, GeoPoint bottomRight) : this()
+        public GeoBoundingBox(GeoLocation topLeft, GeoLocation bottomRight) : this()
         {
             BottomRight = bottomRight;
             TopLeft = topLeft;
@@ -34,8 +34,8 @@ namespace Nest.Searchify.Queries.Models
             {
                 var match = Pattern.Match(value);
                 if (!match.Success) throw new FormatException("Unable to create GeoBoundingBox from input string, string must in in the format '[topLeftLat,topleftLon][bottomRightLat,bottomRightLon]'");
-                GeoPoint topLeft = match.Groups["topLeft"].Value;
-                GeoPoint bottomRight = match.Groups["bottomRight"].Value;
+                GeoLocation topLeft = match.Groups["topLeft"].Value;
+                GeoLocation bottomRight = match.Groups["bottomRight"].Value;
 
                 return new GeoBoundingBox(topLeft, bottomRight);
             }

@@ -1,16 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nest.Searchify", "src\Nest.Searchify\Nest.Searchify.csproj", "{A39CF2A9-75DA-409B-BEAF-F4F90C0C45AF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{298246C4-F1D9-4472-A630-4A46F473FABB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nest.Searchify.Tests", "tests\Nest.Searchify.Tests\Nest.Searchify.Tests.csproj", "{71F4C4D1-1C21-4789-B553-CC5ADC4E3D92}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0F5F1469-6918-43D3-A296-87E3FA08CF23}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EAADB552-031D-4175-8401-9CEFD4B6C3DF}"
-	ProjectSection(SolutionItems) = preProject
-		cake.config = cake.config
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nest.Searchify", "src\Nest.Searchify\Nest.Searchify.csproj", "{B4874200-235E-4918-9F1F-1E3C67F7D199}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nest.Searchify.Tests", "tests\Nest.Searchify.Tests\Nest.Searchify.Tests.csproj", "{BEE12680-9932-4650-B922-EC72CF83C017}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{FDF0EBD3-E9E3-4875-9856-4518DBC2B6E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchifyCoreSample", "sample\SearchifyCoreSample\SearchifyCoreSample.csproj", "{613E380B-2CB0-4F5A-B82E-9CE088F33279}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,16 +21,25 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A39CF2A9-75DA-409B-BEAF-F4F90C0C45AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A39CF2A9-75DA-409B-BEAF-F4F90C0C45AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A39CF2A9-75DA-409B-BEAF-F4F90C0C45AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A39CF2A9-75DA-409B-BEAF-F4F90C0C45AF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{71F4C4D1-1C21-4789-B553-CC5ADC4E3D92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{71F4C4D1-1C21-4789-B553-CC5ADC4E3D92}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{71F4C4D1-1C21-4789-B553-CC5ADC4E3D92}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{71F4C4D1-1C21-4789-B553-CC5ADC4E3D92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4874200-235E-4918-9F1F-1E3C67F7D199}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4874200-235E-4918-9F1F-1E3C67F7D199}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4874200-235E-4918-9F1F-1E3C67F7D199}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4874200-235E-4918-9F1F-1E3C67F7D199}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEE12680-9932-4650-B922-EC72CF83C017}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEE12680-9932-4650-B922-EC72CF83C017}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEE12680-9932-4650-B922-EC72CF83C017}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEE12680-9932-4650-B922-EC72CF83C017}.Release|Any CPU.Build.0 = Release|Any CPU
+		{613E380B-2CB0-4F5A-B82E-9CE088F33279}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{613E380B-2CB0-4F5A-B82E-9CE088F33279}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{613E380B-2CB0-4F5A-B82E-9CE088F33279}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{613E380B-2CB0-4F5A-B82E-9CE088F33279}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B4874200-235E-4918-9F1F-1E3C67F7D199} = {298246C4-F1D9-4472-A630-4A46F473FABB}
+		{BEE12680-9932-4650-B922-EC72CF83C017} = {0F5F1469-6918-43D3-A296-87E3FA08CF23}
+		{613E380B-2CB0-4F5A-B82E-9CE088F33279} = {FDF0EBD3-E9E3-4875-9856-4518DBC2B6E4}
 	EndGlobalSection
 EndGlobal

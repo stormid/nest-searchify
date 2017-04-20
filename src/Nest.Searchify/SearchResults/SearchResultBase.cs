@@ -14,13 +14,13 @@ namespace Nest.Searchify.SearchResults
 		[JsonProperty("pagination")]
 		public IPaginationOptions<TParameters> Pagination => _pagination ?? (_pagination = new PaginationOptions<TParameters>(Parameters, GetSearchResultTotal()));
 
-        protected abstract int GetResponseTimeTaken();
+        protected abstract long GetResponseTimeTaken();
 		protected abstract long GetSearchResultTotal();
 
 		[JsonProperty("parameters")]
 		public TParameters Parameters { get; }
 
 		[JsonProperty("timeTaken")]
-		public int TimeTaken => GetResponseTimeTaken();
+		public long TimeTaken => GetResponseTimeTaken();
 	}
 }

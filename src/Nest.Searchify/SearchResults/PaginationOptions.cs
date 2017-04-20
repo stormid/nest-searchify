@@ -57,15 +57,15 @@ namespace Nest.Searchify.SearchResults
 
 	    public TParameters FirstPage()
 	    {
-            var p = (TParameters)_parameters.Clone();
+	        var p = QueryStringParser<TParameters>.Copy(_parameters);
             p.Page = 1;
             return p;
         }
 
         public TParameters NextPage()
-	    {
+        {
 	        if (!HasNextPage) return null;
-	        var p = (TParameters)_parameters.Clone();
+            var p = QueryStringParser<TParameters>.Copy(_parameters);
 	        p.Page += 1;
 	        return p;
 	    }
@@ -73,7 +73,7 @@ namespace Nest.Searchify.SearchResults
 	    public TParameters PreviousPage()
 	    {
 	        if (!HasPreviousPage) return null;
-	        var p = (TParameters)_parameters.Clone();
+	        var p = QueryStringParser<TParameters>.Copy(_parameters);
 	        p.Page -= 1;
 	        return p;
         }
@@ -81,18 +81,31 @@ namespace Nest.Searchify.SearchResults
         public TParameters ForPage(int page)
         {
             if (!HasPage(page)) return null;
-            var p = (TParameters)_parameters.Clone();
+            var p = QueryStringParser<TParameters>.Copy(_parameters);
             p.Page = page;
             return p;
         }
 
 	    public TParameters LastPage()
 	    {
-            var p = (TParameters)_parameters.Clone();
+	        var p = QueryStringParser<TParameters>.Copy(_parameters);
             p.Page = (int)Pages;
             return p;
         }
 
+#if NETSTANDARD
+	    public IEnumerable<Tuple<int, Dictionary<string, Microsoft.Extensions.Primitives.StringValues>>> PagingGroup(int range = 5)
+	    {
+	        var fromPage = (Page - range) <= 0 ? 1 : Page - range;
+	        var toPage = (Page + range) > Pages ? Pages : Page + range;
+
+	        for (var page = fromPage; page <= toPage; page++)
+	        {
+	            var nvc = QueryStringParser<TParameters>.Parse(ForPage(page));
+	            yield return new Tuple<int, Dictionary<string, Microsoft.Extensions.Primitives.StringValues>>(page, nvc);
+	        }
+	    }
+#else
         public IEnumerable<Tuple<int, NameValueCollection>> PagingGroup(int range = 5)
         {
             var fromPage = (Page - range) <= 0 ? 1 : Page - range;
@@ -104,5 +117,6 @@ namespace Nest.Searchify.SearchResults
                 yield return new Tuple<int, NameValueCollection>(page, nvc);
             }
         }
+#endif
     }
 }

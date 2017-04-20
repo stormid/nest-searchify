@@ -3,7 +3,7 @@ using Nest.Searchify.Queries.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Nest.Searchify.Converters
+namespace Nest.Searchify
 {
     public class GeoBoundingBoxJsonConverter : JsonConverter
     {
@@ -26,8 +26,8 @@ namespace Nest.Searchify.Converters
             if (reader.TokenType == JsonToken.StartObject)
             {
                 var o = JObject.Load(reader);
-                var topLeft = o.GetValue("topLeft")?.ToObject<GeoPoint>();
-                var bottomRight = o.GetValue("bottomRight")?.ToObject<GeoPoint>();
+                var topLeft = o.GetValue("topLeft")?.ToObject<GeoLocation>();
+                var bottomRight = o.GetValue("bottomRight")?.ToObject<GeoLocation>();
                 var bbox = new GeoBoundingBox(topLeft, bottomRight);
                 if (objectType == typeof(string)) return bbox.ToString();
                 return bbox;

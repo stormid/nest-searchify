@@ -8,6 +8,6 @@ namespace Nest.Searchify.Abstractions
     {
         IEnumerable<TReturnAs> Documents { get; }
         AggregationsHelper AggregationHelper { get; }
-        IDictionary<string, IAggregation> Aggregations { get; }
+        IReadOnlyDictionary<string, IAggregate> Aggregations { get; }
     }
 }

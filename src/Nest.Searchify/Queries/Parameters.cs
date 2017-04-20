@@ -36,20 +36,19 @@ namespace Nest.Searchify.Queries
         [JsonProperty(SortDirectionParameter)]
         public SortDirectionOption? SortDirection { get; set; }
 
-	    private int? _page;
+	    private int? page;
         [DefaultValue(DefaultPage)]
 	    [JsonProperty(PageParameter)]
 	    public int? Page
 	    {
-	        get { return _page; }
-	        set { SetPage(value.GetValueOrDefault(DefaultPage)); }
-	    }
+	        get => page;
+            set => SetPage(value.GetValueOrDefault(DefaultPage));
+        }
 
-	    public bool HasSort()
-		{
+	    public virtual bool HasSort()
+	    {
 			return !string.IsNullOrWhiteSpace(SortBy);
 		}
-        
 
 	    public Parameters() : this(DefaultPageSize, DefaultPage) { }
 
@@ -61,12 +60,7 @@ namespace Nest.Searchify.Queries
 
 	    private void SetPage(int page)
 	    {
-	        _page = page <= 0 ? DefaultPage : page;
-	    }
-
-	    public object Clone()
-	    {
-	        return MemberwiseClone();
+	        this.page = page <= 0 ? DefaultPage : page;
 	    }
 	}
 }

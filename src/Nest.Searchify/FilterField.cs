@@ -1,10 +1,11 @@
 using System;
+using Nest.Searchify.Abstractions;
 using Nest.Searchify.Extensions;
 
 namespace Nest.Searchify
 {
 	public class FilterField
-	{
+    {
 		public const string DefaultDelimiter = "||";
 
 		public static FilterField Empty(string text = "N/A", string delimiter = DefaultDelimiter)
@@ -13,10 +14,11 @@ namespace Nest.Searchify
 			return Create(text, text.ToUrl(), delimiter);
 		}
 
-		public static FilterField Create(Enum value, string delimiter = DefaultDelimiter)
-		{
-			return Create(value.ToString("G"), value.ToString("D"), delimiter);
-		}
+        public static FilterField Create(Enum value, string delimiter = DefaultDelimiter)
+        {
+            return Create(value.ToString("G"), value.ToString("D"), delimiter);
+        }
+
         public static FilterField CreateWithCustomDelimiter(string text, string delimiter)
         {
             return CreateWithCustomDelimiter(text, text.ToUrl(), delimiter);
@@ -50,7 +52,12 @@ namespace Nest.Searchify
 			};
 		}
 
-	    public static implicit operator FilterField(string value)
+        public static implicit operator string(FilterField value)
+        {
+            return value.Key;
+        }
+
+        public static implicit operator FilterField(string value)
 	    {
 	        return Create(value);
 	    }
@@ -60,15 +67,20 @@ namespace Nest.Searchify
 			Delimiter = delimiter;
 		}
 
-		[ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
-		public string Key => $"{Value}{Delimiter}{Text}";
+        protected virtual string GetKey()
+        {
+            return $"{Value}{Delimiter}{Text}";
+        }
+
+        [Keyword]
+        public string Key => GetKey();
 
 	    public string Text { get; set; }
 
-		[ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
-		public string Value { get; set; }
+        [Keyword]
+        public string Value { get; set; }
 
-		[ElasticProperty(Index = FieldIndexOption.NotAnalyzed)]
-		public string Delimiter { get; set; }
+        [Keyword(Ignore = true)]
+        public string Delimiter { get; set; }
 	}
 }

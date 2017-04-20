@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.SearchResults;
 
@@ -13,23 +13,34 @@ namespace Nest.Searchify.Queries
         public ParametersQuery(TParameters parameters) : base(parameters) { }
     }
 
-    public partial class ParametersQuery<TParameters, TDocument, TSearchResult, TOutputEntity> : SearchResultQuery<TParameters, TDocument, TSearchResult, TOutputEntity>
+    public class ParametersQuery<TParameters, TDocument, TSearchResult, TOutputEntity> : SearchResultQuery<TParameters, TDocument, TSearchResult, TOutputEntity>
         where TParameters : class, IPagingParameters, ISortingParameters, new()
         where TDocument : class
         where TOutputEntity : class
         where TSearchResult : SearchResult<TParameters, TDocument, TOutputEntity>
     {
-        public ParametersQuery(NameValueCollection parameters) : base(QueryStringParser<TParameters>.Parse(parameters))
+#if !NETSTANDARD
+        public ParametersQuery() : this(new System.Collections.Specialized.NameValueCollection())
         {
         }
+
+        public ParametersQuery(System.Collections.Specialized.NameValueCollection parameters) : base(QueryStringParser<TParameters>.Parse(parameters))
+        {
+        }
+#else
+        public ParametersQuery() : this(Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(""))
+        {
+        }
+
+        public ParametersQuery(Dictionary<string, Microsoft.Extensions.Primitives.StringValues> parameters) : base(QueryStringParser<TParameters>.Parse(parameters))
+        {
+        }
+#endif
 
         public ParametersQuery(TParameters parameters) : base(parameters)
         {
         }
 
-        public ParametersQuery() : this(new NameValueCollection())
-        {
-        }
 
         protected virtual TParameters ModifyParameters(TParameters parameters)
         {
@@ -52,11 +63,8 @@ namespace Nest.Searchify.Queries
             var parameters = ModifyParameters(Parameters);
 
             ApplyPaging(descriptor, parameters);
-
-            if (!string.IsNullOrWhiteSpace(parameters.SortBy))
-            {
-                ApplySorting(descriptor, parameters);
-            }
+            
+            descriptor.Sort(s => ApplySortingCore(s, parameters));
 
             descriptor.Query(q => BuildQueryCore(q, parameters));
 
@@ -67,12 +75,12 @@ namespace Nest.Searchify.Queries
             return descriptor;
         }
 
-        private AggregationDescriptor<TDocument> ApplyAggregationsCore(AggregationDescriptor<TDocument> descriptor, TParameters parameters)
+        private AggregationContainerDescriptor<TDocument> ApplyAggregationsCore(AggregationContainerDescriptor<TDocument> descriptor, TParameters parameters)
         {
             return ApplyAggregations(descriptor, parameters);
         }
 
-        protected virtual AggregationDescriptor<TDocument> ApplyAggregations(AggregationDescriptor<TDocument> descriptor, TParameters parameters)
+        protected virtual AggregationContainerDescriptor<TDocument> ApplyAggregations(AggregationContainerDescriptor<TDocument> descriptor, TParameters parameters)
         {
             return descriptor;
         }
@@ -84,17 +92,19 @@ namespace Nest.Searchify.Queries
                 .Size(parameters.Size);
         }
 
-        protected virtual void ApplySorting(SearchDescriptor<TDocument> descriptor, TParameters parameters)
+        protected virtual SortDescriptor<TDocument> ApplySortingCore(SortDescriptor<TDocument> descriptor, TParameters parameters)
         {
-            if (parameters.HasSort())
-            {
-                descriptor.Sort(sort => ModifySortCore(WithSort(sort, parameters)));
-            }
+            var sortField = string.IsNullOrWhiteSpace(parameters.SortBy) ? null : SortByField(parameters.SortBy);
+            return ApplySorting(descriptor, parameters, sortField, GetSortOrderFromParameters());
         }
 
-        protected virtual IFieldSort ModifySortCore(IFieldSort withSort)
+        protected virtual SortDescriptor<TDocument> ApplySorting(SortDescriptor<TDocument> descriptor, TParameters parameters, Field sortField, SortOrder sortOrder)
         {
-            return withSort;
+            if (parameters.HasSort() && sortField != null)
+            {
+                return descriptor.Field(sortField, sortOrder);
+            }
+            return null;
         }
 
         protected SortOrder GetSortOrderFromParameters()
@@ -108,16 +118,9 @@ namespace Nest.Searchify.Queries
             }
         }
 
-        protected virtual string SortByField(string sortBy)
+        protected virtual Field SortByField(string sortBy)
         {
-            return $"{sortBy}.sort";
-        }
-
-        private IFieldSort WithSort(SortFieldDescriptor<TDocument> sort, TParameters parameters)
-        {
-            return sort
-                .OnField(SortByField(parameters.SortBy))
-                .Order(GetSortOrderFromParameters());
+            return string.IsNullOrWhiteSpace(sortBy) ? null : $"{sortBy}.keyword";
         }
     }
 }

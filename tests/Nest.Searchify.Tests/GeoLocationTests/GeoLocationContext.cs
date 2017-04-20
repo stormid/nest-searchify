@@ -1,17 +1,20 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using Elasticsearch.Net;
 using FluentAssertions;
+using Nest.Searchify.Converters;
+using Nest.Searchify.Queries;
 using Nest.Searchify.Utils;
 using Newtonsoft.Json;
 using Xunit;
 
 namespace Nest.Searchify.Tests.GeoLocationTests
 {
-    public class GeoLocationContext
+    public class GeoLocationParameterContext
     {
         [Theory]
         [InlineData("0,0", "0,0", 0.00)]
@@ -19,8 +22,8 @@ namespace Nest.Searchify.Tests.GeoLocationTests
         [InlineData("55.9740046,-3.1883059", "56.462018,-2.970721000000026", 34.75)]
         public void WhenCalculatingDistanceBetweenTwoPoints(string from, string to, double distance)
         {
-            GeoLocation fromPoint = from;
-            GeoLocation toPoint = to;
+            GeoLocationParameter fromPoint = from;
+            GeoLocationParameter toPoint = to;
 
             var result = GeoMath.Distance(fromPoint.Latitude, fromPoint.Longitude, toPoint.Latitude, toPoint.Longitude,
                 GeoMath.MeasureUnits.Miles);
@@ -28,14 +31,14 @@ namespace Nest.Searchify.Tests.GeoLocationTests
             result.Should().Be(distance);
         }
 
-        public class GeoLocationCreation
+        public class GeoLocationParameterCreation
         {
             [Fact]
-            public void WhenAttemptingToCreateAGeoLocationFromEmptyString()
+            public void WhenAttemptingToCreateAGeoLocationParameterFromEmptyString()
             {
                 Assert.Throws<ArgumentNullException>(() =>
                 {
-                    GeoLocation point = "";
+                    GeoLocationParameter point = "";
                 });
             }
 
@@ -43,11 +46,11 @@ namespace Nest.Searchify.Tests.GeoLocationTests
             [InlineData("hello")]
             [InlineData("1")]
             [InlineData("1,2,3")]
-            public void WhenAttemptingToCreateAGeoLocationFromInvalidString(string input)
+            public void WhenAttemptingToCreateAGeoLocationParameterFromInvalidString(string input)
             {
                 Action a = () =>
                 {
-                    GeoLocation point = input;
+                    GeoLocationParameter point = input;
                 };
 
                 a.ShouldThrow<ArgumentException>();
@@ -58,11 +61,11 @@ namespace Nest.Searchify.Tests.GeoLocationTests
             [InlineData(91)]
             [InlineData(90.1)]
             [InlineData(-90.1)]
-            public void WhenAttemptingToCreateAGeoLocationWithInvalidLatitude(double latitude)
+            public void WhenAttemptingToCreateAGeoLocationParameterWithInvalidLatitude(double latitude)
             {
                 Action a = () =>
                 {
-                    var point = new GeoLocation(latitude, 0);
+                    var point = new GeoLocationParameter(latitude, 0);
                 };
 
                 a.ShouldThrow<ArgumentOutOfRangeException>().And.Message.Should().Contain("latitude");
@@ -73,23 +76,23 @@ namespace Nest.Searchify.Tests.GeoLocationTests
             [InlineData(181)]
             [InlineData(180.1)]
             [InlineData(-180.1)]
-            public void WhenAttemptingToCreateAGeoLocationWithInvalidLongitude(double longitude)
+            public void WhenAttemptingToCreateAGeoLocationParameterWithInvalidLongitude(double longitude)
             {
                 Action a = () =>
                 {
-                    var point = new GeoLocation(0, longitude);
+                    var point = new GeoLocationParameter(0, longitude);
                 };
 
                 a.ShouldThrow<ArgumentOutOfRangeException>().And.Message.Should().Contain("longitude");
             }
         }
 
-        public class GeoLocationSerialisationWithJsonNet
+        public class GeoLocationParameterSerialisationWithJsonNet
         {
             [Fact]
-            public void WhenSerialisingAGeoLocationToString()
+            public void WhenSerialisingAGeoLocationParameterToString()
             {
-                GeoLocation point = "1.1,1.22";
+                GeoLocationParameter point = "1.1,1.22";
 
                 var result = JsonConvert.SerializeObject(point, Formatting.None);
                 var expected = "{\"lat\":1.1,\"lon\":1.22}";
@@ -97,23 +100,23 @@ namespace Nest.Searchify.Tests.GeoLocationTests
             }
 
             [Fact]
-            public void WhenDeserialisingAGeoLocationFromString()
+            public void WhenDeserialisingAGeoLocationParameterFromString()
             {
                 var input = "{\"lat\":1.1,\"lon\":1.22}";
-                var result = JsonConvert.DeserializeObject<GeoLocation>(input);
+                var result = JsonConvert.DeserializeObject<GeoLocationParameter>(input);
 
-                GeoLocation expected = "1.1,1.22";
+                GeoLocationParameter expected = "1.1,1.22";
 
                 result.Should().Be(expected);
             }
         }
 
-        public class GeoLocationSerialisationWithNestSerializer
+        public class GeoLocationParameterSerialisationWithNestSerializer
         {
             [Fact]
-            public void WhenSerialisingAGeoLocationToString()
+            public void WhenSerialisingAGeoLocationParameterToString()
             {
-                GeoLocation point = "1.1,1.22";
+                GeoLocationParameter point = "1.1,1.22";
 
                 var stream = new MemoryStream();
                 var connectionSettings = new ConnectionSettings();
@@ -129,18 +132,46 @@ namespace Nest.Searchify.Tests.GeoLocationTests
             }
 
             [Fact]
-            public void WhenDeserialisingAGeoLocationFromString()
+            public void WhenDeserialisingAGeoLocationParameterFromString()
             {
                 var input = "{\"lat\":1.1,\"lon\":1.22}";
                 var connectionSettings = new ConnectionSettings();
                 var client = new ElasticClient(connectionSettings);
                 var strm = new MemoryStream(Encoding.UTF8.GetBytes(input));
-                var result = client.Serializer.Deserialize<GeoLocation>(strm);
+                var result = client.Serializer.Deserialize<GeoLocationParameter>(strm);
 
-                GeoLocation expected = "1.1,1.22";
+                GeoLocationParameter expected = "1.1,1.22";
 
                 result.Should().Be(expected);
             }
         }
+
+        //public class GeoLocationTypeConverterUsage
+        //{
+        //    [Fact]
+        //    public void ShouldThrowExceptionWhenCustomGeoLocationTypeConverterNotAvailable()
+        //    {
+        //        var str = "2,3";
+
+        //        var converter = TypeDescriptor.GetConverter(typeof(GeoLocation));
+        //        Action exception = () =>
+        //        {
+        //            var geoLocation = (GeoLocation)converter.ConvertTo(str, typeof(GeoLocation));
+        //        };
+
+        //        exception.ShouldThrow<NotSupportedException>();
+        //    }
+
+        //    [Fact]
+        //    public void ShouldAttemptToConvert()
+        //    {
+        //        var str = "2,3";
+        //        GeoLocationTypeConverter.EnsureTypeConverterAssociation();
+        //        var converter = TypeDescriptor.GetConverter(typeof(GeoLocation));
+        //        var geoLocation = (GeoLocation)converter.ConvertFrom(str);
+        //        geoLocation.Latitude.Should().Be(2);
+        //        geoLocation.Longitude.Should().Be(3);
+        //    }
+        //}
     }
 }

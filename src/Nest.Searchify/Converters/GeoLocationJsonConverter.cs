@@ -2,12 +2,10 @@ using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Nest.Searchify
+namespace Nest.Searchify.Converters
 {
     public sealed class GeoLocationJsonConverter : JsonConverter
     {
-        // public override bool CanWrite => false;
-
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             var point = value as GeoLocation ?? value as string;

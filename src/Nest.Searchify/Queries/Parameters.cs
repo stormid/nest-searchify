@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Nest.Searchify.Queries
 {
-	public class Parameters : IPagingParameters, ISortingParameters
+    public class Parameters : IPagingParameters, ISortingParameters
 	{
 	    public const string SizeParameter = "size";
         public const string PageParameter = "page";
@@ -13,7 +13,7 @@ namespace Nest.Searchify.Queries
 
         public const int DefaultPage = 1;
 		public const int DefaultPageSize = 10;
-
+        
 		public int Start()
 		{
 			var start = (Page.GetValueOrDefault(1) - 1)*Size;

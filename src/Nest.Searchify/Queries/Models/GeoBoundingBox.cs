@@ -9,12 +9,12 @@ namespace Nest.Searchify.Queries.Models
 {
     [JsonConverter(typeof(GeoBoundingBoxJsonConverter))]
     [TypeConverter(typeof(GeoBoundingBoxTypeConverter))]
-    public class GeoBoundingBox : IEquatable<GeoBoundingBox>
+    public class GeoBoundingBox : IEquatable<GeoBoundingBox>, IBoundingBox, IFormattable
     {
         private static readonly Regex Pattern = new Regex(@"^\[(?<topLeft>(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?))\]\s?\[(?<bottomRight>(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?))\]$", RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace);
-        [JsonProperty("topLeft")]
+        [JsonProperty("top_left")]
         public GeoLocation TopLeft { get; set; }
-        [JsonProperty("bottomRight")]
+        [JsonProperty("bottom_right")]
         public GeoLocation BottomRight { get; set; }
 
         public GeoBoundingBox()
@@ -22,10 +22,25 @@ namespace Nest.Searchify.Queries.Models
             
         }
 
+        
         public GeoBoundingBox(GeoLocation topLeft, GeoLocation bottomRight) : this()
         {
             BottomRight = bottomRight;
             TopLeft = topLeft;
+        }
+
+        public BoundingBox ToBoundingBox()
+        {
+            return new BoundingBox
+            {
+                BottomRight = BottomRight,
+                TopLeft = TopLeft
+            };
+        }
+
+        public static implicit operator BoundingBox(GeoBoundingBox value)
+        {
+            return value.ToBoundingBox();
         }
 
         public static implicit operator GeoBoundingBox(string value)
@@ -57,5 +72,6 @@ namespace Nest.Searchify.Queries.Models
         {
             return string.Format(CultureInfo.InvariantCulture, "[{0}][{1}]", TopLeft.ToString(), BottomRight.ToString());
         }
-    }
+
+        public string ToString(string format, IFormatProvider formatProvider) => ToString();    }
 }

@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Nest.Searchify.Converters;
 using Nest.Searchify.Queries;
 using Nest.Searchify.Queries.Models;
 using Newtonsoft.Json;
@@ -20,8 +21,9 @@ namespace Nest.Searchify.Tests.ParametersTests
         public class TestGeoPointOutParameters : SearchParameters
         {
             [JsonProperty(PropertyName = "locpt")]
-            public GeoLocation Point { get; set; }
+            public GeoLocationParameter Point { get; set; }
             public GeoBoundingBox BBox { get; set; }
+            public IBoundingBox NestBBox { get; set; } = new BoundingBox();
         }
 
         [Fact]
@@ -51,13 +53,17 @@ namespace Nest.Searchify.Tests.ParametersTests
         {
             var p = new TestGeoPointOutParameters()
             {
-                BBox = "[2.123,-3.213234][2.123,-3.213234]"
+                BBox = "[2.123,-3.213234][2.123,-3.213234]",
+                NestBBox = new GeoBoundingBox() { TopLeft = "2,3", BottomRight = "4,5" }
             };
             var json = JsonConvert.SerializeObject(p);
             var p2 = JsonConvert.DeserializeObject<TestGeoPointOutParameters>(json);
             p2.BBox.Should().NotBeNull();
             p2.BBox.TopLeft.Should().Be(p.BBox.TopLeft);
             p2.BBox.BottomRight.Should().Be(p.BBox.BottomRight);
+
+            p2.NestBBox.BottomRight.Should().Be(p.NestBBox.BottomRight);
+            p2.NestBBox.TopLeft.Should().Be(p.NestBBox.TopLeft);
         }
 
         [Fact]

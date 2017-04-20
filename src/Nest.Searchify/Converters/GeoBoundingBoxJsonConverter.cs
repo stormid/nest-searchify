@@ -1,21 +1,26 @@
 using System;
+using System.Reflection;
 using Nest.Searchify.Queries.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Nest.Searchify
+namespace Nest.Searchify.Converters
 {
     public class GeoBoundingBoxJsonConverter : JsonConverter
     {
+        public static readonly string TopLeftPropertyName = typeof(GeoBoundingBox).GetProperty(nameof(GeoBoundingBox.TopLeft)).GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName ?? nameof(GeoBoundingBox.TopLeft);
+        public static readonly string BottomRightPropertyName = typeof(GeoBoundingBox).GetProperty(nameof(GeoBoundingBox.BottomRight)).GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName ?? nameof(GeoBoundingBox.BottomRight);
+
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             GeoBoundingBox bbox = value as GeoBoundingBox ?? value as string;
             if (bbox != null)
             {
                 writer.WriteStartObject();
-                writer.WritePropertyName("topLeft");
+                writer.WritePropertyName(TopLeftPropertyName);
                 serializer.Serialize(writer, bbox.TopLeft);
-                writer.WritePropertyName("bottomRight");
+
+                writer.WritePropertyName(BottomRightPropertyName);
                 serializer.Serialize(writer, bbox.BottomRight);
                 writer.WriteEndObject();
             }
@@ -26,8 +31,8 @@ namespace Nest.Searchify
             if (reader.TokenType == JsonToken.StartObject)
             {
                 var o = JObject.Load(reader);
-                var topLeft = o.GetValue("topLeft")?.ToObject<GeoLocation>();
-                var bottomRight = o.GetValue("bottomRight")?.ToObject<GeoLocation>();
+                var topLeft = o.GetValue(TopLeftPropertyName)?.ToObject<GeoLocation>();
+                var bottomRight = o.GetValue(BottomRightPropertyName)?.ToObject<GeoLocation>();
                 var bbox = new GeoBoundingBox(topLeft, bottomRight);
                 if (objectType == typeof(string)) return bbox.ToString();
                 return bbox;

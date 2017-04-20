@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using Bogus;
 using Elasticsearch.Net;
 using Nest;
@@ -32,7 +33,7 @@ namespace SearchifyCoreSample
 
             connectionSettings.InferMappingFor<PersonDocument>(m => m.TypeName("person"));
             connectionSettings.ThrowExceptions();
-
+            
             var client = new ElasticClient(connectionSettings);
 
             CreateIndex(client);
@@ -112,14 +113,39 @@ namespace SearchifyCoreSample
             {
                 client.DeleteIndex(client.ConnectionSettings.DefaultIndex);
             }
-            client.CreateIndex(client.ConnectionSettings.DefaultIndex, c => c.Mappings(m => m.Map<PersonDocument>(mm => mm.AutoMap())));
+            client.CreateIndex(client.ConnectionSettings.DefaultIndex, c => c
+                .Settings(s => s
+                    .Analysis(a => a.Analyzers(aa => aa.Language("english", l => l.Language(Language.English)))
+                    )
+                )
+                .Mappings(m => m
+                    .Map<PersonDocument>(mm => mm
+                        .DynamicTemplates(d => d
+                            .DynamicTemplate("english_text", dd => dd
+                                .MatchMappingType("string")
+                                .Match("name")
+                                .Mapping(dm => dm
+                                    .Text(t => t
+                                        .Fields(f => f
+                                            .Keyword(k => k.Name("keyword").IgnoreAbove(25))
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                        .AutoMap()
+                    )
+                )
+            );
         }
     }
-
+    
     public class PersonDocument
     {
         [Keyword]
         public string Id { get; set; }
+
+        // [Text(Analyzer = "english")]
         public string Name { get; set; }
 
         public FilterField Country { get; set; }

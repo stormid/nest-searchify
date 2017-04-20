@@ -145,33 +145,5 @@ namespace Nest.Searchify.Tests.GeoLocationTests
                 result.Should().Be(expected);
             }
         }
-
-        //public class GeoLocationTypeConverterUsage
-        //{
-        //    [Fact]
-        //    public void ShouldThrowExceptionWhenCustomGeoLocationTypeConverterNotAvailable()
-        //    {
-        //        var str = "2,3";
-
-        //        var converter = TypeDescriptor.GetConverter(typeof(GeoLocation));
-        //        Action exception = () =>
-        //        {
-        //            var geoLocation = (GeoLocation)converter.ConvertTo(str, typeof(GeoLocation));
-        //        };
-
-        //        exception.ShouldThrow<NotSupportedException>();
-        //    }
-
-        //    [Fact]
-        //    public void ShouldAttemptToConvert()
-        //    {
-        //        var str = "2,3";
-        //        GeoLocationTypeConverter.EnsureTypeConverterAssociation();
-        //        var converter = TypeDescriptor.GetConverter(typeof(GeoLocation));
-        //        var geoLocation = (GeoLocation)converter.ConvertFrom(str);
-        //        geoLocation.Latitude.Should().Be(2);
-        //        geoLocation.Longitude.Should().Be(3);
-        //    }
-        //}
     }
 }

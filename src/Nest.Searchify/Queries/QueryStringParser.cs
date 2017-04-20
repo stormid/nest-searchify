@@ -27,10 +27,6 @@
                     {
                         var values = nvc[key].OrderBy(o => o).ToArray();
                         sortedNvc.Add(key, new StringValues(values));
-                        //foreach (var value in values.OrderBy(v => v))
-                        //{
-                        //    sortedNvc.Add(key, value);
-                        //}
                     }
                 }
                 return sortedNvc;

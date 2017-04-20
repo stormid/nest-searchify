@@ -9,6 +9,8 @@
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -35,16 +37,11 @@
     <Reference Include="System.Web" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <Compile Remove="SearchAggregations\ITypedAggregration.cs" />
-    <Compile Remove="SearchAggregations\RangeBucket.cs" />
-    <Compile Remove="SearchAggregations\RangeKeyItem.cs" />
-    <Compile Remove="SearchAggregations\SearchAggregationParser.cs" />
-    <Compile Remove="SearchAggregations\SignificantTermBucket.cs" />
-    <Compile Remove="SearchAggregations\SignificantTermKeyItem.cs" />
-    <Compile Remove="SearchAggregations\TermBucket.cs" />
-    <Compile Remove="SearchAggregations\TermKeyItem.cs" />
+    <Compile Remove="SearchAggregations\**" />
+    <EmbeddedResource Remove="SearchAggregations\**" />
+    <None Remove="SearchAggregations\**" />
   </ItemGroup>
   
   <ItemGroup>
@@ -57,13 +54,9 @@
     <Compile Include="..\..\VersionAssemblyInfo.cs" Link="VersionAssemblyInfo.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="SearchAggregations\" />
-  </ItemGroup>
-
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities">
-      <Version>1.1.0</Version>
+      <Version>1.0.0</Version>
     </PackageReference>
   </ItemGroup>
 

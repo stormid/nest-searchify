@@ -1,10 +1,11 @@
 using System;
+using System.Linq;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.Extensions;
 
 namespace Nest.Searchify
 {
-	public class FilterField
+	public class FilterField : IEquatable<FilterField>
     {
 		public const string DefaultDelimiter = "||";
 
@@ -52,6 +53,36 @@ namespace Nest.Searchify
 			};
 		}
 
+        /// <summary>
+        /// Parses a <paramref name="key">key</paramref> in the form '{Value}{Delimiter}{Text}' into a <see cref="FilterField"/>
+        /// </summary>
+        /// <param name="key">key value e.g. '{Value}{Delimiter}{Text}'</param>
+        /// <param name="delimiter">the expected delimiter between values</param>
+        /// <returns>new <see cref="FilterField"/></returns>
+        /// <exception cref="ArgumentNullException">if <paramref name="key"/> is null, empty or whitespace</exception>
+        /// <exception cref="ArgumentOutOfRangeException">if <paramref name="key"/> does not parse into 2 elements with given delimiter</exception>
+        /// <exception cref="ArgumentNullException">if <paramref name="delimiter"/> is null, empty or whitespace</exception>
+        public static FilterField Parse(string key, string delimiter = DefaultDelimiter)
+        {
+            if (string.IsNullOrWhiteSpace(delimiter))
+            {
+                throw new ArgumentNullException(nameof(delimiter), "A delimiter value is required");
+            }
+
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
+            var elements = key.Split(new[] {delimiter}, StringSplitOptions.RemoveEmptyEntries).ToList();
+            if (elements.Count != 2)
+            {
+                throw new ArgumentOutOfRangeException(nameof(key), $"expected 2 elements (value and text), found {elements.Count}");
+            }
+
+            return Create(elements.ElementAt(0), elements.ElementAt(1), delimiter);
+        }
+
         public static implicit operator string(FilterField value)
         {
             return value.Key;
@@ -82,5 +113,28 @@ namespace Nest.Searchify
 
         [Keyword(Ignore = true)]
         public string Delimiter { get; set; }
-	}
+
+        /// <inheritdoc />
+        public bool Equals(FilterField other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return string.Equals(Value, other.Value);
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((FilterField) obj);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return Value != null ? Value.GetHashCode() : 0;
+        }
+    }
 }

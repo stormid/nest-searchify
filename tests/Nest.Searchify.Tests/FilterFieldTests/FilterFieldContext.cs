@@ -48,5 +48,84 @@ namespace Nest.Searchify.Tests.FilterFieldTests
             filter.Text.Should().Be(text);
             filter.Key.Should().Be($"{value}{delimiter}{text}");
         }
+
+        [Theory]
+        [InlineData("text||value", "text", "value", FilterField.DefaultDelimiter)]
+        [InlineData("text##value", "text", "value", "##")]
+        [InlineData("text!!value", "text", "value", "!!")]
+        public void WhenParsingAFilterField(string key, string text, string value, string delimiter)
+        {
+            var filter = FilterField.Parse(key, delimiter);
+
+            filter.Value.Should().Be(value);
+            filter.Text.Should().Be(text);
+            filter.Key.Should().Be($"{value}{delimiter}{text}");
+        }
+
+        [Theory]
+        [InlineData(null, FilterField.DefaultDelimiter)]
+        [InlineData("", FilterField.DefaultDelimiter)]
+        public void WhenParsingFilterFieldWithInvalidKey(string key, string delimiter)
+        {
+            Action exception = () => FilterField.Parse(key, delimiter);
+
+            exception.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Theory]
+        [InlineData("text||value", null)]
+        [InlineData("text||value", "")]
+        public void WhenParsingFilterFieldWithInvalidDelimiter(string key, string delimiter)
+        {
+            Action exception = () => FilterField.Parse(key, delimiter);
+
+            exception.ShouldThrow<ArgumentNullException>();
+        }
+
+        [Theory]
+        [InlineData("text", FilterField.DefaultDelimiter)]
+        [InlineData("text||value||something-else", FilterField.DefaultDelimiter)]
+        public void WhenParsingFilterFieldWithBadlyFormattedKey(string key, string delimiter)
+        {
+            Action exception = () => FilterField.Parse(key, delimiter);
+
+            exception.ShouldThrow<ArgumentOutOfRangeException>();
+        }
+
+        public class WhenComparingFilterFields
+        {
+            [Theory]
+            [InlineData("hello", "hello", true)]
+            [InlineData("hello", "world", false)]
+            public void ShouldMatchAgainstFilterFieldValueOnly(string text1, string text2, bool result)
+            {
+                FilterField f1 = text1;
+                FilterField f2 = text2;
+
+                f1.Equals(f2).Should().Be(result);
+                f2.Equals(f1).Should().Be(result);
+            }
+
+            [Fact]
+            public void ShouldIgnoreTextValue()
+            {
+                var f1 = FilterField.Create("Hello world", "world");
+                var f2 = FilterField.Create("Goodbye world", "world");
+
+                f1.Equals(f2).Should().Be(true);
+                f2.Equals(f1).Should().Be(true);
+            }
+
+            [Fact]
+            public void ShouldIgnoreDelimiterDifferences()
+            {
+                var f1 = FilterField.CreateWithCustomDelimiter("Hello world", "||");
+                var f2 = FilterField.CreateWithCustomDelimiter("Hello world", "!!");
+
+                f1.Equals(f2).Should().Be(true);
+                f2.Equals(f1).Should().Be(true);
+            }
+        }
+
     }
 }

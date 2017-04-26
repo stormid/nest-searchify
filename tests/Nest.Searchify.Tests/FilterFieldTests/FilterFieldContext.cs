@@ -50,9 +50,9 @@ namespace Nest.Searchify.Tests.FilterFieldTests
         }
 
         [Theory]
-        [InlineData("text||value", "text", "value", FilterField.DefaultDelimiter)]
-        [InlineData("text##value", "text", "value", "##")]
-        [InlineData("text!!value", "text", "value", "!!")]
+        [InlineData("value||text", "text", "value", FilterField.DefaultDelimiter)]
+        [InlineData("value##text", "text", "value", "##")]
+        [InlineData("value!!text", "text", "value", "!!")]
         public void WhenParsingAFilterField(string key, string text, string value, string delimiter)
         {
             var filter = FilterField.Parse(key, delimiter);
@@ -73,8 +73,8 @@ namespace Nest.Searchify.Tests.FilterFieldTests
         }
 
         [Theory]
-        [InlineData("text||value", null)]
-        [InlineData("text||value", "")]
+        [InlineData("value||text", null)]
+        [InlineData("value||text", "")]
         public void WhenParsingFilterFieldWithInvalidDelimiter(string key, string delimiter)
         {
             Action exception = () => FilterField.Parse(key, delimiter);
@@ -84,7 +84,7 @@ namespace Nest.Searchify.Tests.FilterFieldTests
 
         [Theory]
         [InlineData("text", FilterField.DefaultDelimiter)]
-        [InlineData("text||value||something-else", FilterField.DefaultDelimiter)]
+        [InlineData("value||text||something-else", FilterField.DefaultDelimiter)]
         public void WhenParsingFilterFieldWithBadlyFormattedKey(string key, string delimiter)
         {
             Action exception = () => FilterField.Parse(key, delimiter);

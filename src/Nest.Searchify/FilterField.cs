@@ -80,7 +80,31 @@ namespace Nest.Searchify
                 throw new ArgumentOutOfRangeException(nameof(key), $"expected 2 elements (value and text), found {elements.Count}");
             }
 
-            return Create(elements.ElementAt(0), elements.ElementAt(1), delimiter);
+            return Create(elements.ElementAt(1), elements.ElementAt(0), delimiter);
+        }
+
+        public static bool TryParse(string key, out FilterField value, string delimiter = DefaultDelimiter)
+        {
+            value = null;
+            if (string.IsNullOrWhiteSpace(delimiter))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                return false;
+            }
+
+            var elements = key.Split(new[] { delimiter }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            if (elements.Count != 2)
+            {
+                return false;
+            }
+
+            value = Create(elements.ElementAt(1), elements.ElementAt(0), delimiter);
+
+            return true;
         }
 
         public static implicit operator string(FilterField value)

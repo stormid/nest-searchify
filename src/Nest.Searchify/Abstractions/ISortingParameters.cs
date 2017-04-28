@@ -1,5 +1,3 @@
-using System;
-
 namespace Nest.Searchify.Abstractions
 {
     public interface ISortingParameters

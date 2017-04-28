@@ -27,18 +27,18 @@ namespace Nest.Searchify.Queries
 		}
 
         [DefaultValue(DefaultPageSize)]
-        [JsonProperty(SizeParameter)]
+        [JsonProperty(SizeParameter, DefaultValueHandling = DefaultValueHandling.Ignore)]
         public int Size { get; set; }
 
-        [JsonProperty(SortByParameter)]
+        [JsonProperty(SortByParameter, DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string SortBy { get; set; }
 
-        [JsonProperty(SortDirectionParameter)]
+        [JsonProperty(SortDirectionParameter, DefaultValueHandling = DefaultValueHandling.Ignore)]
         public SortDirectionOption? SortDirection { get; set; }
 
 	    private int? page;
         [DefaultValue(DefaultPage)]
-	    [JsonProperty(PageParameter)]
+	    [JsonProperty(PageParameter, DefaultValueHandling = DefaultValueHandling.Ignore)]
 	    public int? Page
 	    {
 	        get => page;

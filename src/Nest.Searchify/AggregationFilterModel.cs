@@ -8,7 +8,7 @@ namespace Nest.Searchify
     {
         public string Name { get; set; }
         public string Type { get; set; }
-        public IEnumerable<AggregationFilterItemModel<TParameters>> Items { get; set; } = new List<AggregationFilterItemModel<TParameters>>();
+        public IEnumerable<IParameterisedAggregate<TParameters>> Items { get; set; }
 
         [JsonIgnore]
         public IReadOnlyDictionary<string, object> Meta { get; set; }

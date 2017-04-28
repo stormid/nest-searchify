@@ -20,7 +20,7 @@ namespace Nest.Searchify
 
     }
 
-    public class AggregationFilterItemModel<TParameters> : IParameterisedBucketAggregate<TParameters> where TParameters : class, IPagingParameters, ISortingParameters, new()
+    public class TermFilterItemModel<TParameters> : IParameterisedBucketAggregate<TParameters> where TParameters : class, IPagingParameters, ISortingParameters, new()
     {
         public string Term { get; set; }
         public string Value { get; set; }

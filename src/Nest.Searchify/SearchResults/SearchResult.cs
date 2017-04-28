@@ -101,7 +101,7 @@ namespace Nest.Searchify.SearchResults
                         isSelected ? null : Convert.ChangeType(value, convertablePropertyInfo));
                 }
 
-                return new AggregationFilterItemModel<TParameters>()
+                return new TermFilterItemModel<TParameters>()
                 {
                     Term = term,
                     Value = value,
@@ -169,7 +169,7 @@ namespace Nest.Searchify.SearchResults
                         isSelected ? null : Convert.ChangeType(value, convertablePropertyInfo));
                 }
 
-                return new AggregationFilterItemModel<TParameters>()
+                return new TermFilterItemModel<TParameters>()
                 {
                     Term = term,
                     Value = value,
@@ -236,7 +236,7 @@ namespace Nest.Searchify.SearchResults
 
                 propertyInfo.Value.SetValue(parameters, filterValueList);
 
-                return new AggregationFilterItemModel<TParameters>()
+                return new TermFilterItemModel<TParameters>()
                 {
                     Term = term,
                     Value = value,
@@ -275,7 +275,6 @@ namespace Nest.Searchify.SearchResults
 
             model.Name = filterName;
             model.Type = nameof(AggregationHelper.Range);
-            model.Type = "range";
 
             model.Items = agg.Buckets.Select(item =>
             {
@@ -299,7 +298,7 @@ namespace Nest.Searchify.SearchResults
                     propertyInfo.Value.SetValue(parameters,
                         isSelected ? null : Convert.ChangeType(value, convertablePropertyInfo));
                 }
-                return new AggregationFilterItemModel<TParameters>()
+                return new TermFilterItemModel<TParameters>()
                 {
                     Term = term,
                     Value = value,
@@ -369,9 +368,8 @@ namespace Nest.Searchify.SearchResults
 
         private void SetAggregations()
         {
-            AddFilterAggregationProvider("term", TermFilterFor);
-            AddFilterAggregationProvider("multi_term", MultiTermFilterFor);
-            AddFilterAggregationProvider("range", RangeFilterFor);
+            AddFilterAggregationProvider(nameof(AggregationHelper.Terms), TermFilterFor);
+            AddFilterAggregationProvider(nameof(AggregationHelper.Range), RangeFilterFor);
 
             Aggregations = AlterAggregations(Response.Aggregations);
         }

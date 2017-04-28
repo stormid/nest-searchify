@@ -275,6 +275,7 @@ namespace Nest.Searchify.SearchResults
 
             model.Name = filterName;
             model.Type = nameof(AggregationHelper.Range);
+            model.Type = "range";
 
             model.Items = agg.Buckets.Select(item =>
             {
@@ -290,6 +291,7 @@ namespace Nest.Searchify.SearchResults
                 }
 
                 var isSelected = value.Equals(filterValue?.ToString());
+                var isSelected = value.Equals(filterValue.ToString());
 
                 if (propertyInfo.Value != null)
                 {
@@ -318,7 +320,7 @@ namespace Nest.Searchify.SearchResults
             return RangeFilterFor(filterName);
         }
 
-        private static string GetFilterNameFrom<TValue>(Expression<Func<TParameters, TValue>> expression)
+        private static string GetFilterNameFrom(Expression<Func<TParameters, object>> expression)
         {
             MemberExpression memberExpression;
             switch (expression.Body.NodeType)
@@ -355,7 +357,7 @@ namespace Nest.Searchify.SearchResults
         public AggregationsHelper AggregationHelper => Response.Aggs;
 
         [JsonProperty("aggregations")]
-        public IReadOnlyDictionary<string, IAggregate> Aggregations { get; private set; }
+        public virtual IReadOnlyDictionary<string, IAggregate> Aggregations { get; private set; }
 
         #endregion
 
@@ -368,9 +370,9 @@ namespace Nest.Searchify.SearchResults
 
         private void SetAggregations()
         {
-            AddFilterAggregationProvider(nameof(AggregationHelper.Terms), TermFilterFor);
-            //AddFilterAggregationProvider("multi_term", MultiTermFilterFor);
-            AddFilterAggregationProvider(nameof(AggregationHelper.Range), RangeFilterFor);
+            AddFilterAggregationProvider("term", TermFilterFor);
+            AddFilterAggregationProvider("multi_term", MultiTermFilterFor);
+            AddFilterAggregationProvider("range", RangeFilterFor);
 
             Aggregations = AlterAggregations(Response.Aggregations);
         }

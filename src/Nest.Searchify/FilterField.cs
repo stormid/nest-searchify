@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.Extensions;
+using Newtonsoft.Json;
 
 namespace Nest.Searchify
 {
@@ -136,6 +137,7 @@ namespace Nest.Searchify
         public string Value { get; set; }
 
         [Keyword(Ignore = true)]
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore)]
         public string Delimiter { get; set; }
 
         /// <inheritdoc />

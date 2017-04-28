@@ -8,6 +8,7 @@ using System.Reflection;
 using Bogus;
 using Elasticsearch.Net;
 using Nest;
+using Nest.Queryify.Extensions;
 using Nest.Searchify;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.Extensions;
@@ -27,7 +28,7 @@ namespace SearchifyCoreSample
             {
                 //if (c.Uri.PathAndQuery.Contains("_search"))
                 //{
-                //    Console.WriteLine(c.DebugInformation);
+                Console.WriteLine(c.DebugInformation);
                 //}
             });
 
@@ -43,39 +44,13 @@ namespace SearchifyCoreSample
             {
                 Tags = new[] { "baby", "grocery" },
                 Country = "uk",
-                AgeRange = (int)AgeRangeEnum.MiddleAge
+                //AgeRange = (int)AgeRangeEnum.MiddleAge
             };
 
-            var result = client.Search(new SampleSearchQuery(parameters));
+            var result = client.Query(new SampleSearchQuery(parameters));
 
-            UseAggregationFilterHelper(result);
+            Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
 
-            // ParseAggregations(result.Aggregations);
-
-            //Console.WriteLine($"Total: {result.Documents.Count()}");
-
-            //Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
-
-        }
-
-        private static void UseAggregationFilterHelper(ISearchResult<PersonSearchParameters, PersonDocument> result)
-        {
-            var filters = new[]
-            {
-                SearchResultFilterHelpers.FilterFor(result, p => p.Tags),
-                SearchResultFilterHelpers.FilterFor(result, p => p.Country),
-                SearchResultFilterHelpers.FilterFor(result, p => p.AgeRange)
-            }.Where(f => f != null).ToList();
-
-            foreach (var filter in filters)
-            {
-                Console.WriteLine(filter.Name);
-                foreach (var item in filter.Items)
-                {
-                    Console.WriteLine("[{2}] {0} ({1})", item.Term, item.DocCount, item.Selected ? "X" : " ");
-                    //Console.WriteLine($"{item.Term} ({item.DocCount})\t\t[{(item.Selected ? "X" : "")}]");
-                }
-            }
         }
 
         static void Main(string[] args)
@@ -84,35 +59,7 @@ namespace SearchifyCoreSample
             Console.WriteLine("Done!");
             Console.ReadKey(true);
         }
-
-        private static void ParseAggregations(IReadOnlyDictionary<string, IAggregate> aggs)
-        {
-            var d = new Dictionary<string, IAggregate>();
-
-            foreach (var agg in aggs)
-            {
-                switch (agg.Value)
-                {
-                    case BucketAggregate t:
-                        var terms = t.Items.OfType<KeyedBucket<object>>().Select(b => new KeyedBucket<SearchifyKey>(b?.Aggregations?.ToDictionary(k => k.Key, v => v.Value))
-                        {
-                            DocCount = b.DocCount,
-                            Key = new SearchifyKey(b.Key.ToString()),
-                            KeyAsString = b.KeyAsString
-                        }).ToList();
-
-                        var ta = new TermsAggregate<SearchifyKey>
-                        {
-                            Buckets = new ReadOnlyCollection<KeyedBucket<SearchifyKey>>(terms),
-                            SumOtherDocCount = t.SumOtherDocCount,
-                            Meta = t.Meta
-                        };
-                        d.Add(agg.Key, ta);
-                        break;
-                }
-            }
-        }
-
+        
         private static void SeedIndex(ElasticClient client)
         {
             var faker = new Faker<PersonDocument>();
@@ -162,7 +109,7 @@ namespace SearchifyCoreSample
         public IEnumerable<FilterField> Tags { get; set; }
     }
 
-    public enum AgeRangeEnum : int
+    public enum AgeRangeEnum
     {
         Young,
         MiddleAge,
@@ -188,7 +135,22 @@ namespace SearchifyCoreSample
         public IEnumerable<string> Tags { get; set; }
     }
 
-    public class SampleSearchQuery : SearchParametersQuery<PersonSearchParameters, PersonDocument, SearchResult<PersonSearchParameters, PersonDocument>>
+    public class PersonSearchResult : SearchResult<PersonSearchParameters, PersonDocument>
+    {
+        public PersonSearchResult(PersonSearchParameters parameters, ISearchResponse<PersonDocument> response) : base(parameters, response)
+        {
+        }
+
+        //protected override IReadOnlyDictionary<string, IAggregate> AlterAggregations(IReadOnlyDictionary<string, IAggregate> aggregations)
+        //{
+        //    return new Dictionary<string, IAggregate>()
+        //    {
+        //        {nameof(PersonSearchParameters.Tags), MultiTermFilterFor(p => p.Tags)}
+        //    };
+        //}
+    }
+
+    public class SampleSearchQuery : SearchParametersQuery<PersonSearchParameters, PersonDocument, PersonSearchResult>
     {
         public SampleSearchQuery(string queryTerm, int page = 1, int size = 10) : this(new PersonSearchParameters(size, page) {Query = queryTerm})
         {
@@ -198,7 +160,7 @@ namespace SearchifyCoreSample
         public SampleSearchQuery(PersonSearchParameters parameters) : base(parameters)
         {
         }
-        
+
         protected override QueryContainer WithQuery(IQueryContainer query, string queryTerm)
         {
             return Query<PersonDocument>.Match(f => f.Field(fld => fld.Name).Query(queryTerm));
@@ -218,24 +180,30 @@ namespace SearchifyCoreSample
             return
                 descriptor
                     .Terms(nameof(PersonSearchParameters.Tags), t => t
-                        .Meta(m => m.Add("type", "multi_term"))
+                        .Meta(m => m
+                            .Add("type", nameof(descriptor.Terms))
+                        )
                         .Field(f => f.Tags.First().Key)
 
                     )
                     .Terms(nameof(PersonSearchParameters.Country), t => t
-                        .Meta(m => m.Add("type", "term"))
+                        .Meta(m => m
+                            .Add("type", nameof(descriptor.Terms))
+                        )
                         .Field(f => f.Country.Key)
                     )
                     .Range(PersonSearchParameters.AgeRangeParameter, r => r
-                        .Meta(m => m.Add("type", "range"))
+                        .Meta(m => m
+                            .Add("type", nameof(descriptor.Range))
+                        )
                         .Field(f => f.Age)
                         .Ranges(
                             rng => rng.Key(FilterField.Create(AgeRangeEnum.Young))
-                                      .From(0)
-                                      .To(20),
+                                .From(0)
+                                .To(20),
                             rng => rng.Key(FilterField.Create(AgeRangeEnum.MiddleAge))
-                                      .From(21)
-                                      .To(40),
+                                .From(21)
+                                .To(40),
                             rng => rng.Key(FilterField.Create(AgeRangeEnum.Older)).From(41)
                         )
                     )

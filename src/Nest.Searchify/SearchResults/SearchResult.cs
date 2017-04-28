@@ -291,7 +291,6 @@ namespace Nest.Searchify.SearchResults
                 }
 
                 var isSelected = value.Equals(filterValue?.ToString());
-                var isSelected = value.Equals(filterValue.ToString());
 
                 if (propertyInfo.Value != null)
                 {
@@ -320,7 +319,7 @@ namespace Nest.Searchify.SearchResults
             return RangeFilterFor(filterName);
         }
 
-        private static string GetFilterNameFrom(Expression<Func<TParameters, object>> expression)
+        private static string GetFilterNameFrom<TValue>(Expression<Func<TParameters, TValue>> expression)
         {
             MemberExpression memberExpression;
             switch (expression.Body.NodeType)

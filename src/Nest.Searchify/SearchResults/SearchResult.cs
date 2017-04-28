@@ -3,32 +3,275 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using Nest.Searchify.Abstractions;
+using Nest.Searchify.Extensions;
+using Nest.Searchify.Queries;
 using Newtonsoft.Json;
 
 namespace Nest.Searchify.SearchResults
 {
-    public struct SearchifyKey
+    public abstract partial class SearchResult<TParameters, TDocument, TOutputEntity>
+        where TDocument : class
+        where TOutputEntity : class
+        where TParameters : class, IPagingParameters, ISortingParameters, new()
     {
-        public string Key { get; }
-        public string Value { get; }
-        public string Text { get; }
+        private static readonly IEnumerable<KeyValuePair<string, PropertyInfo>> ParameterPropertyCache = typeof(TParameters).GetProperties(BindingFlags.Instance | BindingFlags.Public).ToParameterLookups().ToList();
+        private readonly Dictionary<string, Func<string, IAggregate>> filterRegistry = new Dictionary<string, Func<string, IAggregate>>();
 
-        public SearchifyKey(string key, string delimiter = "||")
+        protected void AddFilterAggregationProvider(string type, Func<string, IAggregate> provider)
         {
-            if (string.IsNullOrWhiteSpace(key))
+            if (filterRegistry.ContainsKey(type))
             {
-                throw new ArgumentNullException(nameof(key));
+                filterRegistry[type] = provider;
+            }
+            else
+            {
+                filterRegistry.Add(type, provider);
+            }
+        }
+
+        protected IAggregate FilterFor(string filterName)
+        {
+            var aggTypeDescriptor = string.Empty;
+            if (Response.Aggregations.TryGetValue(filterName, out IAggregate agg))
+            {
+                if (agg.Meta != null)
+                {
+                    if (agg.Meta.TryGetValue("type", out object type))
+                    {
+                        aggTypeDescriptor = type.ToString();
+                    }
+                }
             }
 
-            var values = key.Split(new[] { delimiter }, StringSplitOptions.RemoveEmptyEntries);
-            Key = key;
-            Value = values.ElementAtOrDefault(0);
-            Text = values.ElementAtOrDefault(1);
+            if (!filterRegistry.TryGetValue(aggTypeDescriptor, out Func<string, IAggregate> provider))
+            {
+                if (!Response.Aggregations.ContainsKey(filterName))
+                {
+                    throw new ArgumentOutOfRangeException(nameof(filterName), "Unable to find filter (aggregation) with the given name");
+                }
+                return Response.Aggregations[filterName];
+            }
+
+            return provider(filterName);
+        }
+
+        protected AggregationFilterModel<TParameters> TermFilterFor(string filterName)
+        {
+            var propertyInfo = ParameterPropertyCache.FirstOrDefault(c => c.Key == filterName);
+            if (string.IsNullOrWhiteSpace(propertyInfo.Key))
+            {
+                throw new ArgumentOutOfRangeException(nameof(filterName), $"Unable to find parameter named '{filterName}', ensure that either the parameters has a matching property or that a JsonProperty attribute is assigned");
+            }
+
+            var filterValue = propertyInfo.Value.GetValue(Parameters);
+
+            var model = new AggregationFilterModel<TParameters>();
+            var agg = AggregationHelper.Terms(filterName);
+            if (agg == null)
+            {
+                return model;
+            }
+
+            model.Name = filterName;
+            model.Type = "term";
+
+            model.Items = agg.Buckets.Select(item =>
+            {
+                var parameters = QueryStringParser<TParameters>.Copy(Parameters);
+
+                var term = item.Key;
+                var value = item.Key;
+
+                if (FilterField.TryParse(item.Key, out FilterField filterField))
+                {
+                    term = filterField.Text;
+                    value = filterField.Value;
+                }
+
+                var isSelected = value.Equals(filterValue);
+
+                if (propertyInfo.Value != null)
+                {
+                    var convertablePropertyInfo = Nullable.GetUnderlyingType(propertyInfo.Value.PropertyType) ??
+                                                  propertyInfo.Value.PropertyType;
+                    propertyInfo.Value.SetValue(parameters,
+                        isSelected ? null : Convert.ChangeType(value, convertablePropertyInfo));
+                }
+
+                return new AggregationFilterItemModel<TParameters>()
+                {
+                    Term = term,
+                    Value = value,
+                    DocCount = item.DocCount,
+                    Selected = isSelected,
+                    Parameters = parameters
+                };
+
+            }).ToList();
+
+            return model;
+        }
+
+        protected AggregationFilterModel<TParameters> TermFilterFor(Expression<Func<TParameters, object>> expression)
+        {
+            var filterName = GetFilterNameFrom(expression);
+            return TermFilterFor(filterName);
+        }
+
+        protected AggregationFilterModel<TParameters> MultiTermFilterFor(string filterName)
+        {
+            var propertyInfo = ParameterPropertyCache.FirstOrDefault(c => c.Key == filterName);
+            if (string.IsNullOrWhiteSpace(propertyInfo.Key))
+            {
+                throw new ArgumentOutOfRangeException(nameof(filterName), $"Unable to find parameter named '{filterName}', ensure that either the parameters has a matching property or that a JsonProperty attribute is assigned");
+            }
+
+            var filterValue = ((IEnumerable<string>)propertyInfo.Value.GetValue(Parameters)).ToList();
+
+            var model = new AggregationFilterModel<TParameters>();
+            var agg = AggregationHelper.Terms(filterName);
+            if (agg == null)
+            {
+                return model;
+            }
+
+            model.Name = filterName;
+
+            model.Type = "multi_term";
+
+            model.Items = agg.Buckets.Select(item =>
+            {
+                var parameters = QueryStringParser<TParameters>.Copy(Parameters);
+
+                var term = item.Key;
+                var value = item.Key;
+
+                if (FilterField.TryParse(item.Key, out FilterField filterField))
+                {
+                    term = filterField.Text;
+                    value = filterField.Value;
+                }
+
+                var filterValueList = new HashSet<string>(filterValue);
+
+                var isSelected = filterValue.Contains(value);
+
+                if (isSelected)
+                {
+                    filterValueList.Remove(value);
+                }
+                else
+                {
+                    filterValueList.Add(value);
+                }
+
+                propertyInfo.Value.SetValue(parameters, filterValueList);
+
+                return new AggregationFilterItemModel<TParameters>()
+                {
+                    Term = term,
+                    Value = value,
+                    DocCount = item.DocCount,
+                    Selected = isSelected,
+                    Parameters = parameters
+                };
+
+            }).ToList();
+
+            return model;
+        }
+
+        protected AggregationFilterModel<TParameters> MultiTermFilterFor(Expression<Func<TParameters, object>> expression)
+        {
+            var filterName = GetFilterNameFrom(expression);
+            return MultiTermFilterFor(filterName);
+        }
+
+        protected AggregationFilterModel<TParameters> RangeFilterFor(string filterName)
+        {
+            var propertyInfo = ParameterPropertyCache.FirstOrDefault(c => c.Key == filterName);
+            if (string.IsNullOrWhiteSpace(propertyInfo.Key))
+            {
+                throw new ArgumentOutOfRangeException(nameof(filterName), $"Unable to find parameter named '{filterName}', ensure that either the parameters has a matching property or that a JsonProperty attribute is assigned");
+            }
+
+            var filterValue = propertyInfo.Value.GetValue(Parameters);
+
+            var model = new AggregationFilterModel<TParameters>();
+            var agg = AggregationHelper.Range(filterName);
+            if (agg == null)
+            {
+                return model;
+            }
+
+            model.Name = filterName;
+            model.Type = "range";
+
+            model.Items = agg.Buckets.Select(item =>
+            {
+                var parameters = QueryStringParser<TParameters>.Copy(Parameters);
+
+                var term = item.Key;
+                var value = item.Key;
+
+                if (FilterField.TryParse(item.Key, out FilterField filterField))
+                {
+                    term = filterField.Text;
+                    value = filterField.Value;
+                }
+
+                var isSelected = value.Equals(filterValue.ToString());
+
+                if (propertyInfo.Value != null)
+                {
+                    var convertablePropertyInfo = Nullable.GetUnderlyingType(propertyInfo.Value.PropertyType) ??
+                                                  propertyInfo.Value.PropertyType;
+                    propertyInfo.Value.SetValue(parameters,
+                        isSelected ? null : Convert.ChangeType(value, convertablePropertyInfo));
+                }
+                return new AggregationFilterItemModel<TParameters>()
+                {
+                    Term = term,
+                    Value = value,
+                    DocCount = item.DocCount,
+                    Selected = isSelected,
+                    Parameters = parameters
+                };
+
+            }).ToList();
+
+            return model;
+        }
+
+        protected AggregationFilterModel<TParameters> RangeFilterFor(Expression<Func<TParameters, object>> expression)
+        {
+            var filterName = GetFilterNameFrom(expression);
+            return RangeFilterFor(filterName);
+        }
+
+        private static string GetFilterNameFrom(Expression<Func<TParameters, object>> expression)
+        {
+            MemberExpression memberExpression;
+            switch (expression.Body.NodeType)
+            {
+                case ExpressionType.MemberAccess:
+                    memberExpression = expression.Body as MemberExpression;
+                    break;
+                default:
+                    memberExpression = (expression.Body as UnaryExpression)?.Operand as MemberExpression;
+                    break;
+            }
+
+            var filterName = memberExpression?.Member.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName ??
+                             memberExpression?.Member.Name;
+            return filterName;
         }
     }
 
-    public abstract class SearchResult<TParameters, TDocument, TOutputEntity> : SearchResultBase<TParameters>, ISearchResult<TParameters, TOutputEntity>
+    public abstract partial class SearchResult<TParameters, TDocument, TOutputEntity> : SearchResultBase<TParameters>, ISearchResult<TParameters, TOutputEntity>
         where TDocument : class
         where TOutputEntity : class
         where TParameters : class, IPagingParameters, ISortingParameters, new()
@@ -46,7 +289,7 @@ namespace Nest.Searchify.SearchResults
         public AggregationsHelper AggregationHelper => Response.Aggs;
 
         [JsonProperty("aggregations")]
-        public IReadOnlyDictionary<string, IAggregate> Aggregations { get; private set; }
+        public virtual IReadOnlyDictionary<string, IAggregate> Aggregations { get; private set; }
 
         #endregion
 
@@ -59,6 +302,10 @@ namespace Nest.Searchify.SearchResults
 
         private void SetAggregations()
         {
+            AddFilterAggregationProvider("term", TermFilterFor);
+            AddFilterAggregationProvider("multi_term", MultiTermFilterFor);
+            AddFilterAggregationProvider("range", RangeFilterFor);
+
             Aggregations = AlterAggregations(Response.Aggregations);
         }
 
@@ -74,7 +321,7 @@ namespace Nest.Searchify.SearchResults
 
         protected virtual IReadOnlyDictionary<string, IAggregate> AlterAggregations(IReadOnlyDictionary<string, IAggregate> aggregations)
         {
-            return aggregations;
+            return aggregations.Select(a => new KeyValuePair<string, IAggregate>(a.Key, FilterFor(a.Key))).ToDictionary(k => k.Key, v => v.Value);
         }
 
         protected virtual IEnumerable<TDocument> ResponseToDocuments(ISearchResponse<TDocument> response)

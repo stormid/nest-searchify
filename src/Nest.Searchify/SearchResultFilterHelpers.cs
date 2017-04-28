@@ -95,6 +95,7 @@ namespace Nest.Searchify
             var filterValue = ((IEnumerable<string>)expression.Compile().Invoke(searchResult.Parameters) ?? Enumerable.Empty<string>()).ToList();
             var propertyInfo = (PropertyInfo)memberExpression?.Member;
             model.Name = filterDisplayName ?? filterName;
+            model.Type = "multi_term";
 
             model.Items = agg.Buckets.Select(item =>
             {
@@ -170,6 +171,7 @@ namespace Nest.Searchify
             var filterValue = expression.Compile().Invoke(searchResult.Parameters)?.ToString() ?? string.Empty;
             var propertyInfo = (PropertyInfo)memberExpression?.Member;
             model.Name = filterDisplayName ?? filterName;
+            model.Type = "term";
 
             model.Items = agg.Buckets.Select(item =>
             {
@@ -240,6 +242,7 @@ namespace Nest.Searchify
             var filterValue = expression.Compile().Invoke(searchResult.Parameters);
             var propertyInfo = (PropertyInfo)memberExpression?.Member;
             model.Name = filterDisplayName ?? filterName;
+            model.Type = "sigterm";
 
             model.Items = agg.Buckets.Select(item =>
             {
@@ -312,6 +315,7 @@ namespace Nest.Searchify
             var filterValue = expression.Compile().Invoke(searchResult.Parameters) ?? string.Empty;
             var propertyInfo = (PropertyInfo)memberExpression?.Member;
             model.Name = filterDisplayName ?? filterName;
+            model.Type = "range";
 
             model.Items = agg.Buckets.Select(item =>
             {

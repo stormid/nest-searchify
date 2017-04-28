@@ -8,6 +8,7 @@ using System.Reflection;
 using Bogus;
 using Elasticsearch.Net;
 using Nest;
+using Nest.Queryify.Extensions;
 using Nest.Searchify;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.Extensions;
@@ -46,7 +47,7 @@ namespace SearchifyCoreSample
                 AgeRange = (int)AgeRangeEnum.MiddleAge
             };
 
-            var result = client.Search(new SampleSearchQuery(parameters));
+            var result = client.Query(new SampleSearchQuery(parameters));
 
             UseAggregationFilterHelper(result);
 
@@ -54,7 +55,7 @@ namespace SearchifyCoreSample
 
             //Console.WriteLine($"Total: {result.Documents.Count()}");
 
-            //Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+            Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
 
         }
 
@@ -84,35 +85,7 @@ namespace SearchifyCoreSample
             Console.WriteLine("Done!");
             Console.ReadKey(true);
         }
-
-        private static void ParseAggregations(IReadOnlyDictionary<string, IAggregate> aggs)
-        {
-            var d = new Dictionary<string, IAggregate>();
-
-            foreach (var agg in aggs)
-            {
-                switch (agg.Value)
-                {
-                    case BucketAggregate t:
-                        var terms = t.Items.OfType<KeyedBucket<object>>().Select(b => new KeyedBucket<SearchifyKey>(b?.Aggregations?.ToDictionary(k => k.Key, v => v.Value))
-                        {
-                            DocCount = b.DocCount,
-                            Key = new SearchifyKey(b.Key.ToString()),
-                            KeyAsString = b.KeyAsString
-                        }).ToList();
-
-                        var ta = new TermsAggregate<SearchifyKey>
-                        {
-                            Buckets = new ReadOnlyCollection<KeyedBucket<SearchifyKey>>(terms),
-                            SumOtherDocCount = t.SumOtherDocCount,
-                            Meta = t.Meta
-                        };
-                        d.Add(agg.Key, ta);
-                        break;
-                }
-            }
-        }
-
+        
         private static void SeedIndex(ElasticClient client)
         {
             var faker = new Faker<PersonDocument>();
@@ -188,7 +161,14 @@ namespace SearchifyCoreSample
         public IEnumerable<string> Tags { get; set; }
     }
 
-    public class SampleSearchQuery : SearchParametersQuery<PersonSearchParameters, PersonDocument, SearchResult<PersonSearchParameters, PersonDocument>>
+    public class PersonSearchResult : SearchResult<PersonSearchParameters, PersonDocument>
+    {
+        public PersonSearchResult(PersonSearchParameters parameters, ISearchResponse<PersonDocument> response) : base(parameters, response)
+        {
+        }
+    }
+
+    public class SampleSearchQuery : SearchParametersQuery<PersonSearchParameters, PersonDocument, PersonSearchResult>
     {
         public SampleSearchQuery(string queryTerm, int page = 1, int size = 10) : this(new PersonSearchParameters(size, page) {Query = queryTerm})
         {

@@ -145,6 +145,7 @@ namespace Nest.Searchify.SearchResults
 
             model.Name = filterName;
             model.Type = nameof(AggregationHelper.Terms);
+            model.Meta = agg.Meta;
 
             model.Items = agg.Buckets.Select(item =>
             {
@@ -208,6 +209,7 @@ namespace Nest.Searchify.SearchResults
 
             model.Name = filterName;
             model.Type = nameof(AggregationHelper.Terms);
+            model.Meta = agg.Meta;
             model.Items = agg.Buckets.Select(item =>
             {
                 var parameters = QueryStringParser<TParameters>.Copy(Parameters);
@@ -275,6 +277,7 @@ namespace Nest.Searchify.SearchResults
 
             model.Name = filterName;
             model.Type = nameof(AggregationHelper.Range);
+            model.Meta = agg.Meta;
 
             model.Items = agg.Buckets.Select(item =>
             {

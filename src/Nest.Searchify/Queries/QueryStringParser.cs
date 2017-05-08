@@ -349,7 +349,11 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
                 {
                     foreach (var value in stringValues)
                     {
-                        nvc.Add(propertyName, value.ToString());
+                        var strValue = value.ToString();
+                        if (!string.IsNullOrWhiteSpace(strValue))
+                        {
+                            nvc.Add(propertyName, value.ToString());
+                        }
                     }
                 }
             }

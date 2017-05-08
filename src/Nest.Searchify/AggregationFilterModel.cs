@@ -7,6 +7,8 @@ namespace Nest.Searchify
     public class AggregationFilterModel<TParameters> : IAggregate where TParameters : class, IPagingParameters, ISortingParameters, new()
     {
         public string Name { get; set; }
+        public string DisplayName { get; set; }
+
         public string Type { get; set; }
         public IEnumerable<IParameterisedAggregate<TParameters>> Items { get; set; }
 

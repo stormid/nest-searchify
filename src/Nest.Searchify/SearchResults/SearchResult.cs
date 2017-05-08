@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -12,6 +10,29 @@ using Newtonsoft.Json;
 
 namespace Nest.Searchify.SearchResults
 {
+    public static class MetaReadOnlyDictionaryExtensions
+    {
+        public static FluentDictionary<string, object> WithDisplayName(this FluentDictionary<string, object> dictionary, string displayName)
+        {
+            return dictionary.Add(nameof(AggregationFilterModel<SearchParameters>.DisplayName), displayName);
+        }
+
+        public static string GetDisplayName(this IReadOnlyDictionary<string, object> dictionary)
+        {
+            return dictionary.TryGetValue(nameof(AggregationFilterModel<SearchParameters>.DisplayName), out object value) ? value.ToString() : null;
+        }
+
+        public static FluentDictionary<string, object> WithAggregationType(this FluentDictionary<string, object> dictionary, string type)
+        {
+            return dictionary.Add(nameof(AggregationFilterModel<SearchParameters>.Type), type);
+        }
+
+        public static string GetAggregationType(this IReadOnlyDictionary<string, object> dictionary)
+        {
+            return dictionary.TryGetValue(nameof(AggregationFilterModel<SearchParameters>.Type), out object value) ? value.ToString() : null;
+        }
+    }
+
     public abstract partial class SearchResult<TParameters, TDocument, TOutputEntity>
         where TDocument : class
         where TOutputEntity : class
@@ -37,13 +58,7 @@ namespace Nest.Searchify.SearchResults
             var aggTypeDescriptor = string.Empty;
             if (Response.Aggregations.TryGetValue(filterName, out IAggregate agg))
             {
-                if (agg.Meta != null)
-                {
-                    if (agg.Meta.TryGetValue("type", out object type))
-                    {
-                        aggTypeDescriptor = type.ToString();
-                    }
-                }
+                aggTypeDescriptor = agg.Meta.GetAggregationType() ?? string.Empty;
             }
 
             if (!filterRegistry.TryGetValue(aggTypeDescriptor, out Func<string, IAggregate> provider))
@@ -76,7 +91,9 @@ namespace Nest.Searchify.SearchResults
             }
 
             model.Name = filterName;
+            model.Meta = agg.Meta;
             model.Type = nameof(AggregationHelper.SignificantTerms);
+            model.DisplayName = agg.Meta.GetDisplayName() ?? model.Name;
 
             model.Items = agg.Buckets.Select(item =>
             {
@@ -144,6 +161,7 @@ namespace Nest.Searchify.SearchResults
             }
 
             model.Name = filterName;
+            model.DisplayName = agg.Meta.GetDisplayName() ?? model.Name;
             model.Type = nameof(AggregationHelper.Terms);
             model.Meta = agg.Meta;
 
@@ -210,6 +228,7 @@ namespace Nest.Searchify.SearchResults
             model.Name = filterName;
             model.Type = nameof(AggregationHelper.Terms);
             model.Meta = agg.Meta;
+            model.DisplayName = agg.Meta.GetDisplayName() ?? model.Name;
             model.Items = agg.Buckets.Select(item =>
             {
                 var parameters = QueryStringParser<TParameters>.Copy(Parameters);
@@ -278,6 +297,7 @@ namespace Nest.Searchify.SearchResults
             model.Name = filterName;
             model.Type = nameof(AggregationHelper.Range);
             model.Meta = agg.Meta;
+            model.DisplayName = agg.Meta.GetDisplayName() ?? model.Name;
 
             model.Items = agg.Buckets.Select(item =>
             {

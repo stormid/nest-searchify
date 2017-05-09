@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace Nest.Searchify.Tests.FilterFieldTests
@@ -47,6 +49,63 @@ namespace Nest.Searchify.Tests.FilterFieldTests
             filter.Value.Should().Be(value);
             filter.Text.Should().Be(text);
             filter.Key.Should().Be($"{value}{delimiter}{text}");
+        }
+
+        [Fact]
+        public void WhenCreatingAFilterFieldWithDefaultConstructor()
+        {
+            var filter = new FilterField()
+            {
+                Text = "text",
+                Value = "value"
+            };
+
+            filter.Key.Should().Be("value||text");
+        }
+
+        [Fact]
+        public void WhenSerialisingFilterFieldWithDefaultDelimiter()
+        {
+            var filter = new FilterField()
+            {
+                Text = "text",
+                Value = "value"
+            };
+
+            var jObject = JObject.FromObject(filter);
+
+            jObject.SelectToken("Delimiter").Should().BeNull();
+        }
+
+        [Fact]
+        public void WhenSerialisingFilterFieldWithCustomDelimiter()
+        {
+            var filter = new FilterField("!!")
+            {
+                Text = "text",
+                Value = "value"
+            };
+
+            var jObject = JObject.FromObject(filter);
+
+            jObject.SelectToken("Delimiter").Should().NotBeNull();
+            jObject.SelectToken("Delimiter").Value<string>().Should().Be("!!");
+        }
+
+        [Fact]
+        public void WhenSerialisingFilterFieldWithCustomDelimiterViaPropertyModification()
+        {
+            var filter = new FilterField()
+            {
+                Text = "text",
+                Value = "value"
+            };
+            filter.Delimiter = "!!";
+
+            var jObject = JObject.FromObject(filter);
+
+            jObject.SelectToken("Delimiter").Should().NotBeNull();
+            jObject.SelectToken("Delimiter").Value<string>().Should().Be("!!");
         }
 
         [Theory]

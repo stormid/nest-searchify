@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.Extensions;
@@ -118,9 +119,15 @@ namespace Nest.Searchify
 	        return Create(value);
 	    }
 
-		public FilterField(string delimiter = DefaultDelimiter)
+        public FilterField()
+        {
+        }
+
+        public FilterField(string delimiter = DefaultDelimiter)
 		{
-			Delimiter = delimiter;
+		    delimiter = string.IsNullOrWhiteSpace(delimiter) ? DefaultDelimiter : delimiter;
+
+            Delimiter = delimiter;
 		}
 
         protected virtual string GetKey()
@@ -138,7 +145,8 @@ namespace Nest.Searchify
 
         [Keyword(Ignore = true)]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore, NullValueHandling = NullValueHandling.Ignore)]
-        public string Delimiter { get; set; }
+        [DefaultValue(DefaultDelimiter)]
+        public string Delimiter { get; set; } = DefaultDelimiter;
 
         /// <inheritdoc />
         public bool Equals(FilterField other)

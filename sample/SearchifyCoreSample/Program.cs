@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using Bogus;
 using Elasticsearch.Net;
 using Nest;
 using Nest.Queryify.Extensions;
 using Nest.Searchify;
-using Nest.Searchify.Abstractions;
-using Nest.Searchify.Extensions;
 using Nest.Searchify.Queries;
 using Nest.Searchify.SearchResults;
 using Newtonsoft.Json;
@@ -181,20 +175,20 @@ namespace SearchifyCoreSample
                 descriptor
                     .Terms(nameof(PersonSearchParameters.Tags), t => t
                         .Meta(m => m
-                            .Add("type", nameof(descriptor.Terms))
+                            .WithAggregationType(nameof(descriptor.Terms))
                         )
                         .Field(f => f.Tags.First().Key)
 
                     )
                     .Terms(nameof(PersonSearchParameters.Country), t => t
                         .Meta(m => m
-                            .Add("type", nameof(descriptor.Terms))
+                            .WithAggregationType(nameof(descriptor.Terms))
                         )
                         .Field(f => f.Country.Key)
                     )
                     .Range(PersonSearchParameters.AgeRangeParameter, r => r
                         .Meta(m => m
-                            .Add("type", nameof(descriptor.Range))
+                            .WithAggregationType(nameof(descriptor.Range))
                         )
                         .Field(f => f.Age)
                         .Ranges(

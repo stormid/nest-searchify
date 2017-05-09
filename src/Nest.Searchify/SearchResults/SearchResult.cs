@@ -92,7 +92,8 @@ namespace Nest.Searchify.SearchResults
 
             model.Name = filterName;
             model.Meta = agg.Meta;
-            model.Type = nameof(AggregationHelper.SignificantTerms);
+            //model.Type = nameof(AggregationHelper.SignificantTerms);
+            model.Type = agg.Meta.GetAggregationType();
             model.DisplayName = agg.Meta.GetDisplayName() ?? model.Name;
 
             model.Items = agg.Buckets.Select(item =>
@@ -162,7 +163,8 @@ namespace Nest.Searchify.SearchResults
 
             model.Name = filterName;
             model.DisplayName = agg.Meta.GetDisplayName() ?? model.Name;
-            model.Type = nameof(AggregationHelper.Terms);
+            model.Type = agg.Meta.GetAggregationType();
+            //model.Type = nameof(AggregationHelper.Terms);
             model.Meta = agg.Meta;
 
             model.Items = agg.Buckets.Select(item =>
@@ -226,7 +228,7 @@ namespace Nest.Searchify.SearchResults
             }
 
             model.Name = filterName;
-            model.Type = nameof(AggregationHelper.Terms);
+            model.Type = agg.Meta.GetAggregationType(); // nameof(AggregationHelper.Terms);
             model.Meta = agg.Meta;
             model.DisplayName = agg.Meta.GetDisplayName() ?? model.Name;
             model.Items = agg.Buckets.Select(item =>
@@ -295,7 +297,8 @@ namespace Nest.Searchify.SearchResults
             }
 
             model.Name = filterName;
-            model.Type = nameof(AggregationHelper.Range);
+            // model.Type = nameof(AggregationHelper.Range);
+            model.Type = agg.Meta.GetAggregationType();
             model.Meta = agg.Meta;
             model.DisplayName = agg.Meta.GetDisplayName() ?? model.Name;
 
@@ -393,6 +396,7 @@ namespace Nest.Searchify.SearchResults
         {
             AddFilterAggregationProvider(nameof(AggregationHelper.Terms), TermFilterFor);
             AddFilterAggregationProvider(nameof(AggregationHelper.Range), RangeFilterFor);
+            AddFilterAggregationProvider(nameof(AggregationHelper.SignificantTerms), SignificantTermsFilterFor);
 
             Aggregations = AlterAggregations(Response.Aggregations);
         }

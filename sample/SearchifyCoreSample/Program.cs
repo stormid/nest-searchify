@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Bogus;
 using Elasticsearch.Net;
 using Nest;
 using Nest.Queryify.Extensions;
 using Nest.Searchify;
-using Nest.Searchify.Queries;
-using Nest.Searchify.SearchResults;
 using Newtonsoft.Json;
 
 namespace SearchifyCoreSample
@@ -86,122 +83,6 @@ namespace SearchifyCoreSample
                 )
                 .Mappings(m => m.Map<PersonDocument>(mm => mm.AutoMap()))
             );
-        }
-    }
-    
-    public class PersonDocument
-    {
-        [Keyword]
-        public string Id { get; set; }
-
-        public string Name { get; set; }
-
-        public int Age { get; set; }
-
-        public FilterField Country { get; set; }
-
-        public IEnumerable<FilterField> Tags { get; set; }
-    }
-
-    public enum AgeRangeEnum
-    {
-        Young,
-        MiddleAge,
-        Older
-    }
-
-    public class PersonSearchParameters : SearchParameters
-    {
-        public const string AgeRangeParameter = "age";
-
-        public PersonSearchParameters()
-        {
-            
-        }
-
-        public PersonSearchParameters(int size, int page) : base(size, page) { }
-
-        public string Country { get; set; }
-
-        [JsonProperty(AgeRangeParameter)]
-        public int? AgeRange { get; set; }
-
-        public IEnumerable<string> Tags { get; set; }
-    }
-
-    public class PersonSearchResult : SearchResult<PersonSearchParameters, PersonDocument>
-    {
-        public PersonSearchResult(PersonSearchParameters parameters, ISearchResponse<PersonDocument> response) : base(parameters, response)
-        {
-        }
-
-        //protected override IReadOnlyDictionary<string, IAggregate> AlterAggregations(IReadOnlyDictionary<string, IAggregate> aggregations)
-        //{
-        //    return new Dictionary<string, IAggregate>()
-        //    {
-        //        {nameof(PersonSearchParameters.Tags), MultiTermFilterFor(p => p.Tags)}
-        //    };
-        //}
-    }
-
-    public class SampleSearchQuery : SearchParametersQuery<PersonSearchParameters, PersonDocument, PersonSearchResult>
-    {
-        public SampleSearchQuery(string queryTerm, int page = 1, int size = 10) : this(new PersonSearchParameters(size, page) {Query = queryTerm})
-        {
-            
-        }
-
-        public SampleSearchQuery(PersonSearchParameters parameters) : base(parameters)
-        {
-        }
-
-        protected override QueryContainer WithQuery(IQueryContainer query, string queryTerm)
-        {
-            return Query<PersonDocument>.Match(f => f.Field(fld => fld.Name).Query(queryTerm));
-        }
-
-        protected override QueryContainer WithFilters(IQueryContainer query, PersonSearchParameters parameters)
-        {
-            return 
-                Query<PersonDocument>.Term(t => t.Field(f => f.Country.Value).Value(parameters.Country))
-                &&
-                Query<PersonDocument>.Terms(t => t.Field(f => f.Tags.First().Value).Terms(parameters.Tags))
-                ;
-        }
-        
-        protected override AggregationContainerDescriptor<PersonDocument> ApplyAggregations(AggregationContainerDescriptor<PersonDocument> descriptor, PersonSearchParameters parameters)
-        {
-            return
-                descriptor
-                    .Terms(nameof(PersonSearchParameters.Tags), t => t
-                        .Meta(m => m
-                            .WithAggregationType(nameof(descriptor.Terms))
-                        )
-                        .Field(f => f.Tags.First().Key)
-
-                    )
-                    .Terms(nameof(PersonSearchParameters.Country), t => t
-                        .Meta(m => m
-                            .WithAggregationType(nameof(descriptor.Terms))
-                        )
-                        .Field(f => f.Country.Key)
-                    )
-                    .Range(PersonSearchParameters.AgeRangeParameter, r => r
-                        .Meta(m => m
-                            .WithAggregationType(nameof(descriptor.Range))
-                        )
-                        .Field(f => f.Age)
-                        .Ranges(
-                            rng => rng.Key(FilterField.Create(AgeRangeEnum.Young))
-                                .From(0)
-                                .To(20),
-                            rng => rng.Key(FilterField.Create(AgeRangeEnum.MiddleAge))
-                                .From(21)
-                                .To(40),
-                            rng => rng.Key(FilterField.Create(AgeRangeEnum.Older)).From(41)
-                        )
-                    )
-                ;
         }
     }
 }

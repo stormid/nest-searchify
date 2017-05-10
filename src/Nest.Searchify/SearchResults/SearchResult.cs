@@ -10,29 +10,6 @@ using Newtonsoft.Json;
 
 namespace Nest.Searchify.SearchResults
 {
-    public static class MetaReadOnlyDictionaryExtensions
-    {
-        public static FluentDictionary<string, object> WithDisplayName(this FluentDictionary<string, object> dictionary, string displayName)
-        {
-            return dictionary.Add(nameof(AggregationFilterModel<SearchParameters>.DisplayName), displayName);
-        }
-
-        public static string GetDisplayName(this IReadOnlyDictionary<string, object> dictionary)
-        {
-            return dictionary.TryGetValue(nameof(AggregationFilterModel<SearchParameters>.DisplayName), out object value) ? value.ToString() : null;
-        }
-
-        public static FluentDictionary<string, object> WithAggregationType(this FluentDictionary<string, object> dictionary, string type)
-        {
-            return dictionary.Add(nameof(AggregationFilterModel<SearchParameters>.Type), type);
-        }
-
-        public static string GetAggregationType(this IReadOnlyDictionary<string, object> dictionary)
-        {
-            return dictionary.TryGetValue(nameof(AggregationFilterModel<SearchParameters>.Type), out object value) ? value.ToString() : null;
-        }
-    }
-
     public abstract partial class SearchResult<TParameters, TDocument, TOutputEntity>
         where TDocument : class
         where TOutputEntity : class
@@ -58,7 +35,7 @@ namespace Nest.Searchify.SearchResults
             var aggTypeDescriptor = string.Empty;
             if (Response.Aggregations.TryGetValue(filterName, out IAggregate agg))
             {
-                aggTypeDescriptor = agg.Meta.GetAggregationType() ?? string.Empty;
+                aggTypeDescriptor = agg.SearchifyAggregationType() ?? string.Empty;
             }
 
             if (!filterRegistry.TryGetValue(aggTypeDescriptor, out Func<string, IAggregate> provider))
@@ -92,9 +69,8 @@ namespace Nest.Searchify.SearchResults
 
             model.Name = filterName;
             model.Meta = agg.Meta;
-            //model.Type = nameof(AggregationHelper.SignificantTerms);
-            model.Type = agg.Meta.GetAggregationType();
-            model.DisplayName = agg.Meta.GetDisplayName() ?? model.Name;
+            model.Type = agg.SearchifyAggregationType();
+            model.DisplayName = agg.SearchifyDisplayName() ?? model.Name;
 
             model.Items = agg.Buckets.Select(item =>
             {
@@ -162,10 +138,9 @@ namespace Nest.Searchify.SearchResults
             }
 
             model.Name = filterName;
-            model.DisplayName = agg.Meta.GetDisplayName() ?? model.Name;
-            model.Type = agg.Meta.GetAggregationType();
-            //model.Type = nameof(AggregationHelper.Terms);
             model.Meta = agg.Meta;
+            model.Type = agg.SearchifyAggregationType();
+            model.DisplayName = agg.SearchifyDisplayName() ?? model.Name;
 
             model.Items = agg.Buckets.Select(item =>
             {
@@ -228,9 +203,10 @@ namespace Nest.Searchify.SearchResults
             }
 
             model.Name = filterName;
-            model.Type = agg.Meta.GetAggregationType(); // nameof(AggregationHelper.Terms);
             model.Meta = agg.Meta;
-            model.DisplayName = agg.Meta.GetDisplayName() ?? model.Name;
+            model.Type = agg.SearchifyAggregationType();
+            model.DisplayName = agg.SearchifyDisplayName() ?? model.Name;
+
             model.Items = agg.Buckets.Select(item =>
             {
                 var parameters = QueryStringParser<TParameters>.Copy(Parameters);
@@ -297,10 +273,9 @@ namespace Nest.Searchify.SearchResults
             }
 
             model.Name = filterName;
-            // model.Type = nameof(AggregationHelper.Range);
-            model.Type = agg.Meta.GetAggregationType();
             model.Meta = agg.Meta;
-            model.DisplayName = agg.Meta.GetDisplayName() ?? model.Name;
+            model.Type = agg.SearchifyAggregationType();
+            model.DisplayName = agg.SearchifyDisplayName() ?? model.Name;
 
             model.Items = agg.Buckets.Select(item =>
             {

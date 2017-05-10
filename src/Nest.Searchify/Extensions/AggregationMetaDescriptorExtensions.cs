@@ -72,7 +72,7 @@ namespace Nest.Searchify.Extensions
         public SearchifyAggregationConfigurer<TAggregation> WithDisplayName(string displayName)
         {
             var fd = new FluentDictionary<string, object>(descriptor.Meta);
-            fd.AddOrUpdate(AggregationMetaDescriptorExtensions.AggregationDisplayNameKey, displayName, v => !string.IsNullOrWhiteSpace(displayName));
+            fd.AddOrUpdate(SearchifyFilterExtensions.AggregationDisplayNameKey, displayName, v => !string.IsNullOrWhiteSpace(displayName));
             descriptor.Meta = fd;
             
             return this;

@@ -193,7 +193,7 @@ namespace Nest.Searchify.SearchResults
                 throw new ArgumentOutOfRangeException(nameof(filterName), $"Unable to find parameter named '{filterName}', ensure that either the parameters has a matching property or that a JsonProperty attribute is assigned");
             }
 
-            var filterValue = ((IEnumerable<string>)propertyInfo.Value.GetValue(Parameters)).ToList();
+            var filterValue = ((IEnumerable<string>)propertyInfo.Value.GetValue(Parameters))?.ToList() ?? Enumerable.Empty<string>();
 
             var model = new AggregationFilterModel<TParameters>();
             var agg = AggregationHelper.Terms(filterName);

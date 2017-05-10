@@ -33,7 +33,7 @@ namespace SearchifyCoreSample
 
             var parameters = new PersonSearchParameters()
             {
-                Tags = new[] { "baby", "grocery" },
+                // Tags = new[] { "baby", "grocery" },
                 Country = "uk",
                 //AgeRange = (int)AgeRangeEnum.MiddleAge
             };

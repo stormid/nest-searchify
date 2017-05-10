@@ -36,16 +36,16 @@ namespace SearchifyCoreSample
             return
                 descriptor
                     .Terms(nameof(PersonSearchParameters.Tags), t => t
-                        .AsSearchifyFilter(c => c.WithDisplayName("Search Tags"))
+                        //.AsSearchifyFilter(c => c.WithDisplayName("Search Tags"))
                         .Field(f => f.Tags.First().Key)
 
                     )
                     .Terms(nameof(PersonSearchParameters.Country), t => t
-                        .AsSearchifyFilter()
+                        //.AsSearchifyFilter()
                         .Field(f => f.Country.Key)
                     )
                     .Range(PersonSearchParameters.AgeRangeParameter, r => r
-                        .AsSearchifyFilter(c => c.WithDisplayName("Age Range"))
+                        //.AsSearchifyFilter(c => c.WithDisplayName("Age Range"))
                         .Field(f => f.Age)
                         .Ranges(
                             rng => rng.Key(FilterField.Create(AgeRangeEnum.Young))

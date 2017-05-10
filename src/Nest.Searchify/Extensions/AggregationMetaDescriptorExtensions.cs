@@ -51,12 +51,20 @@ namespace Nest.Searchify.Extensions
 
         internal static string SearchifyAggregationType<TAggregate>(this TAggregate aggregate) where TAggregate : IAggregate
         {
-            return aggregate.Meta.TryGetValue(AggregationTypeKey, out object value) ? value.ToString() : null;
+            if (aggregate.Meta == null)
+            {
+                return null;
+            }
+            return aggregate.Meta.TryGetValue(AggregationTypeKey, out object value) ? value?.ToString() : null;
         }
 
         internal static string SearchifyDisplayName<TAggregate>(this TAggregate aggregate) where TAggregate : IAggregate
         {
-            return aggregate.Meta.TryGetValue(AggregationDisplayNameKey, out object value) ? value.ToString() : null;
+            if (aggregate.Meta == null)
+            {
+                return null;
+            }
+            return aggregate.Meta.TryGetValue(AggregationDisplayNameKey, out object value) ? value?.ToString() : null;
         }
     }
 

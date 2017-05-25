@@ -30,6 +30,16 @@ namespace Nest.Searchify.SearchResults
             }
         }
 
+        public AggregationFilterModel<TParameters> FilterModelFor(Expression<Func<TParameters, string>> expression)
+        {
+            var filterName = GetFilterNameFrom(expression);
+            if (Aggregations.ContainsKey(filterName) && Aggregations[filterName] is AggregationFilterModel<TParameters> p)
+            {
+                return p;
+            }
+            throw new ArgumentOutOfRangeException(nameof(filterName), filterName, "Unable to find filter with the given name");
+        }
+        
         protected IAggregate FilterFor(string filterName)
         {
             var aggTypeDescriptor = string.Empty;
@@ -319,7 +329,72 @@ namespace Nest.Searchify.SearchResults
             return RangeFilterFor(filterName);
         }
 
-        private static string GetFilterNameFrom<TValue>(Expression<Func<TParameters, TValue>> expression)
+        protected AggregationFilterModel<TParameters> GeoDistanceFilterFor(string filterName)
+        {
+            var propertyInfo = ParameterPropertyCache.FirstOrDefault(c => c.Key == filterName);
+            if (string.IsNullOrWhiteSpace(propertyInfo.Key))
+            {
+                throw new ArgumentOutOfRangeException(nameof(filterName), $"Unable to find parameter named '{filterName}', ensure that either the parameters has a matching property or that a JsonProperty attribute is assigned");
+            }
+
+            var filterValue = propertyInfo.Value.GetValue(Parameters);
+
+            var model = new AggregationFilterModel<TParameters>();
+            var agg = AggregationHelper.GeoDistance(filterName);
+            if (agg == null)
+            {
+                return model;
+            }
+
+            model.Name = filterName;
+            model.Meta = agg.Meta;
+            model.Type = agg.SearchifyAggregationType();
+            model.DisplayName = agg.SearchifyDisplayName() ?? model.Name;
+
+            model.Items = agg.Buckets.Select(item =>
+            {
+                var parameters = QueryStringParser<TParameters>.Copy(Parameters);
+
+                var term = item.Key;
+                var value = item.Key;
+
+                if (FilterField.TryParse(item.Key, out FilterField filterField))
+                {
+                    term = filterField.Text;
+                    value = filterField.Value;
+                }
+
+                var isSelected = value.Equals(filterValue?.ToString());
+
+                if (propertyInfo.Value != null)
+                {
+                    var convertablePropertyInfo = Nullable.GetUnderlyingType(propertyInfo.Value.PropertyType) ??
+                                                  propertyInfo.Value.PropertyType;
+
+                    propertyInfo.Value.SetValue(parameters,
+                        isSelected ? null : Convert.ChangeType(value, convertablePropertyInfo));
+                }
+                return new TermFilterItemModel<TParameters>()
+                {
+                    Term = term,
+                    Value = value,
+                    DocCount = item.DocCount,
+                    Selected = isSelected,
+                    Parameters = parameters
+                };
+
+            }).ToList();
+
+            return model;
+        }
+
+        protected AggregationFilterModel<TParameters> GeoDistanceFilterFor(Expression<Func<TParameters, object>> expression)
+        {
+            var filterName = GetFilterNameFrom(expression);
+            return GeoDistanceFilterFor(filterName);
+        }
+
+        protected static string GetFilterNameFrom<TValue>(Expression<Func<TParameters, TValue>> expression)
         {
             MemberExpression memberExpression;
             switch (expression.Body.NodeType)
@@ -371,6 +446,7 @@ namespace Nest.Searchify.SearchResults
         {
             AddFilterAggregationProvider(nameof(AggregationHelper.Terms), TermFilterFor);
             AddFilterAggregationProvider(nameof(AggregationHelper.Range), RangeFilterFor);
+            AddFilterAggregationProvider(nameof(AggregationHelper.GeoDistance), GeoDistanceFilterFor);
             AddFilterAggregationProvider(nameof(AggregationHelper.SignificantTerms), SignificantTermsFilterFor);
 
             Aggregations = AlterAggregations(Response.Aggregations);

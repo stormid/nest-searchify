@@ -16,5 +16,8 @@ namespace SearchifyCoreSample
         public FilterField Country { get; set; }
 
         public IEnumerable<FilterField> Tags { get; set; }
+
+        [GeoPoint]
+        public GeoLocation Location { get; set; }
     }
 }

@@ -16,9 +16,7 @@ namespace Nest.Searchify.Extensions
             { typeof(ITermsAggregation), nameof(AggregationContainer.Terms) },
             { typeof(ISignificantTermsAggregation), nameof(AggregationContainer.SignificantTerms) },
             { typeof(IRangeAggregation), nameof(AggregationContainer.Range) },
-            //{ typeof(IDateRangeAggregation), nameof(AggregationContainer.DateRange) },
-            //{ typeof(IDateHistogramAggregation), nameof(AggregationContainer.DateHistogram) },
-            //{ typeof(IGeoDistanceAggregation), nameof(AggregationContainer.GeoDistance) }
+            { typeof(IGeoDistanceAggregation), nameof(AggregationContainer.GeoDistance) }
         };
 
         private static string ResolveAggregationTypeName<TAggregation>(TAggregation aggregation)

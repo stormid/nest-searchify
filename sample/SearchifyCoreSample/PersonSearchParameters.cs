@@ -21,5 +21,11 @@ namespace SearchifyCoreSample
         public int? AgeRange { get; set; }
 
         public IEnumerable<string> Tags { get; set; }
+
+        public int? LocationRange { get; set; }
+
+        public GeoLocationParameter Location { get; set; }
+
+        public double? Radius { get; set; }
     }
 }

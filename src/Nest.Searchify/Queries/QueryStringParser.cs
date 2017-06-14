@@ -38,10 +38,6 @@
                 if (stringValues != null)
                 {
                     nvc.Add(propertyName, new StringValues(stringValues.Select(x => x.ToString()).ToArray()));
-                    //foreach (var value in stringValues)
-                    //{
-                    //    nvc.Add(propertyName, value.ToString());
-                    //}
                 }
             }
 
@@ -53,6 +49,12 @@
             public static void ParseFromGeoLocation(Dictionary<string, StringValues> nvc, object value, string propertyName)
             {
                 var point = value as GeoLocation;
+                if (point != null) nvc.Add(propertyName, point.ToString());
+            }
+
+            public static void ParseFromGeoLocationParameter(Dictionary<string, StringValues> nvc, object value, string propertyName)
+            {
+                var point = value as GeoLocationParameter;
                 if (point != null) nvc.Add(propertyName, point.ToString());
             }
 
@@ -108,6 +110,12 @@
                 return value.ToString();
             }
 
+            public static GeoLocationParameter ParseToGeoLocationParameter(TParameters parameters, PropertyInfo prop, Dictionary<string, StringValues> nvc, string key)
+            {
+                var value = nvc[key];
+                return value.ToString();
+            }
+
             public static object ParseToInteger(TParameters parameters, PropertyInfo prop, Dictionary<string, StringValues> nvc, string key)
             {
                 var value = ParseToString(parameters, prop, nvc, key);
@@ -146,7 +154,8 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
             { typeof(double?), TypeParsers.ParseToDouble },
             { typeof(int?), TypeParsers.ParseToInteger },
             { typeof(SortDirectionOption?), TypeParsers.ParseToEnum<SortDirectionOption> },
-            { typeof(GeoLocation), TypeParsers.ParseToGeoLocation }
+            { typeof(GeoLocation), TypeParsers.ParseToGeoLocation },
+            { typeof(GeoLocationParameter), TypeParsers.ParseToGeoLocationParameter }
         };
 
         private static readonly IDictionary<Type, Action<Dictionary<string, StringValues>, object, string>> Converters = new Dictionary
@@ -162,6 +171,7 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
             { typeof (double?), TypeParsers.ParseFromString },
             { typeof (SortDirectionOption?), TypeParsers.ParseFromString },
             { typeof (GeoLocation), TypeParsers.ParseFromGeoLocation },
+            { typeof (GeoLocationParameter), TypeParsers.ParseFromGeoLocationParameter },
         };
 
         /// <summary>

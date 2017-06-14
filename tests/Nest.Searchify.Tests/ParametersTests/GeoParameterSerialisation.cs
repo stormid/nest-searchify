@@ -39,6 +39,20 @@ namespace Nest.Searchify.Tests.ParametersTests
         }
 
         [Fact]
+        public void ShouldDeserialiseGeoLocationFromJsonObject()
+        {
+            var json = @"{
+	""locpt"" : {
+		""lat"": 55.978672499999995,
+		""lon"" : -3.1734147999999998
+	},
+	""locradius"" : 20
+}";
+            var result = JsonConvert.DeserializeObject<TestGeoPointOutParameters>(json);
+        }
+
+
+        [Fact]
         public void ShouldNotDeserialiseGeoPointToGeoPointWithInvalidPoints()
         {
 

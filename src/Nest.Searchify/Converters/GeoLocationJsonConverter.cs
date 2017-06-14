@@ -1,4 +1,5 @@
 using System;
+using Nest.Searchify.Queries;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -8,7 +9,7 @@ namespace Nest.Searchify.Converters
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            var point = value as GeoLocation ?? value as string;
+            var point = value as GeoLocationParameter ?? value as string;
 
             if (point != null)
             {
@@ -34,7 +35,7 @@ namespace Nest.Searchify.Converters
             }
             if (reader.TokenType == JsonToken.String)
             {
-                GeoLocation point = (string)reader.Value;
+                GeoLocationParameter point = (string)reader.Value;
                 return point;
             }
             return null;
@@ -42,7 +43,7 @@ namespace Nest.Searchify.Converters
 
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(GeoLocation) || objectType == typeof(string);
+            return objectType == typeof(GeoLocationParameter) || objectType == typeof(string);
         }
     }
 }

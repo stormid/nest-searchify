@@ -24,6 +24,7 @@ namespace SearchifyCoreSample
 
         public int? LocationRange { get; set; }
 
+        [JsonProperty(PropertyName = "locpt")]
         public GeoLocationParameter Location { get; set; }
 
         public double? Radius { get; set; }

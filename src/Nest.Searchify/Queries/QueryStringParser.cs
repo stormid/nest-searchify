@@ -52,12 +52,6 @@
                 if (point != null) nvc.Add(propertyName, point.ToString());
             }
 
-            public static void ParseFromGeoLocationParameter(Dictionary<string, StringValues> nvc, object value, string propertyName)
-            {
-                var point = value as GeoLocationParameter;
-                if (point != null) nvc.Add(propertyName, point.ToString());
-            }
-
             public static IEnumerable<string> ParseToStringArray(TParameters parameters, PropertyInfo prop, Dictionary<string, StringValues> nvc, string key)
             {
                 if (nvc.ContainsKey(key))
@@ -108,6 +102,12 @@
             {
                 var value = nvc[key];
                 return value.ToString();
+            }
+
+            public static void ParseFromGeoLocationParameter(Dictionary<string, StringValues> nvc, object value, string propertyName)
+            {
+                var point = value as GeoLocationParameter;
+                if (point != null) nvc.Add(propertyName, point.ToString());
             }
 
             public static GeoLocationParameter ParseToGeoLocationParameter(TParameters parameters, PropertyInfo prop, Dictionary<string, StringValues> nvc, string key)
@@ -379,6 +379,12 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
                 if (point != null) nvc.Add(propertyName, point.ToString());
             }
 
+            public static void ParseFromGeoLocationParameter(NameValueCollection nvc, object value, string propertyName)
+            {
+                var point = value as GeoLocationParameter;
+                if (point != null) nvc.Add(propertyName, point.ToString());
+            }
+
             public static IEnumerable<string> ParseToStringArray(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
             {
                 var values = nvc.GetValues(key);
@@ -422,6 +428,13 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
                 return new GeoLocation(points[0], points[1]);
             }
 
+            public static GeoLocationParameter ParseToGeoLocationParameter(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
+            {
+                var value = nvc.Get(key);
+                var points = value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(double.Parse).ToArray();
+                return new GeoLocationParameter(points[0], points[1]);
+            }
+
             public static object ParseToInteger(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
             {
                 var value = ParseToString(parameters, prop, nvc, key);
@@ -447,7 +460,7 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
                 return null;
             }
 
-#endregion
+            #endregion
         }
 
         private static readonly IDictionary<Type, Func<TParameters, PropertyInfo, NameValueCollection, string, object>> Resolvers =
@@ -462,7 +475,8 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
                 {typeof(double?), TypeParsers.ParseToDouble},
                 {typeof(int?), TypeParsers.ParseToInteger},
                 {typeof(SortDirectionOption?), TypeParsers.ParseToEnum<SortDirectionOption>},
-                {typeof(GeoLocation), TypeParsers.ParseToGeoLocation}
+                {typeof(GeoLocation), TypeParsers.ParseToGeoLocation},
+                {typeof(GeoLocationParameter), TypeParsers.ParseToGeoLocationParameter}
             };
 
         private static readonly IDictionary<Type, Action<NameValueCollection, object, string>> Converters = new Dictionary
@@ -478,6 +492,8 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
                 {typeof(double?), TypeParsers.ParseFromString},
                 {typeof(SortDirectionOption?), TypeParsers.ParseFromString},
                 {typeof(GeoLocation), TypeParsers.ParseFromGeoLocation},
+                {typeof (GeoLocationParameter), TypeParsers.ParseFromGeoLocationParameter},
+
             };
 
         /// <summary>

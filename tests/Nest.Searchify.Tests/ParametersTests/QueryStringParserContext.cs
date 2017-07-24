@@ -21,6 +21,11 @@ namespace Nest.Searchify.Tests.ParametersTests
         public class CustomParameters : Parameters
         {
             public IEnumerable<string> Options { get; set; }
+
+            public IEnumerable<long> LongValues { get; set; }
+
+            public long? OptionalLongValue { get; set; }
+
         }
 
         public class MyParameters : SearchParameters, IGeoPointParameters
@@ -35,6 +40,12 @@ namespace Nest.Searchify.Tests.ParametersTests
 
             public GeoLocation Location { get; set; }
             public SomeOption EnumOptions { get; set; }
+
+            public long LongValue { get; set; }
+
+            public IEnumerable<long> LongValues { get; set; }
+
+            public long? OptionalLongValue { get; set; }
         }
         
         [Theory]
@@ -78,6 +89,8 @@ namespace Nest.Searchify.Tests.ParametersTests
         [InlineData("options=beta&options=alpha", "options=alpha&options=beta", 1)]
         [InlineData("options=2&options=zulu", "options=2&options=zulu", 1)]
         [InlineData("options=zulu&options=6", "options=6&options=zulu", 1)]
+        [InlineData("optionalLongValue=1234567", "optionalLongValue=1234567", 1)]
+        [InlineData("longValues=1234567&longValues=89768945", "longValues=1234567&longValues=89768945", 1)]
         public void ParseQueryStringForCustomParameters(string actual, string expected, int paramCount)
         {
             var parameters = QueryStringParser<CustomParameters>.Parse(actual);
@@ -127,11 +140,13 @@ namespace Nest.Searchify.Tests.ParametersTests
                 Doubles = new[] {2.3, 17.5},
                 Latitude = -53.1,
                 Longitude = -3,
-                Location = GeoLocation.TryCreate(-53.1, -3)
+                Location = GeoLocation.TryCreate(-53.1, -3),
+                LongValue = 999999999,
+                LongValues = new long[] { 11111111, 22222222, 33333333 }
             };
 
             var nvc = QueryStringParser<MyParameters>.Parse(p);
-            nvc.Count.Should().Be(7);
+            nvc.Count.Should().Be(9);
         }
     }
 

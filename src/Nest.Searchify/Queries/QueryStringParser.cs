@@ -89,7 +89,19 @@
                     }
                 }
                 return null;
+            }
 
+            public static IEnumerable<long> ParseToLongArray(TParameters parameters, PropertyInfo prop, Dictionary<string, StringValues> nvc, string key)
+            {
+                if (nvc.ContainsKey(key))
+                {
+                    var values = nvc[key].Select(long.Parse).ToList();
+                    if (values != null && values.Any())
+                    {
+                        return values;
+                    }
+                }
+                return null;
             }
 
             public static string ParseToString(TParameters parameters, PropertyInfo prop, Dictionary<string, StringValues> nvc, string key)
@@ -124,6 +136,14 @@
                 return int.Parse(value);
             }
 
+            public static object ParseToLong(TParameters parameters, PropertyInfo prop, Dictionary<string, StringValues> nvc, string key)
+            {
+                var value = ParseToString(parameters, prop, nvc, key);
+                if (value == null) return null;
+
+                return long.Parse(value);
+            }
+
             public static object ParseToDouble(TParameters parameters, PropertyInfo prop, Dictionary<string, StringValues> nvc, string key)
             {
                 var value = ParseToString(parameters, prop, nvc, key);
@@ -148,11 +168,14 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
             { typeof(IEnumerable<string>), TypeParsers.ParseToStringArray },
             { typeof(string), TypeParsers.ParseToString },
             { typeof(IEnumerable<int>), TypeParsers.ParseToIntegerArray },
+            { typeof(IEnumerable<long>), TypeParsers.ParseToLongArray },
             { typeof(IEnumerable<double>), TypeParsers.ParseToDoubleArray },
             { typeof(double), TypeParsers.ParseToDouble },
             { typeof(int), TypeParsers.ParseToInteger },
+            { typeof(long), TypeParsers.ParseToLong },
             { typeof(double?), TypeParsers.ParseToDouble },
             { typeof(int?), TypeParsers.ParseToInteger },
+            { typeof(long?), TypeParsers.ParseToLong },
             { typeof(SortDirectionOption?), TypeParsers.ParseToEnum<SortDirectionOption> },
             { typeof(GeoLocation), TypeParsers.ParseToGeoLocation },
             { typeof(GeoLocationParameter), TypeParsers.ParseToGeoLocationParameter }
@@ -163,12 +186,15 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
         {
             { typeof (IEnumerable<string>), TypeParsers.ParseFromStringArray<string> },
             { typeof (IEnumerable<int>), TypeParsers.ParseFromStringArray<int> },
+            { typeof (IEnumerable<long>), TypeParsers.ParseFromStringArray<long> },
             { typeof (IEnumerable<double>), TypeParsers.ParseFromStringArray<double> },
             { typeof (string), TypeParsers.ParseFromString },
             { typeof (int), TypeParsers.ParseFromString },
+            { typeof (long), TypeParsers.ParseFromString },
             { typeof (double), TypeParsers.ParseFromString },
             { typeof (int?), TypeParsers.ParseFromString },
             { typeof (double?), TypeParsers.ParseFromString },
+            { typeof (long?), TypeParsers.ParseFromString },
             { typeof (SortDirectionOption?), TypeParsers.ParseFromString },
             { typeof (GeoLocation), TypeParsers.ParseFromGeoLocation },
             { typeof (GeoLocationParameter), TypeParsers.ParseFromGeoLocationParameter },
@@ -415,6 +441,16 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
                 return null;
             }
 
+            public static IEnumerable<long> ParseToLongArray(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
+            {
+                var values = nvc.GetValues(key)?.Select(long.Parse).ToList();
+                if (values != null && values.Any())
+                {
+                    return values;
+                }
+                return null;
+            }
+
             public static string ParseToString(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
             {
                 var value = nvc[key];
@@ -443,6 +479,14 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
                 return int.Parse(value);
             }
 
+            public static object ParseToLong(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
+            {
+                var value = ParseToString(parameters, prop, nvc, key);
+                if (value == null) return null;
+
+                return long.Parse(value);
+            }
+
             public static object ParseToDouble(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
             {
                 var value = ParseToString(parameters, prop, nvc, key);
@@ -469,11 +513,14 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
                 {typeof(IEnumerable<string>), TypeParsers.ParseToStringArray},
                 {typeof(string), TypeParsers.ParseToString},
                 {typeof(IEnumerable<int>), TypeParsers.ParseToIntegerArray},
+                {typeof(IEnumerable<long>), TypeParsers.ParseToLongArray},
                 {typeof(IEnumerable<double>), TypeParsers.ParseToDoubleArray},
                 {typeof(double), TypeParsers.ParseToDouble},
                 {typeof(int), TypeParsers.ParseToInteger},
+                {typeof(long), TypeParsers.ParseToLong},
                 {typeof(double?), TypeParsers.ParseToDouble},
                 {typeof(int?), TypeParsers.ParseToInteger},
+                {typeof(long?), TypeParsers.ParseToLong},
                 {typeof(SortDirectionOption?), TypeParsers.ParseToEnum<SortDirectionOption>},
                 {typeof(GeoLocation), TypeParsers.ParseToGeoLocation},
                 {typeof(GeoLocationParameter), TypeParsers.ParseToGeoLocationParameter}
@@ -484,12 +531,15 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
             {
                 {typeof(IEnumerable<string>), TypeParsers.ParseFromStringArray<string>},
                 {typeof(IEnumerable<int>), TypeParsers.ParseFromStringArray<int>},
+                {typeof(IEnumerable<long>), TypeParsers.ParseFromStringArray<long>},
                 {typeof(IEnumerable<double>), TypeParsers.ParseFromStringArray<double>},
                 {typeof(string), TypeParsers.ParseFromString},
                 {typeof(int), TypeParsers.ParseFromString},
                 {typeof(double), TypeParsers.ParseFromString},
+                {typeof(long), TypeParsers.ParseFromString},
                 {typeof(int?), TypeParsers.ParseFromString},
                 {typeof(double?), TypeParsers.ParseFromString},
+                {typeof(long?), TypeParsers.ParseFromString},
                 {typeof(SortDirectionOption?), TypeParsers.ParseFromString},
                 {typeof(GeoLocation), TypeParsers.ParseFromGeoLocation},
                 {typeof (GeoLocationParameter), TypeParsers.ParseFromGeoLocationParameter},

@@ -41,6 +41,27 @@
                 }
             }
 
+            public static void ParseNullableBoolFromString(Dictionary<string, StringValues> nvc, object value, string propertyName)
+            {
+                var boolValue = value?.ToString().ToNullableBool();
+                if (boolValue != null)
+                {
+                    nvc.Add(propertyName, boolValue.Value.ToString().ToLowerInvariant());
+                }
+            }
+
+            public static void ParseBoolFromString(Dictionary<string, StringValues> nvc, object value, string propertyName)
+            {
+                if (value != null)
+                {
+                    var boolValue = value.ToString().ToBool();
+                    if (boolValue)
+                    {
+                        nvc.Add(propertyName, bool.TrueString.ToLowerInvariant());
+                    }
+                }
+            }
+
             public static void ParseFromString(Dictionary<string, StringValues> nvc, object value, string propertyName)
             {
                 if (value != null) nvc.Add(propertyName, value.ToString());
@@ -78,6 +99,19 @@
                 return null;
             }
 
+            public static IEnumerable<bool> ParseToBoolArray(TParameters parameters, PropertyInfo prop, Dictionary<string, StringValues> nvc, string key)
+            {
+                if (nvc.ContainsKey(key))
+                {
+                    var values = nvc[key].Select(s => s.ToBool()).ToList();
+                    if (values != null && values.Any())
+                    {
+                        return values;
+                    }
+                }
+                return null;
+            }
+            
             public static IEnumerable<int> ParseToIntegerArray(TParameters parameters, PropertyInfo prop, Dictionary<string, StringValues> nvc, string key)
             {
                 if (nvc.ContainsKey(key))
@@ -144,6 +178,18 @@
                 return long.Parse(value);
             }
 
+            public static object ParseToBool(TParameters parameters, PropertyInfo prop, Dictionary<string, StringValues> nvc, string key)
+            {
+                var value = ParseToString(parameters, prop, nvc, key)?.ToLowerInvariant();
+                return value.ToBool();
+            }
+
+            public static object ParseToNullableBool(TParameters parameters, PropertyInfo prop, Dictionary<string, StringValues> nvc, string key)
+            {
+                var value = ParseToString(parameters, prop, nvc, key)?.ToLowerInvariant();
+                return value.ToNullableBool();
+            }
+
             public static object ParseToDouble(TParameters parameters, PropertyInfo prop, Dictionary<string, StringValues> nvc, string key)
             {
                 var value = ParseToString(parameters, prop, nvc, key);
@@ -163,23 +209,25 @@
         }
 
         private static readonly IDictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringValues>, string, object>> Resolvers =
-new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringValues>, string, object>>()
-        {
-            { typeof(IEnumerable<string>), TypeParsers.ParseToStringArray },
-            { typeof(string), TypeParsers.ParseToString },
-            { typeof(IEnumerable<int>), TypeParsers.ParseToIntegerArray },
-            { typeof(IEnumerable<long>), TypeParsers.ParseToLongArray },
-            { typeof(IEnumerable<double>), TypeParsers.ParseToDoubleArray },
-            { typeof(double), TypeParsers.ParseToDouble },
-            { typeof(int), TypeParsers.ParseToInteger },
-            { typeof(long), TypeParsers.ParseToLong },
-            { typeof(double?), TypeParsers.ParseToDouble },
-            { typeof(int?), TypeParsers.ParseToInteger },
-            { typeof(long?), TypeParsers.ParseToLong },
-            { typeof(SortDirectionOption?), TypeParsers.ParseToEnum<SortDirectionOption> },
-            { typeof(GeoLocation), TypeParsers.ParseToGeoLocation },
-            { typeof(GeoLocationParameter), TypeParsers.ParseToGeoLocationParameter }
-        };
+            new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringValues>, string, object>>()
+            {
+                {typeof(IEnumerable<string>), TypeParsers.ParseToStringArray},
+                {typeof(string), TypeParsers.ParseToString},
+                {typeof(IEnumerable<int>), TypeParsers.ParseToIntegerArray},
+                {typeof(IEnumerable<long>), TypeParsers.ParseToLongArray},
+                {typeof(IEnumerable<double>), TypeParsers.ParseToDoubleArray},
+                {typeof(double), TypeParsers.ParseToDouble},
+                {typeof(int), TypeParsers.ParseToInteger},
+                {typeof(long), TypeParsers.ParseToLong},
+                {typeof(bool), TypeParsers.ParseToBool},
+                {typeof(double?), TypeParsers.ParseToDouble},
+                {typeof(int?), TypeParsers.ParseToInteger},
+                {typeof(long?), TypeParsers.ParseToLong},
+                {typeof(bool?), TypeParsers.ParseToNullableBool},
+                {typeof(SortDirectionOption?), TypeParsers.ParseToEnum<SortDirectionOption>},
+                {typeof(GeoLocation), TypeParsers.ParseToGeoLocation},
+                {typeof(GeoLocationParameter), TypeParsers.ParseToGeoLocationParameter}
+            };
 
         private static readonly IDictionary<Type, Action<Dictionary<string, StringValues>, object, string>> Converters = new Dictionary
             <Type, Action<Dictionary<string, StringValues>, object, string>>()
@@ -192,9 +240,11 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
             { typeof (int), TypeParsers.ParseFromString },
             { typeof (long), TypeParsers.ParseFromString },
             { typeof (double), TypeParsers.ParseFromString },
+            { typeof (bool), TypeParsers.ParseBoolFromString },
             { typeof (int?), TypeParsers.ParseFromString },
             { typeof (double?), TypeParsers.ParseFromString },
             { typeof (long?), TypeParsers.ParseFromString },
+            { typeof (bool?), TypeParsers.ParseNullableBoolFromString },
             { typeof (SortDirectionOption?), TypeParsers.ParseFromString },
             { typeof (GeoLocation), TypeParsers.ParseFromGeoLocation },
             { typeof (GeoLocationParameter), TypeParsers.ParseFromGeoLocationParameter },
@@ -394,6 +444,27 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
                 }
             }
 
+            public static void ParseBoolFromString(NameValueCollection nvc, object value, string propertyName)
+            {
+                if (value != null)
+                {
+                    var boolValue = value.ToString().ToBool();
+                    if (boolValue)
+                    {
+                        nvc.Add(propertyName, bool.TrueString.ToLowerInvariant());
+                    }
+                }
+            }
+
+            public static void ParseNullableBoolFromString(NameValueCollection nvc, object value, string propertyName)
+            {
+                var boolValue = value?.ToString().ToNullableBool();
+                if (boolValue != null)
+                {
+                    nvc.Add(propertyName, boolValue.Value.ToString().ToLowerInvariant());
+                }
+            }
+
             public static void ParseFromString(NameValueCollection nvc, object value, string propertyName)
             {
                 if (value != null) nvc.Add(propertyName, value.ToString());
@@ -431,9 +502,19 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
                 return null;
             }
 
+            public static IEnumerable<bool> ParseToBoolArray(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
+            {
+                var values = nvc.GetValues(key)?.Select(v => v.ToBool()).ToList();
+                if (values != null && values.Any())
+                {
+                    return values;
+                }
+                return null;
+            }
+
             public static IEnumerable<int> ParseToIntegerArray(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
             {
-                var values = nvc.GetValues(key)?.Select(Int32.Parse).ToList();
+                var values = nvc.GetValues(key)?.Select(int.Parse).ToList();
                 if (values != null && values.Any())
                 {
                     return values;
@@ -487,6 +568,20 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
                 return long.Parse(value);
             }
 
+            public static object ParseToBool(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
+            {
+                var value = ParseToString(parameters, prop, nvc, key)?.ToLowerInvariant();
+
+                return value.ToBool();
+            }
+
+            public static object ParseToNullableBool(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
+            {
+                var value = ParseToString(parameters, prop, nvc, key)?.ToLowerInvariant();
+
+                return value.ToNullableBool();
+            }
+
             public static object ParseToDouble(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
             {
                 var value = ParseToString(parameters, prop, nvc, key);
@@ -521,6 +616,8 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
                 {typeof(double?), TypeParsers.ParseToDouble},
                 {typeof(int?), TypeParsers.ParseToInteger},
                 {typeof(long?), TypeParsers.ParseToLong},
+                {typeof(bool), TypeParsers.ParseToBool},
+                {typeof(bool?), TypeParsers.ParseToNullableBool},
                 {typeof(SortDirectionOption?), TypeParsers.ParseToEnum<SortDirectionOption>},
                 {typeof(GeoLocation), TypeParsers.ParseToGeoLocation},
                 {typeof(GeoLocationParameter), TypeParsers.ParseToGeoLocationParameter}
@@ -540,6 +637,8 @@ new Dictionary<Type, Func<TParameters, PropertyInfo, Dictionary<string, StringVa
                 {typeof(int?), TypeParsers.ParseFromString},
                 {typeof(double?), TypeParsers.ParseFromString},
                 {typeof(long?), TypeParsers.ParseFromString},
+                {typeof(bool), TypeParsers.ParseBoolFromString},
+                {typeof(bool?), TypeParsers.ParseNullableBoolFromString},
                 {typeof(SortDirectionOption?), TypeParsers.ParseFromString},
                 {typeof(GeoLocation), TypeParsers.ParseFromGeoLocation},
                 {typeof (GeoLocationParameter), TypeParsers.ParseFromGeoLocationParameter},

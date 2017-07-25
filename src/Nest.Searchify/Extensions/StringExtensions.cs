@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.Queries;
@@ -10,6 +11,58 @@ namespace Nest.Searchify.Extensions
         public static string ToUrl(this string input)
         {
             return WebUtility.UrlEncode(input.Replace(" ", "-").ToLowerInvariant());
+        }
+
+        public static bool ToBool(this string value, Action<Dictionary<string, bool>> conversions = null)
+        {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            var boolConversions = new Dictionary<string, bool>
+            {
+                {"", false },
+                {"0", false},
+                {"1", true},
+                {"true", true },
+                {"false", false }
+            };
+
+            conversions?.Invoke(boolConversions);
+
+            if (boolConversions.TryGetValue(value.ToLowerInvariant(), out bool result))
+            {
+                return result;
+            }
+
+            return false;
+        }
+
+        public static bool? ToNullableBool(this string value, Action<Dictionary<string, bool?>> conversions = null)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return null;
+            }
+
+            var boolConversions = new Dictionary<string, bool?>
+            {
+                {"", null },
+                {"0", false},
+                {"1", true},
+                {"true", true },
+                {"false", false }
+            };
+
+            conversions?.Invoke(boolConversions);
+
+            if (boolConversions.TryGetValue(value.ToLowerInvariant(), out bool? result))
+            {
+                return result;
+            }
+
+            return null;
         }
     }
 

@@ -18,6 +18,12 @@ namespace Nest.Searchify.Tests.ParametersTests
             OptionTwo
         }
 
+        public class ParametersWithBool : Parameters
+        {
+            public bool MandatoryBool { get; set; }
+            public bool? OptionalBool { get; set; }
+        }
+
         public class CustomParameters : Parameters
         {
             public IEnumerable<string> Options { get; set; }
@@ -47,7 +53,31 @@ namespace Nest.Searchify.Tests.ParametersTests
 
             public long? OptionalLongValue { get; set; }
         }
-        
+
+        [Theory]
+        [InlineData("", "", 0)]
+        [InlineData("mandatoryBool=true", "mandatoryBool=true", 1)]
+        [InlineData("mandatoryBool=1", "mandatoryBool=true", 1)]
+        [InlineData("mandatoryBool=false", "", 0)]
+        [InlineData("mandatoryBool=0", "", 0)]
+        [InlineData("mandatoryBool=True", "mandatoryBool=true", 1)]
+        [InlineData("mandatoryBool=False", "", 0)]
+        [InlineData("mandatoryBool=2", "", 0)]
+        [InlineData("optionalBool=1", "optionalBool=true", 1)]
+        [InlineData("optionalBool=0", "optionalBool=false", 1)]
+        [InlineData("optionalBool=", "", 0)]
+        [InlineData("optionalBool=2", "", 0)]
+        public void ParseQueryStringForBoolParameters(string actual, string expected, int paramCount)
+        {
+            var parameters = QueryStringParser<ParametersWithBool>.Parse(actual);
+
+            var nvc = QueryStringParser<ParametersWithBool>.Parse(parameters);
+            nvc.Count.Should().Be(paramCount);
+
+            var qs = QueryStringParser<ParametersWithBool>.ToQueryString(parameters);
+            qs.Should().Be(expected);
+        }
+
         [Theory]
         [InlineData("", "", 0)]
         [InlineData("page=1", "", 0)]

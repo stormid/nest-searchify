@@ -87,6 +87,9 @@ namespace Nest.Searchify.Tests.ParametersTests
         [InlineData("page=1&size=100", "size=100", 1)]
         [InlineData("sortdir=Asc&sortby=column", "sortby=column&sortdir=Asc", 2)]
         [InlineData("page=", "", 0)]
+        [InlineData("sortdir=&sortby=column", "sortby=column", 1)]
+        [InlineData("sortdir=invalid&sortby=column", "sortby=column", 1)]
+        [InlineData("sortdir=ASC&sortby=column", "sortby=column&sortdir=Asc", 2)]
         public void ParseQueryStringForParameters(string actual, string expected, int paramCount)
         {
             var parameters = QueryStringParser<Parameters>.Parse(actual);

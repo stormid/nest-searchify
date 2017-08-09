@@ -1,4 +1,6 @@
-﻿namespace Nest.Searchify.Queries
+﻿using System.Collections.Specialized;
+
+namespace Nest.Searchify.Queries
 {
 #if NETSTANDARD
 
@@ -200,11 +202,26 @@
 
             public static object ParseToEnum<TEnum>(TParameters parameters, PropertyInfo prop, Dictionary<string, StringValues> nvc, string key) where TEnum : struct
             {
-                if (nvc.Keys.Contains(key) && nvc.ContainsKey(key))
+                if (nvc.ContainsKey(key) && !string.IsNullOrWhiteSpace(nvc[key]) && Enum.TryParse(nvc[key], true, out TEnum enumValue))
                 {
-                    return (TEnum)Enum.Parse(typeof(TEnum), nvc[key], true);
+                    return enumValue;
                 }
-                return null;
+
+                if (IsNullable(prop.PropertyType))
+                {
+                    return null;
+                }
+
+                return default(TEnum);
+            }
+            
+            public static bool IsNullable(Type type)
+            {
+                if (type.GetTypeInfo().IsGenericType)
+                {
+                    return type.GetGenericTypeDefinition() == typeof(Nullable<>);
+                }
+                return false;
             }
         }
 
@@ -590,13 +607,29 @@
                 return double.Parse(value);
             }
 
-            public static object ParseToEnum<TEnum>(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key) where TEnum : struct
+            public static object ParseToEnum<TEnum>(TParameters parameters, PropertyInfo prop, NameValueCollection nvc,
+                string key) where TEnum : struct
             {
-                if (nvc.AllKeys.Contains(key) && nvc[key] != null)
+                if (nvc.AllKeys.Contains(key) && nvc[key] != null && Enum.TryParse(nvc[key], true, out TEnum enumValue))
                 {
-                    return (TEnum) Enum.Parse(typeof(TEnum), nvc[key], true);
+                    return enumValue;
                 }
-                return null;
+
+                if (IsNullable(prop.PropertyType))
+                {
+                    return null;
+                }
+
+                return default(TEnum);
+            }
+
+            public static bool IsNullable(Type type)
+            {
+                if (type.IsGenericType)
+                {
+                    return type.GetGenericTypeDefinition() == typeof(Nullable<>);
+                }
+                return false;
             }
 
             #endregion

@@ -1,11 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;net46;netstandard1.6</TargetFrameworks>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <AssemblyName>Nest.Searchify</AssemblyName>
     <RootNamespace>Nest.Searchify</RootNamespace>
-    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
-    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.6' ">1.6.0</NetStandardImplicitPackageVersion>
+    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard2.0' ">2.0.0</NetStandardImplicitPackageVersion>
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
@@ -20,19 +19,19 @@
     <Company>Storm ID</Company>
     <Description>Search abstraction</Description>
     <Copyright>Phil Oyston, Storm ID Ltd.</Copyright>
-    <PackageIconUrl>https://www.stormid.com/content/img/icons/apple-touch-icon.png</PackageIconUrl>
+    <Icon>https://www.stormid.com/content/img/icons/apple-touch-icon.png</Icon>
     <PackageProjectUrl>https://github.com/stormid/Nest-Searchify</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/stormid/Nest-Searchify/blob/master/LICENSE</PackageLicenseUrl>
+    <License>MIT</License>
     <PackageTags>elasticsearch nest</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' or '$(TargetFramework)' == 'net46' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
     <Reference Include="System" />
     <Reference Include="System.Web" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,19 +44,23 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Microsoft.Net.Compilers" Version="2.0.1" />
-    <PackageReference Include="NEST" Version="[5.3.0,6)" />
-    <PackageReference Include="Nest.Queryify" Version="[0.10.0,1)" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Net.Compilers" Version="3.3.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="NEST" Version="6.8.2" />
+    <PackageReference Include="NEST.JsonNetSerializer" Version="6.8.2" />
+    <PackageReference Include="Nest.Queryify" Version="1.0.0-ci0001" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="..\..\VersionAssemblyInfo.cs" Link="VersionAssemblyInfo.cs" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities">
-      <Version>1.0.0</Version>
-    </PackageReference>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
   </ItemGroup>
 
 </Project>

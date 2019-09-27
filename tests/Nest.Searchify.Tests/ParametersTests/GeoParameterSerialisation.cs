@@ -11,7 +11,7 @@ namespace Nest.Searchify.Tests.ParametersTests
     {
         public class TestGeoPointParameters : SearchParameters
         {
-            [JsonConverter(typeof(GeoLocationJsonConverter))]
+            [JsonConverter(typeof(GeoLocationParameterJsonConverter))]
             [JsonProperty(PropertyName = "locpt")]
             public string Point { get; set; }
             [JsonConverter(typeof(GeoBoundingBoxJsonConverter))]
@@ -23,6 +23,8 @@ namespace Nest.Searchify.Tests.ParametersTests
             [JsonProperty(PropertyName = "locpt")]
             public GeoLocationParameter Point { get; set; }
             public GeoBoundingBox BBox { get; set; }
+
+            [JsonConverter(typeof(BoundingBoxJsonConverter))]
             public IBoundingBox NestBBox { get; set; } = new BoundingBox();
         }
 

@@ -53,7 +53,7 @@ namespace Nest.Searchify.Tests.GeoLocationTests
                     GeoLocationParameter point = input;
                 };
 
-                a.ShouldThrow<ArgumentException>();
+                a.Should().Throw<ArgumentException>();
             }
             
             [Theory]
@@ -68,7 +68,7 @@ namespace Nest.Searchify.Tests.GeoLocationTests
                     var point = new GeoLocationParameter(latitude, 0);
                 };
 
-                a.ShouldThrow<ArgumentOutOfRangeException>().And.Message.Should().Contain("latitude");
+                a.Should().Throw<ArgumentOutOfRangeException>().And.Message.Should().Contain("latitude");
             }
 
             [Theory]
@@ -83,7 +83,7 @@ namespace Nest.Searchify.Tests.GeoLocationTests
                     var point = new GeoLocationParameter(0, longitude);
                 };
 
-                a.ShouldThrow<ArgumentOutOfRangeException>().And.Message.Should().Contain("longitude");
+                a.Should().Throw<ArgumentOutOfRangeException>().And.Message.Should().Contain("longitude");
             }
         }
 
@@ -119,9 +119,9 @@ namespace Nest.Searchify.Tests.GeoLocationTests
                 GeoLocationParameter point = "1.1,1.22";
 
                 var stream = new MemoryStream();
-                var connectionSettings = new ConnectionSettings();
+                var connectionSettings = new ConnectionSettings(new SingleNodeConnectionPool(new Uri("http://localhost:9200")));
                 var client = new ElasticClient(connectionSettings);
-                client.Serializer.Serialize(point, stream, SerializationFormatting.None);
+                client.SourceSerializer.Serialize(point, stream, SerializationFormatting.None);
                 stream.Seek(0, SeekOrigin.Begin);
                 using (var r = new StreamReader(stream))
                 {
@@ -135,10 +135,10 @@ namespace Nest.Searchify.Tests.GeoLocationTests
             public void WhenDeserialisingAGeoLocationParameterFromString()
             {
                 var input = "{\"lat\":1.1,\"lon\":1.22}";
-                var connectionSettings = new ConnectionSettings();
+                var connectionSettings = new ConnectionSettings(new SingleNodeConnectionPool(new Uri("http://localhost:9200")));
                 var client = new ElasticClient(connectionSettings);
                 var strm = new MemoryStream(Encoding.UTF8.GetBytes(input));
-                var result = client.Serializer.Deserialize<GeoLocationParameter>(strm);
+                var result = client.SourceSerializer.Deserialize<GeoLocationParameter>(strm);
 
                 GeoLocationParameter expected = "1.1,1.22";
 

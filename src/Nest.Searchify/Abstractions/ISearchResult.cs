@@ -5,7 +5,7 @@ namespace Nest.Searchify.Abstractions
     public interface ISearchResultAggregations<out TParameters> : ISearchResultBase<TParameters>
         where TParameters : class, IPagingParameters, ISortingParameters
     {
-        AggregationsHelper AggregationHelper { get; }
+        AggregateDictionary AggregationHelper { get; }
         IReadOnlyDictionary<string, IAggregate> Aggregations { get; }
     }
 

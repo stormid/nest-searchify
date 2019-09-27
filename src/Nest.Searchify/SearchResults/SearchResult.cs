@@ -428,7 +428,7 @@ namespace Nest.Searchify.SearchResults
         #region Aggregations
 
         [JsonIgnore]
-        public AggregationsHelper AggregationHelper => Response.Aggs;
+        public AggregateDictionary AggregationHelper => Response.Aggregations;
 
         [JsonProperty("aggregations")]
         public virtual IReadOnlyDictionary<string, IAggregate> Aggregations { get; private set; }

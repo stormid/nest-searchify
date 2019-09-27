@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 namespace Nest.Searchify.Queries
 {
     [TypeConverter(typeof(GeoLocationParameterTypeConverter))]
+    [JsonConverter(typeof(GeoLocationParameterJsonConverter))]
     [JsonObject]
     public class GeoLocationParameter : GeoLocation
     {

@@ -19,6 +19,13 @@ stages:
       build.configuration: 'Release'
       cake.verbosity: 'Verbose'
     steps:
+    - task: NuGetCommand@2
+      inputs:
+        command: 'restore'
+        restoreSolution: '**/*.sln'
+        feedsToUse: 'select'
+        vstsFeed: '$(artifacts.ci.feed)'
+        
     - powershell: ./build.ps1 -Target "$(cake.buildTarget)" -Configuration "$(build.configuration)" -Verbosity "$(cake.verbosity)"
       displayName: 'Cake Build'
 

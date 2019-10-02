@@ -19,9 +19,6 @@ stages:
       build.configuration: 'Release'
       cake.verbosity: 'Verbose'
     steps:
-    - powershell: nuget sources add -Name libraries -Source https://pkgs.dev.azure.com/storm-id-oss/_packaging/libraries/nuget/v3/index.json
-      displayName: Add libraries feed
-
     - powershell: ./build.ps1 -Target "$(cake.buildTarget)" -Configuration "$(build.configuration)" -Verbosity "$(cake.verbosity)"
       displayName: 'Cake Build'
 

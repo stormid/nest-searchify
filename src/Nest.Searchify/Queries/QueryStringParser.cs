@@ -146,23 +146,23 @@ namespace Nest.Searchify.Queries
                 return string.IsNullOrWhiteSpace(value.ToString()) ? null : value.ToString();
             }
 
-            public static GeoLocation ParseToGeoLocation(TParameters parameters, PropertyInfo prop, Dictionary<string, StringValues> nvc, string key)
-            {
-                var value = nvc[key];
-                return value.ToString();
-            }
+            //public static GeoLocation ParseToGeoLocation(TParameters parameters, PropertyInfo prop, Dictionary<string, StringValues> nvc, string key)
+            //{
+            //    var value = nvc[key];
+            //    return value.ToString();
+            //}
 
-            public static void ParseFromGeoLocationParameter(Dictionary<string, StringValues> nvc, object value, string propertyName)
-            {
-                var point = value as GeoLocationParameter;
-                if (point != null) nvc.Add(propertyName, point.ToString());
-            }
+            //public static void ParseFromGeoLocationParameter(Dictionary<string, StringValues> nvc, object value, string propertyName)
+            //{
+            //    var point = value as GeoLocationParameter;
+            //    if (point != null) nvc.Add(propertyName, point.ToString());
+            //}
 
-            public static GeoLocationParameter ParseToGeoLocationParameter(TParameters parameters, PropertyInfo prop, Dictionary<string, StringValues> nvc, string key)
-            {
-                var value = nvc[key];
-                return value.ToString();
-            }
+            //public static GeoLocationParameter ParseToGeoLocationParameter(TParameters parameters, PropertyInfo prop, Dictionary<string, StringValues> nvc, string key)
+            //{
+            //    var value = nvc[key];
+            //    return value.ToString();
+            //}
 
             public static object ParseToInteger(TParameters parameters, PropertyInfo prop, Dictionary<string, StringValues> nvc, string key)
             {
@@ -242,8 +242,8 @@ namespace Nest.Searchify.Queries
                 {typeof(long?), TypeParsers.ParseToLong},
                 {typeof(bool?), TypeParsers.ParseToNullableBool},
                 {typeof(SortDirectionOption?), TypeParsers.ParseToEnum<SortDirectionOption>},
-                {typeof(GeoLocation), TypeParsers.ParseToGeoLocation},
-                {typeof(GeoLocationParameter), TypeParsers.ParseToGeoLocationParameter}
+                // {typeof(GeoLocation), TypeParsers.ParseToGeoLocation},
+                // {typeof(GeoLocationParameter), TypeParsers.ParseToGeoLocationParameter}
             };
 
         private static readonly IDictionary<Type, Action<Dictionary<string, StringValues>, object, string>> Converters = new Dictionary
@@ -263,8 +263,8 @@ namespace Nest.Searchify.Queries
             { typeof (long?), TypeParsers.ParseFromString },
             { typeof (bool?), TypeParsers.ParseNullableBoolFromString },
             { typeof (SortDirectionOption?), TypeParsers.ParseFromString },
-            { typeof (GeoLocation), TypeParsers.ParseFromGeoLocation },
-            { typeof (GeoLocationParameter), TypeParsers.ParseFromGeoLocationParameter },
+            // { typeof (GeoLocation), TypeParsers.ParseFromGeoLocation },
+            // { typeof (GeoLocationParameter), TypeParsers.ParseFromGeoLocationParameter },
         };
 
         /// <summary>
@@ -487,17 +487,17 @@ namespace Nest.Searchify.Queries
                 if (value != null) nvc.Add(propertyName, value.ToString());
             }
 
-            public static void ParseFromGeoLocation(NameValueCollection nvc, object value, string propertyName)
-            {
-                var point = value as GeoLocation;
-                if (point != null) nvc.Add(propertyName, point.ToString());
-            }
+            //public static void ParseFromGeoLocation(NameValueCollection nvc, object value, string propertyName)
+            //{
+            //    var point = value as GeoLocation;
+            //    if (point != null) nvc.Add(propertyName, point.ToString());
+            //}
 
-            public static void ParseFromGeoLocationParameter(NameValueCollection nvc, object value, string propertyName)
-            {
-                var point = value as GeoLocationParameter;
-                if (point != null) nvc.Add(propertyName, point.ToString());
-            }
+            //public static void ParseFromGeoLocationParameter(NameValueCollection nvc, object value, string propertyName)
+            //{
+            //    var point = value as GeoLocationParameter;
+            //    if (point != null) nvc.Add(propertyName, point.ToString());
+            //}
 
             public static IEnumerable<string> ParseToStringArray(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
             {
@@ -555,19 +555,19 @@ namespace Nest.Searchify.Queries
                 return string.IsNullOrWhiteSpace(value) ? null : value;
             }
 
-            public static GeoLocation ParseToGeoLocation(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
-            {
-                var value = nvc.Get(key);
-                var points = value.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(double.Parse).ToArray();
-                return new GeoLocation(points[0], points[1]);
-            }
+            //public static GeoLocation ParseToGeoLocation(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
+            //{
+            //    var value = nvc.Get(key);
+            //    var points = value.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(double.Parse).ToArray();
+            //    return new GeoLocation(points[0], points[1]);
+            //}
 
-            public static GeoLocationParameter ParseToGeoLocationParameter(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
-            {
-                var value = nvc.Get(key);
-                var points = value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(double.Parse).ToArray();
-                return new GeoLocationParameter(points[0], points[1]);
-            }
+            //public static GeoLocationParameter ParseToGeoLocationParameter(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
+            //{
+            //    var value = nvc.Get(key);
+            //    var points = value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(double.Parse).ToArray();
+            //    return new GeoLocationParameter(points[0], points[1]);
+            //}
 
             public static object ParseToInteger(TParameters parameters, PropertyInfo prop, NameValueCollection nvc, string key)
             {
@@ -652,8 +652,8 @@ namespace Nest.Searchify.Queries
                 {typeof(bool), TypeParsers.ParseToBool},
                 {typeof(bool?), TypeParsers.ParseToNullableBool},
                 {typeof(SortDirectionOption?), TypeParsers.ParseToEnum<SortDirectionOption>},
-                {typeof(GeoLocation), TypeParsers.ParseToGeoLocation},
-                {typeof(GeoLocationParameter), TypeParsers.ParseToGeoLocationParameter}
+                // {typeof(GeoLocation), TypeParsers.ParseToGeoLocation}, // not currently supported
+                // {typeof(GeoLocationParameter), TypeParsers.ParseToGeoLocationParameter} // not currently supported
             };
 
         private static readonly IDictionary<Type, Action<NameValueCollection, object, string>> Converters = new Dictionary
@@ -673,8 +673,8 @@ namespace Nest.Searchify.Queries
                 {typeof(bool), TypeParsers.ParseBoolFromString},
                 {typeof(bool?), TypeParsers.ParseNullableBoolFromString},
                 {typeof(SortDirectionOption?), TypeParsers.ParseFromString},
-                {typeof(GeoLocation), TypeParsers.ParseFromGeoLocation},
-                {typeof (GeoLocationParameter), TypeParsers.ParseFromGeoLocationParameter},
+                // {typeof(GeoLocation), TypeParsers.ParseFromGeoLocation}, // not currently supported
+                // {typeof (GeoLocationParameter), TypeParsers.ParseFromGeoLocationParameter}, // not currently supported
 
             };
 

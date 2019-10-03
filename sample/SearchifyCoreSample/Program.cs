@@ -36,8 +36,8 @@ namespace SearchifyCoreSample
             var parameters = new PersonSearchParameters()
             {
                 Country = "uk",
-                Location = new GeoLocationParameter(55.9, -3.1),
-                Radius = 50
+                //Location = new GeoLocationParameter(55.9, -3.1),
+                //Radius = 50
             };
 
             var result = client.Query(new SampleSearchQuery(parameters));
@@ -62,12 +62,36 @@ namespace SearchifyCoreSample
                 .RuleFor(r => r.Age, f => f.Random.Number(16, 65))
                 .RuleFor(r => r.Country, f => FilterField.Create(f.Address.Country(), f.Address.CountryCode().ToLowerInvariant()))
                 .RuleFor(r => r.Tags, f =>f.Commerce.Categories(5).Select(FilterField.Create))
-                .RuleFor(r => r.Location, f => GeoLocation.TryCreate(f.Address.Latitude(), f.Address.Longitude()))
+                // .RuleFor(r => r.Location, f => GeoLocation.TryCreate(f.Address.Latitude(), f.Address.Longitude()))
                 ;
             var list = faker.Generate(1).ToList();
-            list.Add(new PersonDocument { Id = Guid.NewGuid().ToString(), Name = "Phil Oyston", Age = 20, Country = FilterField.Create("United Kingdom", "uk"), Tags = new[] { FilterField.Create("Baby") }, Location = GeoLocation.TryCreate(55.9532, -3.1882) });
-            list.Add(new PersonDocument { Id = Guid.NewGuid().ToString(), Name = "John Doe", Age = 30, Country = FilterField.Create("United Kingdom", "uk"), Tags = new[] { FilterField.Create("Grocery") }, Location = GeoLocation.TryCreate(55.9, -3.1) });
-            list.Add(new PersonDocument { Id = Guid.NewGuid().ToString(), Name = "John Smith", Age = 40, Country = FilterField.Create("United Kingdom", "uk"), Tags = new[] { FilterField.Create("Baby"), FilterField.Create("Grocery") }, Location = GeoLocation.TryCreate(55.9, -3.1) });
+            list.Add(new PersonDocument
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "Phil Oyston",
+                Age = 20,
+                Country = FilterField.Create("United Kingdom", "uk"),
+                Tags = new[] { FilterField.Create("Baby") },
+                //Location = GeoLocation.TryCreate(55.9532, -3.1882) }
+            });
+            list.Add(new PersonDocument
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "John Doe",
+                Age = 30,
+                Country = FilterField.Create("United Kingdom", "uk"),
+                Tags = new[] { FilterField.Create("Grocery") },
+                //Location = GeoLocation.TryCreate(55.9, -3.1) }
+            });
+            list.Add(new PersonDocument
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "John Smith",
+                Age = 40,
+                Country = FilterField.Create("United Kingdom", "uk"),
+                Tags = new[] { FilterField.Create("Baby"), FilterField.Create("Grocery") },
+                //Location = GeoLocation.TryCreate(55.9, -3.1) }
+            });
 
             client.Bulk(b => b.IndexMany(list).Refresh(Refresh.True));
         }

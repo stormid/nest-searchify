@@ -22,10 +22,10 @@ namespace SearchifyCoreSample
 
         public IEnumerable<string> Tags { get; set; }
 
-        public int? LocationRange { get; set; }
+        //public int? LocationRange { get; set; }
 
-        [JsonProperty(PropertyName = "locpt")]
-        public GeoLocationParameter Location { get; set; }
+        //[JsonProperty(PropertyName = "locpt")]
+        //public GeoLocationParameter Location { get; set; }
 
         public double? Radius { get; set; }
     }

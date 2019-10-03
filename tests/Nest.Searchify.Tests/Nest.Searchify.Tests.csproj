@@ -10,6 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="GeoLocationTests\GeoLocationContext.cs" />
+    <Compile Remove="ParametersTests\GeoLocationJsonPropertyIgnoredTestCase.cs" />
+    <Compile Remove="ParametersTests\GeoParameterSerialisation.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.9.0" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
     <PackageReference Include="Microsoft.Net.Compilers" Version="3.3.1">

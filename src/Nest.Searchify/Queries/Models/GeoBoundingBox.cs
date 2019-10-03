@@ -12,10 +12,15 @@ namespace Nest.Searchify.Queries.Models
     public class GeoBoundingBox : IEquatable<GeoBoundingBox>, IBoundingBox, IFormattable
     {
         private static readonly Regex Pattern = new Regex(@"^\[(?<topLeft>(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?))\]\s?\[(?<bottomRight>(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?))\]$", RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace);
+        
         [JsonProperty("top_left")]
         public GeoLocation TopLeft { get; set; }
+        
         [JsonProperty("bottom_right")]
+        
         public GeoLocation BottomRight { get; set; }
+        
+        public string WellKnownText { get; set; }
 
         public GeoBoundingBox()
         {

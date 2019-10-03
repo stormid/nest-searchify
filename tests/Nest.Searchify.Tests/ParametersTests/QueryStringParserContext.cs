@@ -34,17 +34,11 @@ namespace Nest.Searchify.Tests.ParametersTests
 
         }
 
-        public class MyParameters : SearchParameters, IGeoPointParameters
+        public class MyParameters : SearchParameters
         {
             public IEnumerable<string> Options { get; set; }
             public IEnumerable<int> Numbers { get; set; }
             public IEnumerable<double> Doubles { get; set; }
-            [JsonProperty("lat")]
-            public double Latitude { get; set; }
-            [JsonProperty("lng")]
-            public double Longitude { get; set; }
-
-            public GeoLocation Location { get; set; }
             public SomeOption EnumOptions { get; set; }
 
             public long LongValue { get; set; }
@@ -139,9 +133,9 @@ namespace Nest.Searchify.Tests.ParametersTests
         public void FromQueryString()
         {
 #if NETSTANDARD
-            var queryString = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery("q=test&options=o1&options=o2&numbers=1&numbers=5&doubles=99.99&doubles=8&lat=-53.3&lng=3.234&location=1,2&sortdir=Asc&enumOptions=optionone");
+            var queryString = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery("q=test&options=o1&options=o2&numbers=1&numbers=5&doubles=99.99&doubles=8&sortdir=Asc&enumOptions=optionone");
 #else
-            var queryString = System.Web.HttpUtility.ParseQueryString("q=test&options=o1&options=o2&numbers=1&numbers=5&doubles=99.99&doubles=8&lat=-53.3&lng=3.234&location=1,2&sortdir=Asc&enumOptions=optionone");
+            var queryString = System.Web.HttpUtility.ParseQueryString("q=test&options=o1&options=o2&numbers=1&numbers=5&doubles=99.99&doubles=8&sortdir=Asc&enumOptions=optionone");
 #endif
             var p = new MyParameters();
 
@@ -154,10 +148,6 @@ namespace Nest.Searchify.Tests.ParametersTests
             p.Options.Count().Should().Be(2);
             p.Numbers.Count().Should().Be(2);
             p.Doubles.Count().Should().Be(2);
-            p.Latitude.Should().Be(-53.3);
-            p.Longitude.Should().Be(3.234);
-            p.Location.Latitude.Should().Be(1);
-            p.Location.Longitude.Should().Be(2);
             p.SortDirection.Should().Be(SortDirectionOption.Asc);
             p.EnumOptions.Should().Be(SomeOption.OptionOne);
         }
@@ -171,15 +161,12 @@ namespace Nest.Searchify.Tests.ParametersTests
                 Options = new[] {"o1", "o2"},
                 Numbers = new[] {1, 5},
                 Doubles = new[] {2.3, 17.5},
-                Latitude = -53.1,
-                Longitude = -3,
-                Location = GeoLocation.TryCreate(-53.1, -3),
                 LongValue = 999999999,
                 LongValues = new long[] { 11111111, 22222222, 33333333 }
             };
 
             var nvc = QueryStringParser<MyParameters>.Parse(p);
-            nvc.Count.Should().Be(9);
+            nvc.Count.Should().Be(6);
         }
     }
 

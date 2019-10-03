@@ -3,6 +3,7 @@ using System.Linq;
 using Bogus;
 using Elasticsearch.Net;
 using Nest;
+using Nest.JsonNetSerializer;
 using Nest.Queryify.Extensions;
 using Nest.Searchify;
 using Nest.Searchify.Queries;
@@ -14,7 +15,7 @@ namespace SearchifyCoreSample
     {
         static void ES()
         {
-            var connectionSettings = new ConnectionSettings(new Uri("http://localhost:9200"));
+            var connectionSettings = new ConnectionSettings(new SingleNodeConnectionPool(new Uri("http://localhost:9200")));
             connectionSettings.DefaultIndex("my-application");
             connectionSettings.EnableDebugMode(c =>
             {
@@ -24,7 +25,7 @@ namespace SearchifyCoreSample
                 //}
             });
 
-            connectionSettings.InferMappingFor<PersonDocument>(m => m.TypeName("person"));
+            connectionSettings.DefaultMappingFor<PersonDocument>(m => m.TypeName("person"));
             connectionSettings.ThrowExceptions();
             
             var client = new ElasticClient(connectionSettings);
@@ -35,8 +36,8 @@ namespace SearchifyCoreSample
             var parameters = new PersonSearchParameters()
             {
                 Country = "uk",
-                Location = new GeoLocationParameter(55.9, -3.1),
-                Radius = 50
+                //Location = new GeoLocationParameter(55.9, -3.1),
+                //Radius = 50
             };
 
             var result = client.Query(new SampleSearchQuery(parameters));
@@ -61,12 +62,36 @@ namespace SearchifyCoreSample
                 .RuleFor(r => r.Age, f => f.Random.Number(16, 65))
                 .RuleFor(r => r.Country, f => FilterField.Create(f.Address.Country(), f.Address.CountryCode().ToLowerInvariant()))
                 .RuleFor(r => r.Tags, f =>f.Commerce.Categories(5).Select(FilterField.Create))
-                .RuleFor(r => r.Location, f => GeoLocation.TryCreate(f.Address.Latitude(), f.Address.Longitude()))
+                // .RuleFor(r => r.Location, f => GeoLocation.TryCreate(f.Address.Latitude(), f.Address.Longitude()))
                 ;
-            var list = faker.Generate(100).ToList();
-            list.Add(new PersonDocument { Id = Guid.NewGuid().ToString(), Name = "Phil Oyston", Age = 20, Country = FilterField.Create("United Kingdom", "uk"), Tags = new[] { FilterField.Create("Baby") }, Location = GeoLocation.TryCreate(55.9532, -3.1882) });
-            list.Add(new PersonDocument { Id = Guid.NewGuid().ToString(), Name = "John Doe", Age = 30, Country = FilterField.Create("United Kingdom", "uk"), Tags = new[] { FilterField.Create("Grocery") }, Location = GeoLocation.TryCreate(55.9, -3.1) });
-            list.Add(new PersonDocument { Id = Guid.NewGuid().ToString(), Name = "John Smith", Age = 40, Country = FilterField.Create("United Kingdom", "uk"), Tags = new[] { FilterField.Create("Baby"), FilterField.Create("Grocery") }, Location = GeoLocation.TryCreate(55.9, -3.1) });
+            var list = faker.Generate(1).ToList();
+            list.Add(new PersonDocument
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "Phil Oyston",
+                Age = 20,
+                Country = FilterField.Create("United Kingdom", "uk"),
+                Tags = new[] { FilterField.Create("Baby") },
+                //Location = GeoLocation.TryCreate(55.9532, -3.1882) }
+            });
+            list.Add(new PersonDocument
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "John Doe",
+                Age = 30,
+                Country = FilterField.Create("United Kingdom", "uk"),
+                Tags = new[] { FilterField.Create("Grocery") },
+                //Location = GeoLocation.TryCreate(55.9, -3.1) }
+            });
+            list.Add(new PersonDocument
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "John Smith",
+                Age = 40,
+                Country = FilterField.Create("United Kingdom", "uk"),
+                Tags = new[] { FilterField.Create("Baby"), FilterField.Create("Grocery") },
+                //Location = GeoLocation.TryCreate(55.9, -3.1) }
+            });
 
             client.Bulk(b => b.IndexMany(list).Refresh(Refresh.True));
         }

@@ -128,7 +128,7 @@ namespace Nest.Searchify.Tests.FilterFieldTests
         {
             Action exception = () => FilterField.Parse(key, delimiter);
 
-            exception.ShouldThrow<ArgumentNullException>();
+            exception.Should().Throw<ArgumentNullException>();
         }
 
         [Theory]
@@ -138,7 +138,7 @@ namespace Nest.Searchify.Tests.FilterFieldTests
         {
             Action exception = () => FilterField.Parse(key, delimiter);
 
-            exception.ShouldThrow<ArgumentNullException>();
+            exception.Should().Throw<ArgumentNullException>();
         }
 
         [Theory]
@@ -148,7 +148,7 @@ namespace Nest.Searchify.Tests.FilterFieldTests
         {
             Action exception = () => FilterField.Parse(key, delimiter);
 
-            exception.ShouldThrow<ArgumentOutOfRangeException>();
+            exception.Should().Throw<ArgumentOutOfRangeException>();
         }
 
         public class WhenComparingFilterFields

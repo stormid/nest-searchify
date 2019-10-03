@@ -1,0 +1,101 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - master
+    - release/*
+variables:
+  vmImage: 'windows-latest'
+stages:
+- stage: build
+  displayName: 'Build'
+  jobs:
+  - job: cake
+    displayName: 'Cake'
+    pool:
+      vmImage: $(vmImage)
+    variables:
+      cake.buildTarget: 'CI'
+      build.configuration: 'Release'
+      cake.verbosity: 'Verbose'
+    steps:
+    - powershell: ./build.ps1 -Target "$(cake.buildTarget)" -Configuration "$(build.configuration)" -Verbosity "$(cake.verbosity)"
+      displayName: 'Cake Build'
+
+    - powershell: Write-Host '##vso[build.addbuildtag]PR'
+      displayName: 'Mark as PR Build'
+      condition: and(succeeded(), in(variables['Build.Reason'], 'PullRequest'))
+
+    - powershell: Write-Host '##vso[build.addbuildtag]Release'
+      displayName: 'Mark as Release Build'
+      condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))
+
+- stage: 'PublishCI'
+  displayName: 'Publish CI'
+  dependsOn: build
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/master'))
+  jobs:
+  - job: PublishInternal
+    displayName: 'Publish to Artifacts'
+    pool:
+      vmImage: $(vmImage)
+    steps:   
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        buildType: 'current'
+        downloadType: 'specific'
+        itemPattern: '**'
+        downloadPath: '$(System.ArtifactsDirectory)'
+    - task: NuGetCommand@2
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: '$(artifacts.ci.feed)'
+        allowPackageConflicts: true
+
+- stage: PublishPreview
+  displayName: 'Publish Preview'
+  dependsOn: build
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))
+  jobs:
+  - job: PublishInternal
+    displayName: 'Publish to Artifacts'
+    pool:
+      vmImage: $(vmImage)
+    steps:   
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        buildType: 'current'
+        downloadType: 'specific'
+        itemPattern: '**'
+        downloadPath: '$(System.ArtifactsDirectory)'
+    - task: NuGetCommand@2
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: '$(artifacts.preview.feed)'
+        allowPackageConflicts: true
+- stage: PublishRelease
+  displayName: 'Publish Release'
+  dependsOn: build
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+  jobs:
+  - job: PublishNuGet
+    displayName: 'Publish to NuGet'
+    pool:
+      vmImage: $(vmImage)
+    steps:   
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        buildType: 'current'
+        downloadType: 'specific'
+        itemPattern: '**'
+        downloadPath: '$(System.ArtifactsDirectory)'
+    - task: NuGetCommand@2
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+        nuGetFeedType: 'external'
+        publishFeedCredentials: '$(artifacts.nuget.feed)'

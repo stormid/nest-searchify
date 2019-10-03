@@ -17,7 +17,7 @@ namespace SearchifyCoreSample
 
         public IEnumerable<FilterField> Tags { get; set; }
 
-        [GeoPoint]
-        public GeoLocation Location { get; set; }
+        //[GeoPoint]
+        //public GeoLocation Location { get; set; }
     }
 }

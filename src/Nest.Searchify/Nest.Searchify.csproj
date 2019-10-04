@@ -24,6 +24,7 @@
     <License>MIT</License>
     <PackageTags>elasticsearch nest</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
   </PropertyGroup>
 

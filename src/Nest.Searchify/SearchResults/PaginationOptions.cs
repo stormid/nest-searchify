@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.Queries;
 
@@ -93,7 +92,6 @@ namespace Nest.Searchify.SearchResults
             return p;
         }
 
-#if NETSTANDARD
 	    public IEnumerable<Tuple<int, Dictionary<string, Microsoft.Extensions.Primitives.StringValues>>> PagingGroup(int range = 5)
 	    {
 	        var fromPage = (Page - range) <= 0 ? 1 : Page - range;
@@ -105,18 +103,5 @@ namespace Nest.Searchify.SearchResults
 	            yield return new Tuple<int, Dictionary<string, Microsoft.Extensions.Primitives.StringValues>>(page, nvc);
 	        }
 	    }
-#else
-        public IEnumerable<Tuple<int, NameValueCollection>> PagingGroup(int range = 5)
-        {
-            var fromPage = (Page - range) <= 0 ? 1 : Page - range;
-            var toPage = (Page + range) > Pages ? Pages : Page + range;
-
-            for (var page = fromPage; page <= toPage; page++)
-            {
-                var nvc = QueryStringParser<TParameters>.Parse(ForPage(page));
-                yield return new Tuple<int, NameValueCollection>(page, nvc);
-            }
-        }
-#endif
     }
 }

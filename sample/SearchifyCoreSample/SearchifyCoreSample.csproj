@@ -2,19 +2,17 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <IsPackable>False</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="28.3.1" />
-    <PackageReference Include="Microsoft.Net.Compilers" Version="3.3.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.Compilers" Version="3.3.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Nest.Searchify.JsonNetSerializer\Nest.Searchify.JsonNetSerializer.csproj" />
     <ProjectReference Include="..\..\src\Nest.Searchify\Nest.Searchify.csproj" />
     <PackageReference Include="NEST.JsonNetSerializer" Version="6.8.3" />
   </ItemGroup>

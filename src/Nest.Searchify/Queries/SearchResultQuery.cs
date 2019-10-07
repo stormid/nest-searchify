@@ -32,13 +32,13 @@ namespace Nest.Searchify.Queries
 
         protected override TSearchResult ExecuteCore(IElasticClient client, string index)
         {
-            var response = client.Search<TDocument, TDocument>(desc => BuildQuery(desc).Index(index));
+            var response = client.Search<TDocument, TDocument>(desc => BuildQuery(desc.TypedKeys(false)).Index(index));
             return ToSearchResultCore(response, Parameters);
         }
 
         protected override async Task<TSearchResult> ExecuteCoreAsync(IElasticClient client, string index)
         {
-            var response = await client.SearchAsync<TDocument, TDocument>(desc => BuildQuery(desc).Index(index));
+            var response = await client.SearchAsync<TDocument, TDocument>(desc => BuildQuery(desc.TypedKeys(false)).Index(index));
             return ToSearchResultCore(response, Parameters);
         }
 

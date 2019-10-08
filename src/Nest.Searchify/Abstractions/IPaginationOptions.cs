@@ -23,11 +23,21 @@ namespace Nest.Searchify.Abstractions
         TParameters ForPage(int page);
         TParameters LastPage();
 
+#if NETSTANDARD
         /// <summary>
         /// Generates a group of pages around the current page, will always include
         /// </summary>
         /// <param name="range">the range of pages to generate, by default 5 pages either side of the current page will be generated (or the available pages if that is less than the <paramref name="range"/></param>
         /// <returns>Group of page numbers along with a dictionary containing the required querystring for the page</returns>
         IEnumerable<Tuple<int, Dictionary<string, Microsoft.Extensions.Primitives.StringValues>>> PagingGroup(int range = 5);
+#else
+
+        /// <summary>
+        /// Generates a group of pages around the current page, will always include
+        /// </summary>
+        /// <param name="range">the range of pages to generate, by default 5 pages either side of the current page will be generated (or the available pages if that is less than the <paramref name="range"/></param>
+        /// <returns>Group of page numbers along with a dictionary containing the required querystring for the page</returns>
+        IEnumerable<Tuple<int, NameValueCollection>> PagingGroup(int range = 5);
+#endif
     }
 }

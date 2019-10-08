@@ -19,13 +19,24 @@ namespace Nest.Searchify.Queries
         where TOutputEntity : class
         where TSearchResult : SearchResult<TParameters, TDocument, TOutputEntity>
     {
+#if !NETSTANDARD	
+        public ParametersQuery() : this(new System.Collections.Specialized.NameValueCollection())
+        {
+        }
+
+        public ParametersQuery(System.Collections.Specialized.NameValueCollection parameters) : base(QueryStringParser<TParameters>.Parse(parameters))
+        {
+        }
+#else
         public ParametersQuery() : this(Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(""))
         {
         }
 
-        public ParametersQuery(Dictionary<string, Microsoft.Extensions.Primitives.StringValues> parameters) : base(QueryStringParser<TParameters>.Parse(parameters))
+
+        public ParametersQuery(Dictionary<string, Microsoft.Extensions.Primitives.StringValues> parameters) : base(QueryStringParser<TParameters>.Parse(parameters))	        
         {
-        }
+        }        
+#endif
 
         public ParametersQuery(TParameters parameters) : base(parameters)
         {

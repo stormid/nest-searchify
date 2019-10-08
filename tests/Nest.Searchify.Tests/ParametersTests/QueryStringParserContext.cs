@@ -132,8 +132,13 @@ namespace Nest.Searchify.Tests.ParametersTests
         [Fact]
         public void FromQueryString()
         {
-            var queryString = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery("q=test&options=o1&options=o2&numbers=1&numbers=5&doubles=99.99&doubles=8&sortdir=Asc&enumOptions=optionone");
             var p = new MyParameters();
+
+#if NETSTANDARD
+            var queryString = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery("q=test&options=o1&options=o2&numbers=1&numbers=5&doubles=99.99&doubles=8&sortdir=Asc&enumOptions=optionone");
+#else
+            var queryString = System.Web.HttpUtility.ParseQueryString("q=test&options=o1&options=o2&numbers=1&numbers=5&doubles=99.99&doubles=8&sortdir=Asc&enumOptions=optionone");
+#endif
 
             QueryStringParser<MyParameters>.Populate(queryString, p);
 

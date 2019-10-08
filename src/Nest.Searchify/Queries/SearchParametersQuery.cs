@@ -16,6 +16,10 @@ namespace Nest.Searchify.Queries
         public SearchParametersQuery(TSearchParameters parameters, string docTypeName, Func<string> docTypeValueFunc) : base(parameters, docTypeName, docTypeValueFunc)
         {
         }
+
+        public SearchParametersQuery(TSearchParameters parameters, string docTypeName) : base(parameters, docTypeName, () => DocTypeValueFuncDefault)
+        {
+        }
     }
 
     public class SearchParametersQuery<TSearchParameters, TDocument, TSearchResult, TOutputEntity> :

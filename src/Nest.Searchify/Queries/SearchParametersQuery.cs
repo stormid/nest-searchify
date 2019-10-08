@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using Nest.Searchify.Abstractions;
 using Nest.Searchify.SearchResults;
 
@@ -13,6 +12,10 @@ namespace Nest.Searchify.Queries
         public SearchParametersQuery(TSearchParameters parameters) : base(parameters)
         {
         }
+
+        public SearchParametersQuery(TSearchParameters parameters, string docTypeName, Func<string> docTypeValueFunc) : base(parameters, docTypeName, docTypeValueFunc)
+        {
+        }
     }
 
     public class SearchParametersQuery<TSearchParameters, TDocument, TSearchResult, TOutputEntity> :
@@ -22,8 +25,19 @@ namespace Nest.Searchify.Queries
         where TOutputEntity : class
         where TSearchResult : SearchResult<TSearchParameters, TDocument, TOutputEntity>
     {
+        protected static string DocTypeValueFuncDefault = $"{typeof(TDocument).FullName}, {typeof(TDocument).Assembly.GetName().Name}";
+
+        private readonly string docTypeName;
+        private readonly Func<string> docTypeValueFunc;
+
         public SearchParametersQuery(TSearchParameters parameters) : base(parameters)
         {
+        }
+
+        public SearchParametersQuery(TSearchParameters parameters, string docTypeName, Func<string> docTypeValueFunc) : base(parameters)
+        {
+            this.docTypeName = docTypeName;
+            this.docTypeValueFunc = docTypeValueFunc;
         }
 
         protected virtual QueryContainer WithQuery(IQueryContainer query, string queryTerm)
@@ -38,8 +52,23 @@ namespace Nest.Searchify.Queries
             return Query<TDocument>
                 .Bool(b => b
                     .Must(query)
-                    .Filter(filters)
+                    .Filter(DocTypeFilterCore(docTypeName, docTypeValueFunc?.Invoke() ?? DocTypeValueFuncDefault, parameters) && filters)
                 );
+        }
+
+        protected QueryContainer DocTypeFilterCore(string docTypeFieldName, string docTypeValue, TSearchParameters parameters)
+        {
+            if (!string.IsNullOrWhiteSpace(docTypeName))
+            {
+                return DocTypeFilter(docTypeFieldName, docTypeValue, parameters);
+            }
+
+            return null;
+        }
+
+        protected virtual QueryContainer DocTypeFilter(string docTypeFieldName, string docTypeValue, TSearchParameters parameters)
+        {
+            return Query<TDocument>.Term(docTypeFieldName, docTypeValue);
         }
 
         protected virtual QueryContainer WithFilters(IQueryContainer query, TSearchParameters parameters)
